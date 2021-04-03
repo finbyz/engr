@@ -1,6 +1,6 @@
 {
  "autoname": "hash",
- "creation": "2021-03-22 11:30:12.298297",
+ "creation": "2013-03-07 11:42:58",
  "doctype": "DocType",
  "document_type": "Document",
  "editable_grid": 1,
@@ -8,7 +8,9 @@
  "field_order": [
   "item_code",
   "customer_item_code",
+  "ensure_delivery_based_on_produced_serial_no",
   "col_break1",
+  "delivery_date",
   "item_name",
   "section_break_5",
   "description",
@@ -54,16 +56,37 @@
   "billed_amt",
   "valuation_rate",
   "gross_profit",
+  "drop_ship_section",
+  "delivered_by_supplier",
+  "supplier",
   "item_weight_details",
   "weight_per_unit",
   "total_weight",
   "column_break_21",
   "weight_uom",
+  "warehouse_and_reference",
+  "warehouse",
+  "target_warehouse",
   "prevdoc_docname",
+  "col_break4",
+  "blanket_order",
+  "blanket_order_rate",
+  "planning_section",
+  "projected_qty",
+  "actual_qty",
+  "ordered_qty",
+  "planned_qty",
+  "column_break_69",
+  "work_order_qty",
+  "delivered_qty",
+  "produced_qty",
+  "returned_qty",
+  "shopping_cart_section",
   "additional_notes",
   "section_break_63",
   "page_break",
   "item_tax_rate",
+  "transaction_date",
   "references_section",
   "sales_order",
   "column_break_60",
@@ -92,6 +115,13 @@
    "label": "Customer's Item Code",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ensure_delivery_based_on_produced_serial_no",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Ensure Delivery Based on Produced Serial No"
   },
   {
    "fieldname": "col_break1",
@@ -126,32 +156,14 @@
    "width": "300px"
   },
   {
-   "fieldname": "item_group",
-   "fieldtype": "Link",
+   "allow_on_submit": 1,
+   "columns": 2,
+   "fieldname": "delivery_date",
+   "fieldtype": "Date",
    "hidden": 1,
-   "label": "Item Group",
-   "oldfieldname": "item_group",
-   "oldfieldtype": "Link",
-   "options": "Item Group",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "brand",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "label": "Brand Name",
-   "oldfieldname": "brand",
-   "oldfieldtype": "Link",
-   "options": "Brand",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "collapsible": 1,
-   "fieldname": "image_section",
-   "fieldtype": "Section Break",
-   "label": "Image"
+   "label": "Delivery Date",
+   "no_copy": 1,
+   "print_hide": 1
   },
   {
    "fieldname": "image",
@@ -342,13 +354,6 @@
    "width": "100px"
   },
   {
-   "fieldname": "item_tax_template",
-   "fieldtype": "Link",
-   "label": "Item Tax Template",
-   "options": "Item Tax Template",
-   "print_hide": 1
-  },
-  {
    "fieldname": "col_break3",
    "fieldtype": "Column Break"
   },
@@ -388,6 +393,7 @@
    "default": "0",
    "fieldname": "is_free_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Free Item",
    "print_hide": 1,
    "read_only": 1
@@ -433,33 +439,27 @@
    "read_only": 1
   },
   {
-   "fieldname": "billed_amt",
-   "fieldtype": "Currency",
-   "label": "Billed Amt",
-   "no_copy": 1,
-   "options": "currency",
-   "print_hide": 1,
-   "read_only": 1
+   "collapsible": 1,
+   "fieldname": "drop_ship_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Drop Ship",
+   "print_hide": 1
   },
   {
-   "fieldname": "valuation_rate",
-   "fieldtype": "Currency",
-   "label": "Valuation Rate",
-   "no_copy": 1,
-   "options": "Company:company:default_currency",
-   "print_hide": 1,
-   "read_only": 1,
-   "report_hide": 1
+   "default": "0",
+   "fieldname": "delivered_by_supplier",
+   "fieldtype": "Check",
+   "label": "Supplier delivers to Customer",
+   "print_hide": 1
   },
   {
-   "fieldname": "gross_profit",
-   "fieldtype": "Currency",
-   "label": "Gross Profit",
-   "no_copy": 1,
-   "options": "Company:company:default_currency",
-   "print_hide": 1,
-   "read_only": 1,
-   "report_hide": 1
+   "allow_on_submit": 1,
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "print_hide": 1
   },
   {
    "collapsible": 1,
@@ -490,6 +490,36 @@
    "options": "UOM"
   },
   {
+   "fieldname": "warehouse_and_reference",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Warehouse and Reference"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "Delivery Warehouse",
+   "oldfieldname": "reserved_warehouse",
+   "oldfieldtype": "Link",
+   "options": "Warehouse",
+   "print_hide": 1,
+   "print_width": "150px",
+   "width": "150px"
+  },
+  {
+   "depends_on": "eval:doc.delivered_by_supplier!=1",
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "ignore_user_permissions": 1,
+   "label": "Customer Warehouse (Optional)",
+   "no_copy": 1,
+   "options": "Warehouse",
+   "print_hide": 1
+  },
+  {
    "fieldname": "prevdoc_docname",
    "fieldtype": "Link",
    "label": "Quotation",
@@ -502,13 +532,146 @@
    "search_index": 1
   },
   {
-   "fieldname": "additional_notes",
-   "fieldtype": "Text",
-   "label": "Additional Notes"
+   "fieldname": "brand",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Brand Name",
+   "oldfieldname": "brand",
+   "oldfieldtype": "Link",
+   "options": "Brand",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Item Group",
+   "oldfieldname": "item_group",
+   "oldfieldtype": "Link",
+   "options": "Item Group",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "billed_amt",
+   "fieldtype": "Currency",
+   "label": "Billed Amt",
+   "no_copy": 1,
+   "options": "currency",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "valuation_rate",
+   "fieldtype": "Currency",
+   "label": "Valuation Rate",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "gross_profit",
+   "fieldtype": "Currency",
+   "label": "Gross Profit",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "blanket_order",
+   "fieldtype": "Link",
+   "label": "Blanket Order",
+   "no_copy": 1,
+   "options": "Blanket Order"
+  },
+  {
+   "fieldname": "blanket_order_rate",
+   "fieldtype": "Currency",
+   "label": "Blanket Order Rate",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_break4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "projected_qty",
+   "fieldtype": "Float",
+   "label": "Projected Qty",
+   "no_copy": 1,
+   "oldfieldname": "projected_qty",
+   "oldfieldtype": "Currency",
+   "print_hide": 1,
+   "print_width": "70px",
+   "read_only": 1,
+   "width": "70px"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "actual_qty",
+   "fieldtype": "Float",
+   "label": "Actual Qty",
+   "no_copy": 1,
+   "print_hide": 1,
+   "print_width": "70px",
+   "read_only": 1,
+   "width": "70px"
+  },
+  {
+   "fieldname": "ordered_qty",
+   "fieldtype": "Float",
+   "label": "Ordered Qty",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "delivered_qty",
+   "fieldtype": "Float",
+   "label": "Delivered Qty",
+   "no_copy": 1,
+   "oldfieldname": "delivered_qty",
+   "oldfieldtype": "Currency",
+   "print_hide": 1,
+   "print_width": "100px",
+   "read_only": 1,
+   "width": "100px"
+  },
+  {
+   "fieldname": "work_order_qty",
+   "fieldtype": "Float",
+   "label": "Work Order Qty",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "returned_qty",
+   "fieldname": "returned_qty",
+   "fieldtype": "Float",
+   "label": "Returned Qty",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "section_break_63",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_tax_template",
+   "fieldtype": "Link",
+   "label": "Item Tax Template",
+   "options": "Item Tax Template",
+   "print_hide": 1
   },
   {
    "allow_on_submit": 1,
@@ -522,6 +685,35 @@
    "report_hide": 1
   },
   {
+   "description": "For Production",
+   "fieldname": "planned_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Planned Quantity",
+   "no_copy": 1,
+   "oldfieldname": "planned_qty",
+   "oldfieldtype": "Currency",
+   "print_hide": 1,
+   "print_width": "50px",
+   "read_only": 1,
+   "report_hide": 1,
+   "width": "50px"
+  },
+  {
+   "description": "For Production",
+   "fieldname": "produced_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Produced Quantity",
+   "oldfieldname": "produced_qty",
+   "oldfieldtype": "Currency",
+   "print_hide": 1,
+   "print_width": "50px",
+   "read_only": 1,
+   "report_hide": 1,
+   "width": "50px"
+  },
+  {
    "fieldname": "item_tax_rate",
    "fieldtype": "Code",
    "hidden": 1,
@@ -533,6 +725,46 @@
    "report_hide": 1
   },
   {
+   "description": "Used for Production Plan",
+   "fieldname": "transaction_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Sales Order Date",
+   "oldfieldname": "transaction_date",
+   "oldfieldtype": "Date",
+   "print_hide": 1,
+   "read_only": 1,
+   "report_hide": 1
+  },
+  {
+   "fieldname": "planning_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Planning"
+  },
+  {
+   "fieldname": "column_break_69",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "image_section",
+   "fieldtype": "Section Break",
+   "label": "Image"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "shopping_cart_section",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Shopping Cart"
+  },
+  {
+   "fieldname": "additional_notes",
+   "fieldtype": "Text",
+   "label": "Additional Notes"
+  },
+  {
    "fieldname": "references_section",
    "fieldtype": "Section Break",
    "label": "References"
@@ -541,6 +773,7 @@
    "fieldname": "sales_order",
    "fieldtype": "Link",
    "label": "Sales Order",
+   "no_copy": 1,
    "options": "Sales Order",
    "read_only": 1
   },
@@ -548,6 +781,7 @@
    "fieldname": "sales_order_item",
    "fieldtype": "Data",
    "label": "Sales Order Item",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -561,8 +795,9 @@
    "read_only": 1
   }
  ],
+ "idx": 1,
  "istable": 1,
- "modified": "2021-03-23 11:30:03.324994",
+ "modified": "2021-04-03 14:22:12.485311",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Proforma Invoice Item",
