@@ -81,6 +81,12 @@ def create_proforma_invoice(source_name, target_doc=None):
 			"field_no_map":{
 				"ensure_delivery_based_on_produced_serial_no",
 				"delivery_date",
+				"margin_type",
+				"margin_rate_or_amount",
+				"rate_with_margin",
+				"discount_percentage",
+				"discount_amount",
+				"base_rate_with_margin"
 				"is_free_item",
 				"delivered_by_supplier",
 				"supplier",
