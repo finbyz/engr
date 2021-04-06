@@ -38,6 +38,7 @@
   "shipping_address",
   "customer_group",
   "territory",
+  "place_of_supply",
   "currency_and_price_list",
   "currency",
   "conversion_rate",
@@ -106,6 +107,14 @@
   "terms_section_break",
   "tc_name",
   "terms",
+  "transporter_info_section",
+  "transporter",
+  "transporter_name",
+  "column_break_104",
+  "lr_no",
+  "broker_name",
+  "my_bank_account_section",
+  "bank_account",
   "more_info",
   "inter_company_order_reference",
   "project",
@@ -138,7 +147,9 @@
   "to_date",
   "column_break_108",
   "auto_repeat",
-  "update_auto_repeat_reference"
+  "update_auto_repeat_reference",
+  "fiscal",
+  "company_series"
  ],
  "fields": [
   {
@@ -1218,12 +1229,79 @@
    "hidden": 1,
    "label": "Skip Delivery Note",
    "print_hide": 1
+  },
+  {
+   "fieldname": "place_of_supply",
+   "fieldtype": "Data",
+   "label": "Place of Supply",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "transporter",
+   "fieldname": "transporter_info_section",
+   "fieldtype": "Section Break",
+   "label": "Transporter Info"
+  },
+  {
+   "fieldname": "transporter",
+   "fieldtype": "Link",
+   "label": "Transporter",
+   "options": "Supplier",
+   "print_hide": 1
+  },
+  {
+   "fetch_from": "transporter.name",
+   "fieldname": "transporter_name",
+   "fieldtype": "Data",
+   "label": "Transporter Name",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_104",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lr_no",
+   "fieldtype": "Data",
+   "label": "Transport Receipt No"
+  },
+  {
+   "fieldname": "my_bank_account_section",
+   "fieldtype": "Section Break",
+   "label": "My Bank Account"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
+  },
+  {
+   "fieldname": "broker_name",
+   "fieldtype": "Data",
+   "label": "Broker Name"
+  },
+  {
+   "fieldname": "fiscal",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Fiscal"
+  },
+  {
+   "fetch_from": "company.company_series",
+   "fieldname": "company_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Company Series"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-04-03 14:22:01.171339",
+ "modified": "2021-04-05 12:50:24.634810",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Proforma Invoice",

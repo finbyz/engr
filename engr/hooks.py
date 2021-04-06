@@ -29,6 +29,12 @@ doctype_js = {
 override_doctype_dashboards = {
 	"Sales Order": "engr.engineering.dashboard.sales_order.get_data",
 }
+doc_events = {
+	"Item":{
+		#"validate": "engr.engineering.doc_events.item.validate",
+		"on_update": "engr.engineering.doc_events.item.on_update",
+	}
+}
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
 # web_include_js = "/assets/engr/js/engr.js"
