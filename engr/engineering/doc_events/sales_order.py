@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.utils import flt,cint
+from erpnext.controllers.status_updater import StatusUpdater
 
 def update_proforma_details(docname,action):
     doc = frappe.get_doc("Proforma Invoice",docname)
@@ -12,6 +13,8 @@ def update_proforma_details(docname,action):
         if action == "submit":
             if doc.payment_percentage > 100:
                 frappe.throw("Payment Percentage cannot be more than 100%")
+
+            sales_order_list = []
 
             for item in doc.items:
                 proforma_query = frappe.db.sql("""
@@ -22,6 +25,8 @@ def update_proforma_details(docname,action):
                     where poi.sales_order = '{}' and poi.sales_order_item = '{}'
                     and pi.name != '{}' and pi.docstatus=1
                 """.format(item.sales_order,item.sales_order_item,doc.name))
+ 
+                sales_order_list.append(item.sales_order)
 
                 update_value = False
                 if proforma_query:
@@ -44,7 +49,17 @@ def update_proforma_details(docname,action):
                     frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
                         'proforma_percentage',doc.payment_percentage)
 
+            sales_order_list = list(set(sales_order_list))
+            for so in sales_order_list:
+                doc = frappe.get_doc("Sales Order",so)
+                so_proforma_percentage = sum(x.proforma_percentage for x in doc.items)
+                if so_proforma_percentage > 0:
+                    doc.db_set("proforma_percentage",so_proforma_percentage / len(doc.items))
+                if doc.proforma_percentage > 0 and doc.docstatus == 1:
+                    doc.db_set("status","Proforma Raised")
+
         elif action == "cancel":
+            sales_order_list = []
             for item in doc.items:
                 proforma_query = frappe.db.sql("""
                     select sum(poi.payment_amount) as payment_amount,soi.net_amount
@@ -54,6 +69,8 @@ def update_proforma_details(docname,action):
                     where poi.sales_order = '{}' and poi.sales_order_item = '{}'
                     and pi.name != '{}' and pi.docstatus=1
                 """.format(item.sales_order,item.sales_order_item,doc.name))
+
+                sales_order_list.append(item.sales_order)
 
                 update_value = False
                 if proforma_query:
@@ -73,3 +90,14 @@ def update_proforma_details(docname,action):
                         'proforma_amount',0)                    
                     frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
                         'proforma_percentage',0)
+
+            sales_order_list = list(set(sales_order_list))
+            for so in sales_order_list:
+                doc  = frappe.get_doc("Sales Order",so)
+                so_proforma_percentage = sum(x.proforma_percentage for x in doc.items)
+                if so_proforma_percentage > 0:
+                    doc.db_set("proforma_percentage",so_proforma_percentage / len(doc.items))
+                else:
+                    doc.db_set("proforma_percentage",0)
+                if doc.proforma_percentage in [0,100] and doc.status == "Proforma Raised":
+                    StatusUpdater.set_status(doc,update=True)

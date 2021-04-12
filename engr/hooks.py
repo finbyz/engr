@@ -22,6 +22,11 @@ app_include_js = [
 	"assets/js/engineering.min.js" 
 ]
 
+
+doctype_list_js = {
+	"Sales Order" : "public/js/doctype_js/sales_order_list.js"
+}
+
 doctype_js = {
 	"Sales Order": "public/js/doctype_js/sales_order.js"
 }
@@ -33,6 +38,10 @@ doc_events = {
 	"Item":{
 		#"validate": "engr.engineering.doc_events.item.validate",
 		"on_update": "engr.engineering.doc_events.item.on_update",
+	},
+	"Payment Entry":{
+		"on_submit":"engr.engineering.doc_events.payment_entry.on_submit",
+		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel"
 	}
 }
 # include js, css files in header of web template

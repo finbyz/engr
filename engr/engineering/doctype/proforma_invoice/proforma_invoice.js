@@ -3,6 +3,16 @@
 {% include 'engr/public/js/sales_common.js' %}
 
 frappe.ui.form.on('Proforma Invoice', {
+	onload: function(frm) {
+		if (!frm.doc.transaction_date){
+			frm.set_value('transaction_date', frappe.datetime.get_today())
+		}
+	},
+	refresh: function(frm){
+		if(frm.doc.status != "Paid" && frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Payment'), () => frm.trigger('create_payment_entry'), __('Create'));
+		}
+	},
 	payment_percentage: function(frm){
 		if (frm.doc.payment_percentage){
 			frm.set_value('payment_due_amount',flt(frm.doc.grand_total) * frm.doc.payment_percentage / 100)
@@ -38,11 +48,21 @@ frappe.ui.form.on('Proforma Invoice', {
 			};
 		})
 	},
-	onload: function(frm) {
-		if (!frm.doc.transaction_date){
-			frm.set_value('transaction_date', frappe.datetime.get_today())
-		}
-	},
+	create_payment_entry: function(frm){
+		return frappe.call({
+			method: "engr.engineering.doc_events.payment_entry.create_payment_entry",
+			args: {
+				"dt": "Sales Order",
+				"dn": frm.doc.items[0].sales_order,
+				"ref_dt":frm.doc.doctype,
+				"ref_dn":frm.doc.name
+			},
+			callback: function(r) {
+				var doclist = frappe.model.sync(r.message);
+				frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+			}
+		});
+	}
 });
 
 erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend({
