@@ -5,7 +5,7 @@ frappe.listview_settings['Proforma Invoice'] = {
             "Draft":"red",
 			"Unpaid": "orange",
 			"Paid": "green",
-			"Half Paid": "orange",
+			"Partially Paid": "orange",
             "Submitted":"blue"
 		};
 		return [__(doc.status), status_color[doc.status], "status,=,"+doc.status];

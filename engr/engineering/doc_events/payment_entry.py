@@ -10,7 +10,7 @@ from erpnext.accounts.party import get_party_account
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_bank_cash_account
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
-
+from engr.engineering.doctype.proforma_invoice.proforma_invoice import set_status
 
 def on_submit(self,method):
 	update_proforma_invoice(self,"submit")
@@ -26,14 +26,9 @@ def update_proforma_invoice(self,method):
 					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
 
 					doc.db_set("advance_paid",doc.advance_paid + ref.allocated_amount)
-					if doc.advance_paid > flt(doc.rounded_total):
+					if flt(doc.advance_paid) > flt(doc.payment_due_amount):
 						frappe.throw("You cannot Allocate more than Proforma Amount.")
-					if doc.advance_paid in [flt(doc.rounded_total),flt(doc.grand_total),flt(doc.base_rounded_total),flt(doc.base_grand_total)]:
-						doc.db_set('status','Paid')
-					elif doc.advance_paid > 0:
-						doc.db_set('status','Half Paid')
-					else:
-						doc.db_set('status','Unpaid')
+					set_status(doc)
 
 	elif method == "cancel":
 		if self.get('references'):
@@ -42,12 +37,7 @@ def update_proforma_invoice(self,method):
 					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
 
 					doc.db_set("advance_paid",doc.advance_paid - ref.allocated_amount)
-					if doc.advance_paid in [flt(doc.rounded_total),flt(doc.grand_total),flt(doc.base_rounded_total),flt(doc.base_grand_total)]:
-						doc.db_set('status','Paid')
-					elif doc.advance_paid > 0:
-						doc.db_set('status','Half Paid')
-					else:
-						doc.db_set('status','Unpaid')
+					set_status(doc)
 	
 @frappe.whitelist()
 def create_payment_entry(dt, dn, ref_dt, ref_dn):
@@ -69,17 +59,11 @@ def create_payment_entry(dt, dn, ref_dt, ref_dn):
 	grand_total = outstanding_amount = pri_grand_total = pri_outstanding_amount = 0
 	if party_account_currency == doc.company_currency:
 		grand_total = flt(doc.get("base_rounded_total") or doc.base_grand_total)
-		# Proforma Invoice
-		pri_grand_total = flt(pri_doc.get("base_rounded_total") or pri_doc.base_grand_total)
 	else:
 		grand_total = flt(doc.get("rounded_total") or doc.grand_total)
-		# Proforma Invoice
-		pri_grand_total = flt(pri_doc.get("rounded_total") or pri_doc.grand_total)
 
 	outstanding_amount = grand_total - flt(doc.advance_paid)
 
-	# Proforma Invoice
-	pri_outstanding_amount = pri_grand_total - flt(pri_doc.advance_paid)
 	bank_account = None
 	# bank or cash
 	bank = get_default_bank_cash_account(doc.company, "Bank", mode_of_payment=doc.get("mode_of_payment"),
@@ -99,9 +83,9 @@ def create_payment_entry(dt, dn, ref_dt, ref_dn):
 	# Proforma Invoice
 	pri_paid_amount = pri_received_amount = 0
 	if party_account_currency == bank.account_currency:
-		pri_paid_amount = pri_received_amount = abs(pri_outstanding_amount)
+		pri_paid_amount = pri_received_amount = abs(pri_doc.payment_due_amount - pri_doc.advance_paid)
 	elif payment_type == "Receive":
-		pri_paid_amount = abs(pri_outstanding_amount)
+		pri_paid_amount = abs(pri_doc.payment_due_amount - pri_doc.advance_paid)
 		pri_received_amount = pri_paid_amount * pri_doc.conversion_rate
 
 	pe = frappe.new_doc("Payment Entry")
@@ -139,7 +123,7 @@ def create_payment_entry(dt, dn, ref_dt, ref_dn):
 		"due_date": doc.get("due_date"),
 		'total_amount': grand_total,
 		'outstanding_amount': outstanding_amount,
-		'allocated_amount': pri_outstanding_amount
+		'allocated_amount': pri_paid_amount
 	})
 
 	pe.setup_party_account_field()

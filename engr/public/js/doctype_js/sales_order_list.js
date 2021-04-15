@@ -3,7 +3,7 @@ frappe.listview_settings['Sales Order'] = {
 		"per_delivered", "per_billed", "status", "order_type", "name", "skip_delivery_note"],
 	get_indicator: function (doc) {
         // Proforma Raised
-        if (doc.proforma_percentage > 0 && doc.proforma_percentage < 100){
+        if (doc.status == "Proforma Raised"){
             return [__("Proforma Raised"), "orange", "status,=,Proforma Raised"];
         }
 		else if (doc.status === "Closed") {

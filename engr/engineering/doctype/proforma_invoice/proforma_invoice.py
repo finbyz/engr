@@ -7,7 +7,8 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import flt,cint ,comma_or, nowdate, getdate
 from frappe.model.mapper import get_mapped_doc
-from engr.engineering.doc_events.sales_order import update_proforma_details
+from engr.engineering.doc_events.sales_order import update_proforma_details,change_sales_order_status
+from erpnext.controllers.status_updater import StatusUpdater
 
 class ProformaInvoice(Document):
 	# def __init__(self, *args, **kwargs):
@@ -29,12 +30,13 @@ class ProformaInvoice(Document):
 		update_proforma_details(self.name,"cancel")
 
 def set_status(self):
-	if self.advance_paid in [flt(self.rounded_total),flt(self.grand_total),flt(self.base_rounded_total),flt(self.base_grand_total)]:
+	if flt(self.advance_paid) == flt(self.payment_due_amount):
 		self.db_set('status','Paid')
-	elif self.advance_paid > 0:
-		self.db_set('status','Half Paid')
+	elif flt(self.advance_paid) > 0:
+		self.db_set('status','Partially Paid')
 	else:
 		self.db_set('status','Unpaid')
+	change_sales_order_status(frappe.get_doc("Sales Order",self.items[0].sales_order))
 
 @frappe.whitelist()
 def create_proforma_invoice(source_name, target_doc=None):

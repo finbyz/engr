@@ -51,12 +51,11 @@ def update_proforma_details(docname,action):
 
             sales_order_list = list(set(sales_order_list))
             for so in sales_order_list:
-                doc = frappe.get_doc("Sales Order",so)
-                so_proforma_percentage = sum(x.proforma_percentage for x in doc.items)
-                if so_proforma_percentage > 0:
-                    doc.db_set("proforma_percentage",so_proforma_percentage / len(doc.items))
-                if doc.proforma_percentage > 0 and doc.docstatus == 1:
-                    doc.db_set("status","Proforma Raised")
+                so_doc = frappe.get_doc("Sales Order",so)
+
+                so_doc.db_set("proforma_amount",flt(doc.payment_due_amount) + flt(so_doc.proforma_amount))
+                so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.grand_total) * 100)
+                change_sales_order_status(so_doc)
 
         elif action == "cancel":
             sales_order_list = []
@@ -93,11 +92,21 @@ def update_proforma_details(docname,action):
 
             sales_order_list = list(set(sales_order_list))
             for so in sales_order_list:
-                doc  = frappe.get_doc("Sales Order",so)
-                so_proforma_percentage = sum(x.proforma_percentage for x in doc.items)
-                if so_proforma_percentage > 0:
-                    doc.db_set("proforma_percentage",so_proforma_percentage / len(doc.items))
-                else:
-                    doc.db_set("proforma_percentage",0)
-                if doc.proforma_percentage in [0,100] and doc.status == "Proforma Raised":
-                    StatusUpdater.set_status(doc,update=True)
+                so_doc  = frappe.get_doc("Sales Order",so)
+ 
+                so_doc.db_set("proforma_amount",flt(so_doc.proforma_amount) - flt(doc.payment_due_amount))
+                so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.grand_total) * 100)
+                change_sales_order_status(so_doc)
+
+def change_sales_order_status(so_doc):
+    pi_status = frappe.db.sql("""select pi.status
+        from `tabProforma Invoice` as pi
+        JOIN `tabProforma Invoice Item` as pii on pii.parent = pi.name
+        where pii.sales_order = '{}' and pi.docstatus=1
+    """.format(so_doc.name),as_dict=1)
+    status_list = list(set(status.status for status in pi_status))
+    if ("Unpaid" in status_list or "Partially Paid" in status_list) and so_doc.docstatus == 1:
+        so_doc.db_set("status","Proforma Raised")
+    elif so_doc.docstatus == 1:
+        StatusUpdater.set_status(so_doc,update=True)
+
