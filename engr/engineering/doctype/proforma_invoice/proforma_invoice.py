@@ -5,8 +5,10 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt,cint ,comma_or, nowdate, getdate
 from frappe.model.mapper import get_mapped_doc
-from engr.engineering.doc_events.sales_order import update_proforma_details
+from engr.engineering.doc_events.sales_order import update_proforma_details,change_sales_order_status
+from erpnext.controllers.status_updater import StatusUpdater
 
 class ProformaInvoice(Document):
 	# def __init__(self, *args, **kwargs):
@@ -19,10 +21,22 @@ class ProformaInvoice(Document):
 			item.payment_amount = flt(item.net_amount) * self.payment_percentage / 100
 
 	def on_submit(self):
+		if self.payment_percentage == 0:
+			frappe.throw("Please Enter Payment Percentage")
 		update_proforma_details(self.name,"submit")
+		set_status(self)
 
 	def on_cancel(self):
 		update_proforma_details(self.name,"cancel")
+
+def set_status(self):
+	if flt(self.advance_paid) == flt(self.payment_due_amount):
+		self.db_set('status','Paid')
+	elif flt(self.advance_paid) > 0:
+		self.db_set('status','Partially Paid')
+	else:
+		self.db_set('status','Unpaid')
+	change_sales_order_status(frappe.get_doc("Sales Order",self.items[0].sales_order))
 
 @frappe.whitelist()
 def create_proforma_invoice(source_name, target_doc=None):
@@ -69,7 +83,8 @@ def create_proforma_invoice(source_name, target_doc=None):
 				"sales_team",
 				"from_date",
 				"to_date",
-				"auto_repeat"				
+				"auto_repeat",
+				"advance_paid"				
 			},
 		},
 		"Sales Order Item": {

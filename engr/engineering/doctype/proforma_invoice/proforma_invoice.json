@@ -848,7 +848,7 @@
   {
    "fieldname": "advance_paid",
    "fieldtype": "Currency",
-   "label": "Advance Paid",
+   "label": "Amount Paid",
    "no_copy": 1,
    "options": "party_account_currency",
    "print_hide": 1,
@@ -1049,7 +1049,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "\nDraft\nOn Hold\nTo Deliver and Bill\nTo Bill\nTo Deliver\nCompleted\nCancelled\nClosed",
+   "options": "\nDraft\nPaid\nPartially Paid\nUnpaid\nSubmitted",
    "print_hide": 1,
    "read_only": 1,
    "reqd": 1,
