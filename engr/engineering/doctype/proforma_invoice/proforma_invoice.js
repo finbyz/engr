@@ -15,7 +15,7 @@ frappe.ui.form.on('Proforma Invoice', {
 	},
 	payment_percentage: function(frm){
 		if (frm.doc.payment_percentage){
-			frm.set_value('payment_due_amount',flt(frm.doc.grand_total) * frm.doc.payment_percentage / 100)
+			frm.set_value('payment_due_amount',flt(frm.doc.rounded_total) * frm.doc.payment_percentage / 100)
 			frm.doc.items.forEach(function(row){
 				frappe.model.set_value(row.doctype,row.name,'payment_amount',flt(row.net_amount) * frm.doc.payment_percentage / 100)
 			})
