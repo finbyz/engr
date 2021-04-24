@@ -4,7 +4,8 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import flt,cint
+from frappe import _
+from frappe.utils import flt,cint,get_url_to_form
 from erpnext.controllers.status_updater import StatusUpdater
 
 def update_proforma_details(docname,action):
@@ -110,3 +111,40 @@ def change_sales_order_status(so_doc):
     elif so_doc.docstatus == 1:
         StatusUpdater.set_status(so_doc,update=True)
 
+
+@frappe.whitelist()
+def get_last_5_transaction_details(name, item_code, customer):
+	data = frappe.db.sql("""
+		SELECT soi.qty, soi.rate, so.transaction_date, so.company,so.name 
+		FROM `tabSales Order Item` as soi JOIN `tabSales Order` as so on soi.parent=so.name 
+		WHERE soi.name != '{}' and so.customer = '{}' and soi.item_code = '{}' and so.docstatus = 1
+		ORDER By so.transaction_date DESC LIMIT 5	
+	""".format(name, customer, item_code), as_dict = 1)
+
+	table = """<table class="table table-bordered" style="margin: 0; font-size:80%;">
+		<thead>
+			<tr>
+				<th>Sales Order</th>
+				<th>Company</th>
+				<th>Date</th>
+				<th>Qty</th>
+				<th>Rate</th>
+
+			<tr>
+		</thead>
+	<tbody>"""
+	for i in data:
+		table += f"""
+			<tr>
+				<td>{"<a href='{0}' target='_blank'>{1}</a>".format(get_url_to_form("Sales Order",i.name),i.name)}</td>
+				<td>{i.company}</td>
+				<td>{frappe.format(i.transaction_date, {'fieldtype': 'Date'})}</td>
+				<td>{i.qty}</td>
+				<td>{i.rate}</td>
+			</tr>
+		"""
+	
+	table += """
+	</tbody></table>
+	"""
+	return table
