@@ -29,3 +29,23 @@ frappe.ui.form.on('Sales Order Item', {
 		})
 	}
 });
+frappe.ui.keys.on('ctrl+i', function(e) {
+	const current_doc = $('.data-row.editable-row').parent().attr("data-name");
+	const d = locals["Sales Order Item"][current_doc];
+	frappe.call({
+		method: "engr.engineering.doc_events.sales_order.get_last_5_transaction_details",
+		args: {
+			url:window.location.href.split("#")[0] + "#Form/Sales Order" + "/",
+			name:d.name,
+			item_code: d.item_code,
+			customer: cur_frm.doc.customer
+		},
+		callback: function (r) {
+			frappe.msgprint({
+				message: r.message,
+				title: "Item Code : " + d.item_code + " And Customer : " + cur_frm.doc.customer,
+				wide: true,
+			});
+		}
+	})
+});
