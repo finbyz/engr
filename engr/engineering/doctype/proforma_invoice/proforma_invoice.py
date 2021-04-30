@@ -41,10 +41,6 @@ def set_status(self):
 @frappe.whitelist()
 def create_proforma_invoice(source_name, target_doc=None):
 	def set_missing_value(source, target):
-		if source.get('payment_schedule'):
-			for payment in source.payment_schedule:
-				if payment.payment_amount > 0:
-					target.advance_paid = payment.payment_amount
 		target.run_method('set_missing_values')
 		target.run_method('calculate_taxes_and_totals')
 		
@@ -88,7 +84,6 @@ def create_proforma_invoice(source_name, target_doc=None):
 				"from_date",
 				"to_date",
 				"auto_repeat",
-				"advance_paid"				
 			},
 		},
 		"Sales Order Item": {
