@@ -28,12 +28,14 @@ doctype_list_js = {
 }
 
 doctype_js = {
-	"Sales Order": "public/js/doctype_js/sales_order.js"
+	"Sales Order": "public/js/doctype_js/sales_order.js",
+	"Purchase Order": "public/js/doctype_js/purchase_order.js"
 }
 
 override_doctype_dashboards = {
 	"Sales Order": "engr.engineering.dashboard.sales_order.get_data",
 }
+
 doc_events = {
 	"Item":{
 		#"validate": "engr.engineering.doc_events.item.validate",
