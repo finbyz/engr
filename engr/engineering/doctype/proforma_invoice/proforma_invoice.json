@@ -794,6 +794,7 @@
    "width": "50%"
   },
   {
+   "default": "100",
    "fieldname": "payment_percentage",
    "fieldtype": "Percent",
    "in_list_view": 1,
@@ -1297,7 +1298,7 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-04-27 15:16:44.410903",
+ "modified": "2021-05-03 15:21:30.694080",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Proforma Invoice",
