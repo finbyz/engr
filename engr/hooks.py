@@ -44,6 +44,10 @@ doc_events = {
 	"Payment Entry":{
 		"on_submit":"engr.engineering.doc_events.payment_entry.on_submit",
 		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel"
+	},
+	"Sales Invoice":{
+		"on_submit":"engr.engineering.doc_events.sales_invoice.on_submit",
+		"on_cancel":"engr.engineering.doc_events.sales_invoice.on_cancel"
 	}
 }
 # include js, css files in header of web template

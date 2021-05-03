@@ -10,6 +10,7 @@ from frappe.model.mapper import get_mapped_doc
 from engr.engineering.doc_events.sales_order import update_proforma_details,change_sales_order_status
 from erpnext.controllers.status_updater import StatusUpdater
 
+
 class ProformaInvoice(Document):
 	# def __init__(self, *args, **kwargs):
 	# 	super(SalesOrder, self).__init__(*args, **kwargs)
@@ -52,37 +53,15 @@ def create_proforma_invoice(source_name, target_doc=None):
 			},
 			"field_no_map":{
 				"naming_series",
-				"order_type",
 				"skip_delivery_note",
 				"amended_from",
-				"delivery_date",
-				"po_no",
-				"po_date",
-				"set_warehouse",
 				"scan_barcode",
-				"loyalty_points_redemption",
-				"loyalty_points",
-				"loyalty_amount",
-				"packed_items",
-				"payment_terms_template",
-				"payment_schedule",
 				"inter_company_order_reference",
-				"project",
-				"party_account_currency",
-				"source",
-				"campaign",
-				"group_same_items",
 				"status",
 				"delivery_status",
 				"per_delivered",
 				"per_billed",
 				"billing_status",
-				"sales_partner",
-				"commission_rate",
-				"total_commission",
-				"sales_team",
-				"from_date",
-				"to_date",
 				"auto_repeat",
 			},
 		},
@@ -91,34 +70,6 @@ def create_proforma_invoice(source_name, target_doc=None):
 			"field_map": {
 				"parent": "sales_order",
 				"name":"sales_order_item",
-			},
-			"field_no_map":{
-				"ensure_delivery_based_on_produced_serial_no",
-				"delivery_date",
-				"margin_type",
-				"margin_rate_or_amount",
-				"rate_with_margin",
-				"discount_percentage",
-				"discount_amount",
-				"base_rate_with_margin"
-				"is_free_item",
-				"delivered_by_supplier",
-				"supplier",
-				"warehouse",
-				"target_warehouse",
-				"prevdoc_docname",
-				"blanket_order",
-				"blanket_order_rate",
-				"projected_qty",
-				"actual_qty",
-				"ordered_qty",
-				"planned_qty",
-				"work_order_qty",
-				"delivered_qty",
-				"produced_qty",
-				"returned_qty",
-				"additional_notes",
-				"transaction_date"
 			},
 			"condition": lambda doc: (doc.proforma_percentage) < 100
 		},

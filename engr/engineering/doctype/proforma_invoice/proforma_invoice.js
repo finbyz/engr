@@ -12,6 +12,9 @@ frappe.ui.form.on('Proforma Invoice', {
 		if(frm.doc.status != "Paid" && frm.doc.docstatus==1) {
 			frm.add_custom_button(__('Payment'), () => frm.trigger('create_payment_entry'), __('Create'));
 		}
+		if(flt(frm.doc.per_billed, 6) < 100 && frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Sales Invoice'), () => frm.trigger('make_sales_invoice'), __('Create'));
+		}
 	},
 	payment_percentage: function(frm){
 		if (frm.doc.payment_percentage){
@@ -62,7 +65,13 @@ frappe.ui.form.on('Proforma Invoice', {
 				frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 			}
 		});
-	}
+	},
+	make_sales_invoice: function(frm) {
+		frappe.model.open_mapped_doc({
+			method: "engr.engineering.doc_events.sales_invoice.make_sales_invoice",
+			frm: frm
+		})
+	},
 });
 
 erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend({
