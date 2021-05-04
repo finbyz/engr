@@ -102,9 +102,10 @@ def get_next_contact_date(row, filters):
 
 	party_type = filters.doctype or row["Ref DocType"]
 	party = row["Ref DocName"]
-
-	next_contact_date = frappe.db.get_value(party_type, party, "contact_date") or None
-
+	try:
+		next_contact_date = frappe.db.get_value(party_type, party, "contact_date") or None
+	except:
+		next_contact_date = None
 	return next_contact_date
 
 def get_organization(row, filters):
