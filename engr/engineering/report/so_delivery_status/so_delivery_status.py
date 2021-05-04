@@ -30,6 +30,15 @@ def get_purchase_invoice_data():
 			pi_map.setdefault(pi.po_detail,pi.qty)
 	return pi_map
 
+def get_purchase_order_data():
+
+	po_map = {}
+	data = frappe.db.sql("select po.material_request_item,po.parent as purchase_order,po.qty as po_qty,po.name as po_detail from `tabPurchase Order Item` as po where po.docstatus = 1",as_dict=1)
+	for po in data:
+		if po.material_request_item:
+			po_map.setdefault(po.material_request_item,po)
+	return po_map
+
 def get_filters_conditions(filters):
 	conditions = ''
 	if filters.get('name'):
@@ -63,28 +72,28 @@ def get_data(filters):
 				WHEN mr.docstatus=1 THEN mr.qty
 			END AS mr_qty,
 			CASE
-				WHEN po.docstatus=1 THEN po.parent
-			END AS purchase_order,
-			CASE
-				WHEN po.docstatus=1 THEN po.qty
-			END AS po_qty,
-			CASE
-				WHEN po.docstatus=1 THEN po.name
-			END AS po_detail
+				WHEN mr.docstatus=1 THEN mr.name
+			END AS mr_name
 		from 
 			`tabSales Order` as so
 			JOIN `tabSales Order Item` as soi on soi.parent=so.name
 			LEFT JOIN `tabBin` as b on b.item_code = soi.item_code and b.warehouse=soi.warehouse
 			LEFT JOIN `tabMaterial Request Item` as mr on mr.sales_order_item = soi.name
-			LEFT JOIN `tabPurchase Order Item` as po on po.material_request_item = mr.name
 		where
 			so.docstatus=1 and so.status not in ("Cancelled", "Closed","Completed"){}
 		order by
 			so.transaction_date asc
 	""".format(conditions),as_dict=1)
+	po_map = get_purchase_order_data()
 	pr_map = get_purchase_receipt_data()
 	pi_map = get_purchase_invoice_data()
 	for row in data:
+		if row.mr_name:
+			po = po_map.get(row.mr_name)
+			if po:
+				row.purchase_order = po.purchase_order
+				row.po_qty = po.po_qty
+				row.po_detail = po.po_detail
 		if row.po_detail:
 			qty = pr_map.get(row.po_detail)
 			if qty:
