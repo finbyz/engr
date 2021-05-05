@@ -29,7 +29,8 @@ doctype_list_js = {
 
 doctype_js = {
 	"Sales Order": "public/js/doctype_js/sales_order.js",
-	"Purchase Order": "public/js/doctype_js/purchase_order.js"
+	"Purchase Order": "public/js/doctype_js/purchase_order.js",
+	"Customer":"public/js/doctype_js/customer.js"
 }
 
 override_doctype_dashboards = {
@@ -37,6 +38,9 @@ override_doctype_dashboards = {
 }
 
 doc_events = {
+	"Customer":{
+		"validate":"engr.engineering.doc_events.customer.validate_customer_potential"
+	},
 	"Item":{
 		#"validate": "engr.engineering.doc_events.item.validate",
 		"on_update": "engr.engineering.doc_events.item.on_update",
