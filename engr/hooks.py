@@ -42,7 +42,7 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.customer.validate_customer_potential"
 	},
 	"Item":{
-		#"validate": "engr.engineering.doc_events.item.validate",
+		"validate": "engr.engineering.doc_events.item.validate",
 		"on_update": "engr.engineering.doc_events.item.on_update",
 	},
 	"Payment Entry":{
@@ -50,6 +50,7 @@ doc_events = {
 		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel"
 	},
 	"Sales Invoice":{
+		"validate":"engr.engineering.doc_events.sales_invoice.validate",
 		"on_submit":"engr.engineering.doc_events.sales_invoice.on_submit",
 		"on_cancel":"engr.engineering.doc_events.sales_invoice.on_cancel"
 	}

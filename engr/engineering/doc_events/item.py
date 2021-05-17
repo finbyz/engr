@@ -1,7 +1,9 @@
 import frappe
 
 def validate(self,method):
-	create_item_price(self)
+	validate_hsn_code(self)
+	# create_item_price(self)
+	
 
 def on_update(self,method):
 	create_item_price(self)
@@ -34,3 +36,8 @@ def create_item_price(self):
 			item_price.price_list_rate= self.selling_price
 				
 			item_price.save()
+
+def validate_hsn_code(self):
+	if self.gst_hsn_code:
+		if len(self.gst_hsn_code) < 6:
+			frappe.throw("HSN Code cannot be less then 6 digits")

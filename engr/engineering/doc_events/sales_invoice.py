@@ -107,3 +107,13 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 	}, target_doc, postprocess, ignore_permissions=ignore_permissions)
 
 	return doclist
+
+
+def validate(self,method):
+	validate_hsn_code(self)
+
+def validate_hsn_code(self):
+	for row in self.items:
+		if row.gst_hsn_code:
+			if len(row.gst_hsn_code) < 6:
+				frappe.throw("Row {}: HSN Code cannot be less then 6 digits".format(row.idx))
