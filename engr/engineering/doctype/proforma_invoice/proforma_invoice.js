@@ -7,6 +7,22 @@ frappe.ui.form.on('Proforma Invoice', {
 		if (!frm.doc.transaction_date){
 			frm.set_value('transaction_date', frappe.datetime.get_today())
 		}
+		if(frm.doc.company){
+			if (!frm.doc.bank_account){
+				frappe.db.get_value("Bank Account",{"company":frm.doc.company,"is_company_account":1,"is_default":1},"name", function(r){
+					frm.set_value("bank_account",r.name);
+				})
+			}
+        }
+	},
+	company: function(frm){
+		if(frm.doc.company){
+			if (!frm.doc.bank_account){
+				frappe.db.get_value("Bank Account",{"company":frm.doc.company,"is_company_account":1,"is_default":1},"name", function(r){
+					frm.set_value("bank_account",r.name);
+				})
+			}
+        }
 	},
 	refresh: function(frm){
 		if(frm.doc.status != "Paid" && frm.doc.docstatus==1) {

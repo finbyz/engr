@@ -30,7 +30,8 @@ doctype_list_js = {
 doctype_js = {
 	"Sales Order": "public/js/doctype_js/sales_order.js",
 	"Purchase Order": "public/js/doctype_js/purchase_order.js",
-	"Customer":"public/js/doctype_js/customer.js"
+	"Customer":"public/js/doctype_js/customer.js",
+	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
 }
 
 override_doctype_dashboards = {
