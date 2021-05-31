@@ -6,54 +6,68 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
-def execute(filters=None):
+def execute(filters):
 	columns, data = [], []
-	data,item_group_list= get_data()
+	data,item_group_list= get_data(filters)
 	columns=get_columns(item_group_list)
 	return columns, data
 
+def get_data_filters(filters):
+	where_clause = ''
+	if filters.get('customer'):
+		where_clause += " and cp.parent='{}'  ".format(filters.get('customer'))
+	if filters.get('item_group'):
+		where_clause += " and cp.item_group='{}'  ".format(filters.get('item_group'))
+	return where_clause
 
-def get_data():
+def get_data(filters):
+	conditions=get_data_filters(filters)
 	data_sql= frappe.db.sql("""
 	SELECT cp.potential,cp.target,cp.parent as customer,cp.item_group, st.sales_person
 	FROM `tabCustomer Potential` AS cp  
-	left join `tabSales Team` as st ON cp.parent=st.parent where cp.parenttype = 'Customer';
-	""", as_dict=1)
+	left join `tabSales Team` as st ON cp.parent=st.parent where cp.parenttype = 'Customer' {} 
+	""".format(conditions), as_dict=1)
 	customer_ig = {}
 	item_group_list = []
-	new_data = []
-	columns = []
 	for row in data_sql:
 		item_group_list.append(row.item_group)
 		total_potential = 0
 		if row.customer not in customer_ig:
 
-			customer_ig[row.customer] = [{row.item_group:str(row.potential)+ " | " + str(row.target),"sales_person":row.sales_person}]
+			# customer_ig[row.customer] = [{row.item_group:'{} | {}'.format(str(int(row.potential)),str(int(row.target)))}]
+			customer_ig[row.customer] = [{row.item_group:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">{}</p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;padding: 0;text-align:right !important;">{}</p></td></tr></table>'.format(str(int(row.potential)),str(int(row.target)))}]
+			customer_ig[row.customer].append({'sales_person':row.sales_person})
 		else:
-			customer_ig[row.customer].append({row.item_group:str(row.potential)+ " | " + str(row.target)})
+			customer_ig[row.customer].append({row.item_group:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">{}</p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;padding: 0;text-align:right !important;">{}</p></td></tr></table>'.format(str(int(row.potential)),str(int(row.target)))})
+			# <p><spam style="text-align:right !important; margin: 0;padding: 0;">{}| <spam style="text-align:right !important;text-align:right;margin: 0;padding: 0;">{}</spam></spam></p>
 	data=customize_data(customer_ig)
-	return data,item_group_list
+	return data,list(set(item_group_list))
 
 def customize_data(customer_ig):
 	lst=[]
-	lst.append({"customer":''})
+	lst.append({"customer":'',"sales_person":''})
 	for key,value in customer_ig.items():
-		total_potential,total_target = 0.0,0.0
+		total_potential,total_target = 0,0
 		each_customer={}
 		each_customer["customer"]=key
+		# each_customer['sales_person']=
 		for each in value:
 			for ka,va in each.items():
-				lst[0].update({ka:"Potential | Target"})
-				each_customer[ka]=va
-				if (va):
-					try:
-						total_potential += flt(va.split(' | ')[0])
-						total_target += flt(va.split(' | ')[1])
-					except:
-						total_potential += 0
-						total_target += 0			
-					each_customer['potential'] = total_potential
-					each_customer['target'] = total_target
+				if ka !='sales_person':
+					lst[0].update({ka:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">Potential </p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;padding: 0;text-align:right !important;"> Target</p></td></tr></table>'})
+					each_customer[ka]=va
+					if (va):
+						try:
+							total_potential_value= (va.split('0;">'))
+							total_potential += flt(total_potential_value[1].split('</p></td><td width=')[0])
+							total_target += flt(total_potential_value[3].split('</p></td></tr></table>')[0])
+						except:
+							total_potential += 0
+							total_target += 0			
+						each_customer['potential'] = total_potential
+						each_customer['target'] = total_target
+				else:
+					each_customer['sales_person']=va
 		lst.append(each_customer)
 	return lst
 	
@@ -98,6 +112,6 @@ def get_item_columns(ig_columns):
 			'fieldname': '{}'.format(ig),
 			'label': _('{}'.format(ig)),
 			'fieldtype': 'data',
-			'width': '120'
+			'width': '180'
 		},)
 	return columns
