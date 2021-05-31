@@ -4,10 +4,10 @@
 
 frappe.ui.form.on('Proforma Invoice', {
 	onload: function(frm) {
-		if (!frm.doc.transaction_date){
+		if (!frm.doc.transaction_date && frm.doc.docstatus ==0){
 			frm.set_value('transaction_date', frappe.datetime.get_today())
 		}
-		if(frm.doc.company){
+		if(frm.doc.company && frm.doc.docstatus==0){
 			if (!frm.doc.bank_account){
 				frappe.db.get_value("Bank Account",{"company":frm.doc.company,"is_company_account":1,"is_default":1},"name", function(r){
 					frm.set_value("bank_account",r.name);
