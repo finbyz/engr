@@ -49,7 +49,7 @@ def customize_data(customer_ig):
 	for key,value in customer_ig.items():
 		total_potential,total_target = 0,0
 		each_customer={}
-		each_customer["customer"]= "<p style='text-align:left;margin:0px''>{}</p>".format(key)
+		each_customer["customer"]= key
 		# each_customer['sales_person']=
 		for each in value:
 			for ka,va in each.items():
@@ -77,7 +77,8 @@ def get_columns(ig_columns):
 		{
 			'fieldname': 'customer',
 			'label': _('Customer'),
-			'fieldtype': 'Data',
+			'fieldtype': 'Link',
+			'options':"Customer",
 			'width': '220'
 		},
 		{
