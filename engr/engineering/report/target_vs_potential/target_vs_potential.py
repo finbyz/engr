@@ -35,10 +35,10 @@ def get_data(filters):
 		if row.customer not in customer_ig:
 
 			# customer_ig[row.customer] = [{row.item_group:'{} | {}'.format(str(int(row.potential)),str(int(row.target)))}]
-			customer_ig[row.customer] = [{row.item_group:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">{}</p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;padding: 0;text-align:right !important;">{}</p></td></tr></table>'.format(str(int(row.potential)),str(int(row.target)))}]
+			customer_ig[row.customer] = [{row.item_group:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">{}</p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;text-align:right !important;padding: 0;">{}</p></td></tr></table>'.format(str(int(row.potential or 0)),str(int(row.target or 0)))}]
 			customer_ig[row.customer].append({'sales_person':row.sales_person})
 		else:
-			customer_ig[row.customer].append({row.item_group:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">{}</p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;padding: 0;text-align:right !important;">{}</p></td></tr></table>'.format(str(int(row.potential)),str(int(row.target)))})
+			customer_ig[row.customer].append({row.item_group:'<table width="100%"><tr><td width="49%"><p style="margin: 0;padding: 0;">{}</p></td><td width="2%"><p style="margin: 0;padding: 0;">|</p></td><td width="49%"><p style="margin: 0;text-align:right !important;padding: 0;">{}</p></td></tr></table>'.format(str(int(row.potential or 0)),str(int(row.target or 0)))})
 			# <p><spam style="text-align:right !important; margin: 0;padding: 0;">{}| <spam style="text-align:right !important;text-align:right;margin: 0;padding: 0;">{}</spam></spam></p>
 	data=customize_data(customer_ig)
 	return data,list(set(item_group_list))
@@ -49,7 +49,7 @@ def customize_data(customer_ig):
 	for key,value in customer_ig.items():
 		total_potential,total_target = 0,0
 		each_customer={}
-		each_customer["customer"]=key
+		each_customer["customer"]= "<p style='text-align:left;margin:0px''>{}</p>".format(key)
 		# each_customer['sales_person']=
 		for each in value:
 			for ka,va in each.items():
@@ -58,7 +58,7 @@ def customize_data(customer_ig):
 					each_customer[ka]=va
 					if (va):
 						try:
-							total_potential_value= (va.split('0;">'))
+							total_potential_value= (va.split('padding: 0;">'))
 							total_potential += flt(total_potential_value[1].split('</p></td><td width=')[0])
 							total_target += flt(total_potential_value[3].split('</p></td></tr></table>')[0])
 						except:
@@ -77,9 +77,8 @@ def get_columns(ig_columns):
 		{
 			'fieldname': 'customer',
 			'label': _('Customer'),
-			'fieldtype': 'Link',
-			'options': 'Customer',
-			'width': '120'
+			'fieldtype': 'Data',
+			'width': '220'
 		},
 		{
 			'fieldname': 'potential',
