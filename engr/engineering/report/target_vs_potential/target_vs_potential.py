@@ -47,7 +47,7 @@ def get_data(filters):
 def customize_data(customer_ig):
 	lst=[]
 	if customer_ig:
-		lst.append({"customer":'',"sales_person":''})
+		lst.append({"customer":'',"sales_person":'',"potential":0,"target":0})
 		for key,value in customer_ig.items():
 			total_potential,total_target = 0,0
 			each_customer={}
@@ -66,8 +66,8 @@ def customize_data(customer_ig):
 							except:
 								total_potential += 0
 								total_target += 0			
-							each_customer['potential'] = total_potential
-							each_customer['target'] = total_target
+							each_customer['potential'] = flt(total_potential)
+							each_customer['target'] = flt(total_target)
 					else:
 						each_customer['sales_person']=va
 			lst.append(each_customer)
