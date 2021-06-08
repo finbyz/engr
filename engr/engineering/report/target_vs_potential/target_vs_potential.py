@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import flt
+import math
 
 def execute(filters):
 	columns, data = [], []
@@ -19,45 +20,31 @@ def get_data_filters(filters):
 	if filters.get('item_group'):
 		where_clause += " and cp.item_group='{}'  ".format(filters.get('item_group'))
 	return where_clause
-
-def get_split(filters):
-	conditions=get_data_filters(filters)
-	data_sql= frappe.db.sql("""
-	SELECT cp.potential,cp.target,cp.parent as customer,cp.item_group, st.sales_person
-	FROM `tabCustomer Potential` AS cp  
-	left join `tabSales Team` as st ON cp.parent=st.parent where cp.parenttype = 'Customer' {} 
-	""".format(conditions), as_dict=1)
-	customer_ig = {}
-	item_group_list = []
-	for row in data_sql:
-		item_group_list.append(row.item_group)
-		total_potential = 0
-	
 	
 def get_data(filters):
 	conditions=get_data_filters(filters)
 	data_sql= frappe.db.sql("""
-	SELECT cp.potential,cp.target,cp.parent as customer,cp.item_group, st.sales_person
+	SELECT IFNULL(cp.potential,0) as potential,IFNULL(cp.target,0) as target,cp.parent as customer,cp.item_group, st.sales_person
 	FROM `tabCustomer Potential` AS cp  
-	left join `tabSales Team` as st ON cp.parent=st.parent where cp.parenttype = 'Customer' {} 
-	""".format(conditions), as_dict=1)
+	left join `tabSales Team` as st ON cp.parent=st.parent where cp.parenttype = 'Customer' {}
+	""".format(conditions), as_dict=1) 
 	customer_ig = {}
 	item_group_list = []
 	for row in data_sql:
 		item_group_list.append(row.item_group)
 		total_potential = 0
 		if row.customer not in customer_ig:
-			customer_ig[row.customer] = [{'P_{}'.format(row.item_group):row.potential }]
-			customer_ig[row.customer].append({'T_{}'.format(row.item_group):row.target })
+			customer_ig[row.customer] = [{'P_{}'.format(row.item_group):flt(row.potential,2) }]
+			customer_ig[row.customer].append({'T_{}'.format(row.item_group):flt(row.target,2) })
 			customer_ig[row.customer].append({'sales_person':row.sales_person})
 		else:
-			customer_ig[row.customer].append({'T_{}'.format(row.item_group):row.target })
-			customer_ig[row.customer].append({'P_{}'.format(row.item_group):row.potential })
+			customer_ig[row.customer].append({'T_{}'.format(row.item_group):flt(row.target,2) })
+			customer_ig[row.customer].append({'P_{}'.format(row.item_group):flt(row.potential,2) })
+	list_item=list(set(item_group_list))
+	data=customize_data(customer_ig,list_item)
+	return data,list_item
 
-	data=customize_data(customer_ig)
-	return data,list(set(item_group_list))
-
-def customize_data(customer_ig):
+def customize_data(customer_ig,list_item):
 	lst=[]
 	if customer_ig:
 		for key,value in customer_ig.items():
@@ -67,16 +54,21 @@ def customize_data(customer_ig):
 			for each in value:
 				for ka,va in each.items():
 					if ka !='sales_person':
-						each_customer[ka]=va
+						each_customer[ka]=flt(va,2)
 						if (va):
 							if (ka.startswith('P_')):
-								total_potential += flt(va)
+								total_potential += (va)
 							elif(ka.startswith('T_')):
-								total_target += flt(va)		
+								total_target += (va)		
 					else:
 						each_customer['sales_person']=va or ''
-				each_customer['potential'] = flt(total_potential)
-				each_customer['target'] = flt(total_target)
+				each_customer['potential'] = (total_potential)
+				each_customer['target'] = (total_target)
+			for each_group_item in list_item:
+				if 'P_{}'.format(each_group_item) not in each_customer.keys():
+					if each_group_item != None: 
+						each_customer['P_{}'.format(each_group_item)]=0.0
+						each_customer['T_{}'.format(each_group_item)]=0.0
 			lst.append(each_customer)
 	return lst
 	
@@ -110,7 +102,6 @@ def get_columns(ig_columns):
 			'width': '120'
 		},
 	]
-	# columns += ig_columns
 	columns += get_item_columns(ig_columns)
 	return columns
 
@@ -122,13 +113,15 @@ def get_item_columns(ig_columns):
 				'fieldname': 'P_{}'.format(ig),
 				'label': _('P_{}'.format(ig)),
 				'fieldtype': 'Currency',
-				'width': '120'
+				'width': '120',
+				'default':0.0
 			},)
 			columns.append({
 				'fieldname': 'T_{}'.format(ig),
 				'label': _('T_{}'.format(ig)),
 				'fieldtype': 'Currency',
-				'width': '120'
+				'width': '120',
+				'default':0.0
 			},)
 		
 	return columns
