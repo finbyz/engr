@@ -54,6 +54,10 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.sales_invoice.validate",
 		"on_submit":"engr.engineering.doc_events.sales_invoice.on_submit",
 		"on_cancel":"engr.engineering.doc_events.sales_invoice.on_cancel"
+	},
+	"Purchase Order":{
+		"validate":"engr.engineering.doc_events.purchase_order.validate",
+		"on_update_after_submit":"engr.engineering.doc_events.purchase_order.update_reqd_date"
 	}
 }
 # include js, css files in header of web template

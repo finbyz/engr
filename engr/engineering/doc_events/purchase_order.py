@@ -4,6 +4,22 @@ import frappe
 from frappe import _
 from frappe.utils import get_url_to_form
 
+def validate(self,method):
+	update_reqd_date(self)
+
+def update_reqd_date(self,method=None):
+	mr_list = [item.material_request for item in self.items]
+	so_list = [item.sales_order for item in self.items]
+
+	for mr in mr_list:
+		if self.schedule_date != frappe.db.get_value("Material Request",mr,"schedule_date"):
+			frappe.db.set_value("Material Request",mr,"schedule_date",self.schedule_date)
+
+
+	for so in so_list:
+		if self.schedule_date != frappe.db.get_value("Sales Order",so,"delivery_date"):
+			frappe.db.set_value("Sales Order",so,"delivery_date",self.schedule_date)
+
 @frappe.whitelist()
 def get_last_5_transaction_details(name, item_code, supplier):
 	data = frappe.db.sql("""
