@@ -33,7 +33,9 @@ def get_purchase_invoice_data():
 def get_purchase_order_data():
 
 	po_map = {}
-	data = frappe.db.sql("select po.material_request_item,po.parent as purchase_order,po.qty as po_qty,po.name as po_detail from `tabPurchase Order Item` as po where po.docstatus = 1",as_dict=1)
+	data = frappe.db.sql("""select po.material_request_item,po.parent as purchase_order,po.qty as po_qty,po.name as po_detail, pop.schedule_date, pop.supplier from `tabPurchase Order Item` as po
+	JOIN `tabPurchase Order` as pop on pop.name = po.parent 
+	where po.docstatus = 1""",as_dict=1)
 	for po in data:
 		if po.material_request_item:
 			po_map.setdefault(po.material_request_item,po)
@@ -94,6 +96,8 @@ def get_data(filters):
 				row.purchase_order = po.purchase_order
 				row.po_qty = po.po_qty
 				row.po_detail = po.po_detail
+				row.schedule_date = po.schedule_date
+				row.supplier = po.supplier
 		if row.po_detail:
 			qty = pr_map.get(row.po_detail)
 			if qty:
@@ -123,6 +127,8 @@ def get_columns_details():
 		{ "label": _("Purchase Order"),"fieldname": "purchase_order","fieldtype": "Link","options":"Purchase Order","width": 120},
 		{ "label": _("PO Qty"),"fieldname": "po_qty","fieldtype": "Float","width": 70},
 		{ "label": _("Received Qty"),"fieldname": "received_qty","fieldtype": "Float","width": 70},
+		{ "label": _("PO Expected Date"),"fieldname": "schedule_date","fieldtype": "Date","width": 70},
+		{ "label": _("PO Supplier"),"fieldname": "supplier","fieldtype": "Link","options":"Supplier","width": 70},
 		{ "label": _("Item Name"),"fieldname": "item_name","fieldtype": "Data","width": 100},
 		{ "label": _("Item Group"),"fieldname": "item_group","fieldtype": "Link","options":"Item Group","width": 100},
 		{ "label": _("Warehouse"),"fieldname": "warehouse","fieldtype": "Link","options":"Warehouse","width": 100},
