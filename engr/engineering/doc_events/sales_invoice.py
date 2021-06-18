@@ -12,6 +12,7 @@ from erpnext.stock.doctype.item.item import get_item_defaults
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.model.utils import get_fetch_values
+from engr.api import validate_sales_person
 
 def on_submit(self,method):
     update_proforma_billed_percent(self)
@@ -111,6 +112,7 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 
 def validate(self,method):
 	validate_hsn_code(self)
+	validate_sales_person(self)
 
 def validate_hsn_code(self):
 	for row in self.items:

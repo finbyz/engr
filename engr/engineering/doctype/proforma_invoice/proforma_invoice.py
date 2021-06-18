@@ -9,17 +9,19 @@ from frappe.utils import flt,cint ,comma_or, nowdate, getdate
 from frappe.model.mapper import get_mapped_doc
 from engr.engineering.doc_events.sales_order import update_proforma_details,change_sales_order_status
 from erpnext.controllers.status_updater import StatusUpdater
+from engr.api import validate_sales_person
 
 
 class ProformaInvoice(Document):
 	# def __init__(self, *args, **kwargs):
 	# 	super(SalesOrder, self).__init__(*args, **kwargs)
 		
-	def on_validate(self):
+	def validate(self):
 		if self.payment_percentage:
 			self.payment_due_amount = flt(self.rounded_total) * self.payment_percentage / 100
 		for item in self.items:
 			item.payment_amount = flt(item.net_amount) * self.payment_percentage / 100
+		validate_sales_person(self)
 
 	def on_submit(self):
 		if self.payment_percentage == 0:

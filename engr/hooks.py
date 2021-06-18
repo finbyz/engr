@@ -58,7 +58,11 @@ doc_events = {
 	"Purchase Order":{
 		"validate":"engr.engineering.doc_events.purchase_order.validate",
 		"on_update_after_submit":"engr.engineering.doc_events.purchase_order.update_reqd_date"
-	}
+	},
+	"Sales Order":{
+		"validate":"engr.engineering.doc_events.sales_order.validate",
+	},
+
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"

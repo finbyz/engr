@@ -7,6 +7,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt,cint,get_url_to_form
 from erpnext.controllers.status_updater import StatusUpdater
+from engr.api import validate_sales_person
 
 def update_proforma_details(docname,action):
     doc = frappe.get_doc("Proforma Invoice",docname)
@@ -148,3 +149,6 @@ def get_last_5_transaction_details(name, item_code, customer):
 	</tbody></table>
 	"""
 	return table
+
+def validate(self,method):
+    validate_sales_person(self)
