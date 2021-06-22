@@ -150,5 +150,11 @@ def get_last_5_transaction_details(name, item_code, customer):
 	"""
 	return table
 
+def validate_item_group(self):
+    for row in self.items:
+        if row.item_group=="GENERIC ITEM":
+            frappe.throw("Row: {} has item of GENERIC ITEM group.".format(frappe.bold(row.idx)))
+
 def validate(self,method):
     validate_sales_person(self)
+    validate_item_group(self)
