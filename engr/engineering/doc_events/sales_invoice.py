@@ -13,25 +13,33 @@ from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.model.utils import get_fetch_values
 from engr.api import validate_sales_person
+from engr.engineering.doctype.proforma_invoice.proforma_invoice import set_status
 
 def on_submit(self,method):
-    update_proforma_billed_percent(self)
+	update_proforma_billed_percent(self,"submit")
 
 def on_cancel(self,method):
-    update_proforma_billed_percent(self)
-    
-def update_proforma_billed_percent(self):
-    so = self.items[0].sales_order
-    pi = self.items[0].proforma_invoice
-    if so and pi:
-        per_billed = frappe.db.get_value("Sales Order",so,"per_billed")
-        frappe.db.set_value("Proforma Invoice",pi,"per_billed",per_billed)
- 
+	update_proforma_billed_percent(self,"cancel")
+	
+def update_proforma_billed_percent(self,method):
+	so = self.items[0].sales_order
+	pi = self.items[0].proforma_invoice
+	if so and pi:
+		per_billed = frappe.db.get_value("Sales Order",so,"per_billed")
+		frappe.db.set_value("Proforma Invoice",pi,"per_billed",per_billed)
+
+		if method == "cancel" and not frappe.db.exists("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}):
+			frappe.db.set_value("Proforma Invoice",pi,"advance_paid",0)
+			set_status(frappe.get_doc("Proforma Invoice",pi))
+			
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 	def postprocess(source, target):
 		set_missing_values(source, target)
 		#Get the advance paid Journal Entries in Sales Invoice Advance
+		if source.status == "Paid" and source.payment_percentage == 100:
+			target.allocate_advances_automatically = 1
+
 		if target.get("allocate_advances_automatically"):
 			target.set_advances()
 
@@ -54,7 +62,7 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 		# set the redeem loyalty points if provided via shopping cart
 		if source.loyalty_points and source.order_type == "Shopping Cart":
 			target.redeem_loyalty_points = 1
-
+		
 	def update_item(source, target, source_parent):
 		target.amount = flt(source.amount) - flt(source.billed_amt)
 		target.base_amount = target.amount * flt(source_parent.conversion_rate)
@@ -78,11 +86,11 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 				"party_account_currency": "party_account_currency",
 				"payment_terms_template": "payment_terms_template"
 			},
-            "field_no_map":{
-                "naming_series",
-                "amended_from",
-                "status"
-            },
+			"field_no_map":{
+				"naming_series",
+				"amended_from",
+				"status"
+			},
 			"validation": {
 				"docstatus": ["=", 1]
 			}
@@ -92,8 +100,8 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			"field_map": {
 				"name": "proforma_invoice_item",
 				"parent": "proforma_invoice",
-                "sales_order":"sales_order",
-                "sales_order_item":"so_detail"
+				"sales_order":"sales_order",
+				"sales_order_item":"so_detail"
 			},
 			"postprocess": update_item,
 		},
