@@ -30,6 +30,7 @@ doctype_list_js = {
 doctype_js = {
 	"Sales Order": "public/js/doctype_js/sales_order.js",
 	"Purchase Order": "public/js/doctype_js/purchase_order.js",
+	"Delivery Note": "public/js/doctype_js/delivery_note.js",
 	"Customer":"public/js/doctype_js/customer.js",
 	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
 }
@@ -57,12 +58,18 @@ doc_events = {
 	},
 	"Purchase Order":{
 		"validate":"engr.engineering.doc_events.purchase_order.validate",
-		"on_update_after_submit":"engr.engineering.doc_events.purchase_order.update_reqd_date"
+		"on_update_after_submit":"engr.engineering.doc_events.purchase_order.update_reqd_date",
+		"on_submit":"engr.engineering.doc_events.purchase_order.on_submit",
+		"on_cancel":"engr.engineering.doc_events.purchase_order.on_cancel",
+		"on_trash":"engr.engineering.doc_events.purchase_order.on_trash",
+
 	},
 	"Sales Order":{
 		"validate":"engr.engineering.doc_events.sales_order.validate",
 	},
-
+	"Delivery Note":{
+		"on_submit":"engr.engineering.doc_events.delivery_note.on_submit",
+	}
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
@@ -173,3 +180,7 @@ doc_events = {
 # 	"Task": "engr.task.get_dashboard_data"
 # }
 
+# Sales Partner target report changes for all fetch all item groups instead of one item group
+from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
+from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
+item_group_wise_sales_target_variance.get_data_column = get_data_column

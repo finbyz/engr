@@ -1,3 +1,33 @@
+frappe.ui.form.on('Purchase Order', {
+	refresh:function(frm) {
+		console.log('called')
+		cur_frm.fields_dict.set_supplier_warehouse.get_query = function(doc) {
+			return {
+				filters: {
+					"company":['in',doc.supplier],
+					"is_group": 0
+				}
+			}
+		};
+	},
+	billing_address: function(frm) {
+		console.log(frm.doc.billing_address)
+    if(frm.doc.billing_address) {
+        frappe.call({
+            method: "frappe.contacts.doctype.address.address.get_address_display",
+			
+            args: {"address_dict": frm.doc.billing_address },
+            callback: function(r) {
+                if(r.message) {
+                    me.frm.set_value("billing_address_display", r.message)
+                }
+            }
+        })
+		} else {
+			this.frm.set_value("billing_address_display", "");
+		}
+	},
+});
 frappe.ui.form.on('Purchase Order Item', {
 	last_5_transaction: function(frm, cdt, cdn){
 		let d = locals[cdt][cdn];
