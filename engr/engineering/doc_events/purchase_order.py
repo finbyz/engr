@@ -177,7 +177,9 @@ def create_sales_order(self):
 			# if not valid_price_list:
 			# 	frappe.throw(_("Selected Price List should have buying and selling fields checked."))
 			so = get_sales_order_entry(self.name)
-			
+			row = so.append('sales_team', {})
+			row.sales_person="PRATHEEK SHETTY"
+			row.allocated_percentage="100.000"
 			so.save(ignore_permissions = True)
 			so.submit()
 
