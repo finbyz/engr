@@ -1,4 +1,12 @@
 frappe.ui.form.on('Customer', {
+    refresh:function(frm){
+        frm.add_custom_button(__('Task'), function(){
+            frappe.model.open_mapped_doc({
+                method: 'engr.engineering.doc_events.customer.create_task',
+                frm: frm,
+            });
+        }, __("Create"));
+    },
     get_item_groups: function(frm) {
         
             frappe.call({
@@ -18,3 +26,4 @@ frappe.ui.form.on('Customer', {
 	},
 
 })
+

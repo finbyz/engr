@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
+from frappe.model.mapper import get_mapped_doc
 from frappe.utils import flt,cint
 
 @frappe.whitelist()
@@ -27,3 +28,20 @@ def validate_customer_potential(self,method):
         
         [self.customer_potential.remove(d) for d in to_remove]
     return self
+
+@frappe.whitelist()
+def create_task(source_name, target_doc=None, ignore_permissions= True):
+    fields = {
+        "Customer": {
+            "doctype": "Task",
+            "field_map": {
+                'name':'customer'
+            }}}
+    doc = get_mapped_doc(
+        "Customer",
+        source_name,
+        fields,
+        target_doc,
+        ignore_permissions=ignore_permissions
+    )
+    return doc
