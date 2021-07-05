@@ -138,6 +138,7 @@ def validate_hsn_code(self):
 	
 
 def on_trash(self, method):
+	# frappe.msgprint("hello")
 	delete_all(self)
 
 # def on_cancel(self, method):
@@ -210,19 +211,38 @@ def cancel_all(self):
 			doc.cancel()
 
 def delete_all(self):
+	# if self.get('pr_ref'):
+	# 	pr_ref = self.pr_ref
+	# 	frappe.db.set_value("Purchase Invoice", self.pr_ref, 'inter_company_invoice_reference', None)
+	# 	frappe.db.set_value("Purchase Invoice", self.pr_ref, 'si_ref', None)
 
-
+	# 	self.db_set("pi_ref", None)
+	# 	self.db_set("inter_company_invoice_reference", None)
+		
+	# 	doc = frappe.get_doc("Purchase Invoice", pi_ref)
+	# 	doc.delete()
 	if self.get('pi_ref'):
 		pi_ref = self.pi_ref
-		frappe.db.set_value("Purchase Invoice", self.pi_ref, 'inter_company_invoice_reference', None)
-		frappe.db.set_value("Purchase Invoice", self.pi_ref, 'si_ref', None)
-
-		self.db_set("pi_ref", None)
-		self.db_set("inter_company_invoice_reference", None)
+		frappe.db.set_value("Purchase Invoice", self.pi_ref, 'inter_company_invoice_reference', '')
+		frappe.db.set_value("Purchase Invoice", self.pi_ref, 'si_ref', '')
+		# frappe.msgprint(pi_ref)
+		self.db_set("pi_ref", '')
+		self.db_set("inter_company_invoice_reference", '')
 		
 		doc = frappe.get_doc("Purchase Invoice", pi_ref)
 		doc.delete()
+		frappe.msgprint(_("Purchase Invoice <b>{name}</b> has been deleted!".format(name=pi_ref)), title="Purchase Invoice Deleted", indicator="red")
 
+# def delete_sales_order(self):
+# 	if self.so_ref:
+# 		frappe.db.set_value("Purchase Order", self.name, 'inter_company_order_reference', '')
+# 		frappe.db.set_value("Purchase Order", self.name, 'so_ref', '')
+
+# 		frappe.db.set_value("Sales Order", self.so_ref, 'po_ref', '')
+
+# 		if frappe.db.exists("Sales Order", self.so_ref):
+# 			frappe.delete_doc("Sales Order", self.so_ref, force = 1, ignore_permissions=True)
+# 			frappe.msgprint(_("Sales Order <b>{name}</b> has been deleted!".format(name=self.so_ref)), title="Sales Order Deleted", indicator="red")
 def make_inter_company_transaction(self, target_doc=None):
 	source_doc  = frappe.get_doc("Sales Invoice", self.name)
 

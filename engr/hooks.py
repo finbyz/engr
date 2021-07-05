@@ -54,7 +54,8 @@ doc_events = {
 	"Sales Invoice":{
 		"validate":"engr.engineering.doc_events.sales_invoice.validate",
 		"on_submit":"engr.engineering.doc_events.sales_invoice.on_submit",
-		"on_cancel":"engr.engineering.doc_events.sales_invoice.on_cancel"
+		"on_cancel":"engr.engineering.doc_events.sales_invoice.on_cancel",
+		"on_trash":"engr.engineering.doc_events.sales_invoice.on_trash",
 	},
 	"Purchase Order":{
 		"validate":"engr.engineering.doc_events.purchase_order.validate",
@@ -69,6 +70,8 @@ doc_events = {
 	},
 	"Delivery Note":{
 		"on_submit":"engr.engineering.doc_events.delivery_note.on_submit",
+		"on_cancel":"engr.engineering.doc_events.delivery_note.on_cancel",
+		"on_trash":"engr.engineering.doc_events.delivery_note.on_trash",
 	}
 }
 # include js, css files in header of web template
@@ -184,3 +187,4 @@ doc_events = {
 from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
 from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
 item_group_wise_sales_target_variance.get_data_column = get_data_column
+# selling/report/sales_person_target_variance_based_on_item_group/sales_person_target_variance_based_on_item_group.py

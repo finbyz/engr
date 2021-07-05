@@ -181,3 +181,98 @@ def create_purchase_receipt(self):
 
 			url = get_url_to_form("Purchase Receipt", pr.name)
 			frappe.msgprint(_("Purchase Receipt <b><a href='{url}'>{name}</a></b> has been created successfully!".format(url=url, name=frappe.bold(pr.name))), title="Purchase Receipt Created", indicator="green")
+
+
+def on_cancel(self, method):
+	cancel_all(self)	
+	# update_packages(self, method)
+	# cancel_pallet_stock_entry(self)
+	# for item in self.items:
+	# 	if item.against_pick_list:
+	# 		pick_list_item = frappe.get_doc("Pick List Item", item.against_pick_list)
+	# 		delivered_qty = pick_list_item.delivered_qty - item.qty
+	# 		if delivered_qty < 0:
+	# 			delivered_qty = 0
+	# 			# frappe.throw("You can not deliver more tha picked qty")
+	# 			pass
+	# 		pick_list_item.db_set("delivered_qty", delivered_qty)
+	# calculate_pick_delivered(self)
+
+def cancel_all(self):
+	if self.pr_ref:
+		doc = frappe.get_doc("Purchase Receipt", self.pr_ref)
+
+		if doc.docstatus == 1:
+			doc.cancel()
+
+def on_trash(self, method):
+	# pass
+ 	delete_all(self)
+
+def delete_all(self):
+	if self.pr_ref:
+		pr_ref = self.pr_ref
+		frappe.db.set_value("Purchase Receipt", self.pr_ref, 'inter_company_delivery_reference', '')
+		frappe.db.set_value("Purchase Receipt", self.pr_ref, 'dn_ref', '')
+
+		self.db_set("pr_ref", '')
+		self.db_set("inter_company_receipt_reference", '')
+
+		doc = frappe.get_doc("Purchase Receipt", pr_ref)
+		doc.delete()
+		frappe.msgprint(_("Purchase Receipt <b>{name}</b> has been deleted!".format(name=pr_ref)), title="Purchase Receipt Deleted", indicator="red")
+		
+def update_packages(self, method):
+	if method == "on_submit":
+		if self.is_return:
+			for row in self.packages:
+				doc = frappe.get_doc("Package", row.package)
+				doc.add_consumption(self.doctype, self.name, -row.consumed_qty, self.posting_date, self.posting_time)
+				doc.save(ignore_permissions=True)
+		else:
+			for row in self.packages:
+				doc = frappe.get_doc("Package", row.package)
+				doc.add_consumption(self.doctype, self.name, row.consumed_qty, self.posting_date, self.posting_time)
+				doc.save(ignore_permissions=True)
+
+	elif method == "on_cancel":
+		for row in self.packages:
+			doc = frappe.get_doc("Package", row.package)
+			if doc.warehouse != row.warehouse:
+				frappe.throw(_("Row:{}  Package {} does not belong to warehouse {}.Please cancel the tranfer and reselect the package".format(row.idx,row.package,row.warehouse)))
+			doc.remove_consumption(self.doctype, self.name)
+			doc.save(ignore_permissions=True)
+
+def cancel_pallet_stock_entry(self):
+	if self.pallet_item:
+		se = frappe.get_doc("Stock Entry",{'reference_doctype': self.doctype,'reference_docname':self.name})
+		se.flags.ignore_permissions = True
+		try:
+			se.cancel()
+		except Exception as e:
+			raise e
+		se.db_set('reference_doctype','')
+		se.db_set('reference_docname','')
+
+
+def calculate_pick_delivered(self):
+	pick_list_list = list(set([row.against_pick_list for row in self.items]))
+	for item in pick_list_list:
+		if item:
+			parent = frappe.db.get_value("Pick List Item", item, 'parent')
+			pick_doc = frappe.get_doc("Pick List", parent)
+			qty = 0
+			delivered_qty = 0
+			for row in pick_doc.locations:
+				qty += row.qty
+				delivered_qty += row.delivered_qty
+
+			pick_doc.per_delivered = flt((delivered_qty / qty) * 100, 2)
+			if pick_doc.per_delivered > 99.99:
+				pick_doc.status = 'Delivered'
+			elif pick_doc.per_delivered > 0.0 and pick_doc.per_delivered < 99.99:
+				pick_doc.status = 'Partially Delivered'
+			else:
+				pick_doc.status = 'To Deliver'
+			pick_doc.save()
+
