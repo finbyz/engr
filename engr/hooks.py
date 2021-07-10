@@ -184,7 +184,6 @@ doc_events = {
 # }
 
 # Sales Partner target report changes for all fetch all item groups instead of one item group
-from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
-from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
-item_group_wise_sales_target_variance.get_data_column = get_data_column
-# selling/report/sales_person_target_variance_based_on_item_group/sales_person_target_variance_based_on_item_group.py
+# from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
+# from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
+# item_group_wise_sales_target_variance.get_data_column = get_data_column

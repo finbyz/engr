@@ -281,6 +281,9 @@ def make_inter_company_transaction(self, target_doc=None):
 				target.taxes[index].account_head = item.account_head.replace(
 					source_company_abbr, target_company_abbr
 				)
+				target.taxes[index].cost_center = item.cost_center.replace(
+					source_company_abbr, target_company_abbr
+				)
 			
 		target.run_method("set_missing_values")
 	
@@ -288,6 +291,8 @@ def make_inter_company_transaction(self, target_doc=None):
 		target_company = source_parent.customer
 		doc = frappe.get_doc("Company", target_company)
 
+		target_company_abbr = frappe.db.get_value("Company", target_company, "abbr")
+		source_company_abbr = frappe.db.get_value("Company", source_parent.company, "abbr")
 		if source_doc.pr_detail:
 			target_doc.purchase_receipt = frappe.db.get_value("Purchase Receipt Item", source_doc.pr_detail, 'parent')
 		if source_doc.purchase_order_item:
@@ -295,7 +300,7 @@ def make_inter_company_transaction(self, target_doc=None):
 
 		target_doc.income_account = doc.default_income_account
 		target_doc.expense_account = doc.default_expense_account
-		target_doc.cost_center = doc.cost_center
+		target_doc.cost_center = source_doc.cost_center.replace(source_company_abbr,target_company_abbr)
 	
 	doclist = get_mapped_doc("Sales Invoice", self.name,	{
 		"Sales Invoice": {
@@ -323,7 +328,6 @@ def make_inter_company_transaction(self, target_doc=None):
 			"field_no_map": [
 				"income_account",
 				"expense_account",
-				"cost_center",
 				"warehouse",
 				"proforma_invoice"
 			], "postprocess": update_accounts,
