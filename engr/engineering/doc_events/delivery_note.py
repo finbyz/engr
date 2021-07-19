@@ -28,7 +28,9 @@ def create_purchase_receipt(self):
 				target_taxes_and_charges = source.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
 				if frappe.db.exists("Purchase Taxes and Charges Template", target_taxes_and_charges):
 					target.taxes_and_charges = target_taxes_and_charges
-
+				else:
+					frappe.throw("Please Create Sales Taxes and Charges Template Like Purchase Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
+					
 			# if source_parent.purchase_naming_series:
 			# 	target_doc.name = source_parent.purchase_naming_series
 			# else:
@@ -85,7 +87,7 @@ def create_purchase_receipt(self):
 					"purchase_naming_series": "naming_series",
 				},
 				"field_no_map": [
-					"taxes_and_charges",
+					# "taxes_and_charges",
 					"series_value",
 					"letter_head",
 				],

@@ -83,7 +83,8 @@ def create_sales_order(self):
 				target_taxes_and_charges = source.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
 				if frappe.db.exists("Sales Taxes and Charges Template", target_taxes_and_charges):
 					target.taxes_and_charges = target_taxes_and_charges
-
+				else:
+					frappe.throw("Please Create Sales Taxes and Charges Template Like Purchase Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
 			if self.amended_from:
 				name = frappe.db.get_value("Sales Order", {'po_ref': self.amended_from}, "name")
 				target.amended_from = name
@@ -112,6 +113,16 @@ def create_sales_order(self):
 
 			if source_doc.cost_center:
 				target_doc.cost_center = source_doc.cost_center.replace(source_company_abbr, target_company_abbr)
+			post_process(source_doc,target_doc,source_parent)
+
+		def post_process(source,target,source_parent):
+			target_company_abbr = frappe.db.get_value("Company",source_parent.supplier , "abbr")
+			source_company_abbr = frappe.db.get_value("Company",source_parent.company, "abbr")
+			if source.account_head:
+				target.account_head=source.account_head.replace(source_company_abbr,target_company_abbr)
+			if source.cost_center:
+				target.cost_center=source.cost_center.replace(source_company_abbr,target_company_abbr)
+
 
 		fields = {
 			"Purchase Order": {
@@ -126,7 +137,6 @@ def create_sales_order(self):
 					"billing_address_gstin":"billing_address_gstin"
 				},
 				"field_no_map": [
-					"taxes_and_charges",
 					"series_value",
 					"set_warehouse",
 				]
@@ -148,7 +158,7 @@ def create_sales_order(self):
 				"doctype": "Sales Taxes and Charges",
 				"postprocess": update_taxes,
 			}
-		}
+			}
 
 		doc = get_mapped_doc(
 			"Purchase Order",

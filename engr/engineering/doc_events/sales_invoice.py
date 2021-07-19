@@ -267,14 +267,14 @@ def make_inter_company_transaction(self, target_doc=None):
 		if source.taxes_and_charges:
 			target_company_abbr = frappe.db.get_value("Company", target.company, "abbr")
 			source_company_abbr = frappe.db.get_value("Company", source.company, "abbr")
-			
 			taxes_and_charges = source.taxes_and_charges.replace(
 				source_company_abbr, target_company_abbr
 			)
 
 			if frappe.db.exists("Purchase Taxes and Charges Template", taxes_and_charges):
 				target.taxes_and_charges = taxes_and_charges
-
+			else:
+				frappe.throw("Please Create Purchase Taxes and Charges Template Like Sales Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
 			target.taxes = source.taxes
 			
 			for index, item in enumerate(source.taxes):
@@ -284,7 +284,7 @@ def make_inter_company_transaction(self, target_doc=None):
 				target.taxes[index].cost_center = item.cost_center.replace(
 					source_company_abbr, target_company_abbr
 				)
-			
+		
 		target.run_method("set_missing_values")
 	
 	def update_accounts(source_doc, target_doc, source_parent):
@@ -302,6 +302,14 @@ def make_inter_company_transaction(self, target_doc=None):
 		target_doc.expense_account = doc.default_expense_account
 		target_doc.cost_center = source_doc.cost_center.replace(source_company_abbr,target_company_abbr)
 	
+	def post_process(source,target):
+		target_company_abbr = frappe.db.get_value("Company",source.company , "abbr")
+		source_company_abbr = frappe.db.get_value("Company",target.company , "abbr")
+		target.taxes_and_charges=source.taxes_and_charges.replace(source_company_abbr,target_company_abbr)
+		target.account_head=source.account_head.replace(source_company_abbr,target_company_abbr)
+		target.cost_center=source.cost_center.replace(source_company_abbr,target_company_abbr)
+
+
 	doclist = get_mapped_doc("Sales Invoice", self.name,	{
 		"Sales Invoice": {
 			"doctype": "Purchase Invoice",
@@ -313,11 +321,10 @@ def make_inter_company_transaction(self, target_doc=None):
 				"shipping_address": "shipping_address_display",
 			},
 			"field_no_map": [
-				"taxes_and_charges",
 				"series_value",
 				"update_stock",
 				"real_difference_amount"
-			],
+			]
 		},
 		"Sales Invoice Item": {
 			"doctype": "Purchase Invoice Item",
@@ -332,7 +339,7 @@ def make_inter_company_transaction(self, target_doc=None):
 				"proforma_invoice"
 			], "postprocess": update_accounts,
 		}
-	}, target_doc, set_missing_values)
+	}, target_doc,set_missing_values)
 
 	return doclist
 
