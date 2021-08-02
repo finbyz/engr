@@ -12,6 +12,17 @@ from erpnext.accounts.doctype.journal_entry.journal_entry import get_default_ban
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
 from engr.engineering.doctype.proforma_invoice.proforma_invoice import set_status
 
+def before_validate(self,method):
+	update_performa_reference_si(self)
+
+def update_performa_reference_si(self):
+	if self.get('references'):
+		for ref in self.references:
+			if not ref.get('proforma_invoice') and ref.reference_doctype == "Sales Invoice":
+				proforma_invoice = frappe.db.get_value("Sales Invoice Item",{"parent":ref.reference_name,"idx":1,"docstatus":1},"proforma_invoice")
+				if proforma_invoice and frappe.db.exists("Proforma Invoice",proforma_invoice) and frappe.db.get_value("Proforma Invoice",proforma_invoice,"docstatus") == 1:
+					ref.proforma_invoice = proforma_invoice	
+
 def on_submit(self,method):
 	update_proforma_invoice(self,"submit")
 
