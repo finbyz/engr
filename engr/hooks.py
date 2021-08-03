@@ -19,7 +19,7 @@ app_license = "MIT"
 # app_include_js = "/assets/engr/js/engr.js"
 
 app_include_js = [
-	"assets/js/engineering.min.js" 
+	"/assets/js/engineering.min.js" 
 ]
 
 
