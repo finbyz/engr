@@ -1,6 +1,8 @@
 {
     "js/engineering.min.js": [
         "public/js/taxes_and_totals.js",
-        "public/js/transaction.js"
+        "public/js/transaction.js",
+        "public/js/frappe/views/reports/report_view.js",
+        "public/js/frappe/utils/utils.js"
     ]
 }

@@ -323,7 +323,8 @@ def make_inter_company_transaction(self, target_doc=None):
 			"field_no_map": [
 				"series_value",
 				"update_stock",
-				"real_difference_amount"
+				"real_difference_amount",
+				"cost_center"
 			]
 		},
 		"Sales Invoice Item": {
@@ -336,9 +337,13 @@ def make_inter_company_transaction(self, target_doc=None):
 				"income_account",
 				"expense_account",
 				"warehouse",
-				"proforma_invoice"
+				"proforma_invoice",
 			], "postprocess": update_accounts,
-		}
+		},
+		# "Sales Taxes and Charges":{
+		# 	"doctype":"Purchase Taxes and Charges",
+		# 	"field_no_map": ["dont_recompute_tax"]
+		# }
 	}, target_doc,set_missing_values)
 
 	return doclist
