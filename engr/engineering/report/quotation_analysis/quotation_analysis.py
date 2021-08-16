@@ -16,8 +16,8 @@ def get_columns():
 	columns=[
 		{ "label": _("Sales Person"),"fieldname": "sales_person","fieldtype": "Data","width": 100},
 		{ "label": _("Status"),"fieldname": "doc_status","fieldtype": "Data","width": 100},
-		{ "label": _("Sum Of Net Amount"),"fieldname": "total_net_amount","fieldtype": "Currency","width": 100},
 		{ "label": _("Status Count"),"fieldname": "total_status_count","fieldtype": "Data","width": 100},
+		{ "label": _("Sum Of Net Amount"),"fieldname": "total_net_amount","fieldtype": "Currency","width": 100},
 	]
 	return columns
 
@@ -50,6 +50,6 @@ def get_data(filters):
 			sales_person_total+=total_net_total
 			sales_person_doc_total+=len(data[each_sales_person][each_docstatus])
 			formatted_data.append({'sales_person':each_sales_person,"doc_status":each_docstatus,'total_status_count':len(data[each_sales_person][each_docstatus]),'total_net_amount':total_net_total})
-		formatted_data.append({'sales_person':each_sales_person,"doc_status":"Total",'total_status_count':sales_person_doc_total,'total_net_amount':sales_person_total})
+		formatted_data.append({'sales_person':frappe.bold(each_sales_person),"doc_status":frappe.bold("Total"),'total_status_count':frappe.bold(sales_person_doc_total),'total_net_amount':sales_person_total})
 	return formatted_data
 
