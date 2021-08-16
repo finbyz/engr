@@ -8,9 +8,11 @@ from frappe.utils import flt
 
 def execute(filters=None):
 	columns, data = [], []
+
 	columns = get_columns(filters)
 	columns, data, chart = get_data(filters,columns)
-	return columns, data
+
+	return columns, data, None, chart
 	
 def get_data(filters,columns):
 	doc = filters.get('doctype')
@@ -19,12 +21,12 @@ def get_data(filters,columns):
 
 	doc_query = frappe.db.sql("""
 		select
-			st.sales_person, item.item_group, SUM(item.net_amount) as net_amount
+			st.sales_person, item.item_group, SUM(item.base_net_amount) as net_amount
 		from `tab{doc}` as doc
 			JOIN `tab{item_doc}` as item on item.parent = doc.name
 			JOIN `tabSales Team` as st on st.parent = doc.name
 		where
-			doc.company = '{company}' and doc.{date} BETWEEN '{from_date}' AND '{to_date}'
+			doc.company = '{company}' and doc.{date} BETWEEN '{from_date}' AND '{to_date}' and doc.docstatus = 1
 		group by st.sales_person, item.item_group
 	""".format(item_doc=item_doc, doc=doc, company=filters.get('company'), from_date=filters.get('from_date'),
 				to_date=filters.get('to_date'), date=date), as_dict=1)
@@ -45,7 +47,8 @@ def get_data(filters,columns):
 		sales_dict['net_amount'] += flt(row.net_amount)
 
 	sales_person_list = []
-	datasets = []
+	datapoints = []
+
 	for key, value in sales_item_dict.items():
 		total_net_amount = 0
 		dct = frappe._dict({'sales_person':key})
@@ -56,23 +59,23 @@ def get_data(filters,columns):
 		new_data.append(dct)
 
 		sales_person_list.append(key)
-		datasets.append({
-			'name':"Net Amount",
-			'values':total_net_amount
-		})
+		datapoints.append(total_net_amount)
 	
-	chart = get_chart_data(sales_person_list,datasets)
-	return columns, new_data, chart
-
-def get_chart_data(sales_person_list,datasets):
 	chart = {
 		"data": {
 			'labels': sales_person_list,
-			'datasets': datasets
-		}
+			'datasets': [
+				{
+					"name":"Net Amount",
+					"values":datapoints
+				}
+			]
+		},
+		"type":"pie"
 	}
-	chart["type"] = "bar"
-	return chart
+
+	return columns, new_data, chart
+
 
 def get_columns(filters):
 	columns = [

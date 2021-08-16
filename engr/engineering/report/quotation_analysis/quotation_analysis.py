@@ -21,14 +21,21 @@ def get_columns():
 	]
 	return columns
 
+def get_conditions(filters):
+	conditions=''
+	if filters.get("sales_person"):
+		conditions +=" and child.sales_person='{}' ".format(filters.get('sales_person'))
+	return conditions
+
 def get_data(filters):
+	conditions=get_conditions(filters)
 	data_sql=frappe.db.sql("""
 	SELECT child.parent,child.sales_person,child.docstatus,qu.name,qu.net_total,qu.status
 	from `tabSales Team` as child 
 	LEFT JOIN `tabQuotation` as qu ON qu.name=child.parent
-	where child.parenttype="Quotation"
-	ORDER BY child.sales_person;
-	""",as_dict=1)
+	where child.parenttype="Quotation" {}
+	ORDER BY child.sales_person
+	""".format(conditions),as_dict=1)
 	formatted_data=[]
 	data={}
 	for each in data_sql:

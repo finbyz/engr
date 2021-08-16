@@ -29,7 +29,7 @@ frappe.query_reports["Sales Person Item Groupwise Performance"] = {
 			fieldname: "doctype",
 			label: __("DocType"),
 			fieldtype: "Select",
-			options: "\nQuotation\nSales Order\nDelivery Note\nSales Invoice",
+			options: "\nQuotation\nSales Order\nSales Invoice",
 			reqd: 1
 		},
 	]

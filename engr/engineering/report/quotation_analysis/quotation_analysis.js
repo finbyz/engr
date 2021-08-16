@@ -4,6 +4,11 @@
 
 frappe.query_reports["Quotation Analysis"] = {
 	"filters": [
-
+		{
+			"fieldname":"sales_person",
+				"label": __("Sales Person"),
+				"fieldtype": "Link",
+				"options": "Sales Person",
+			},
 	]
 };
