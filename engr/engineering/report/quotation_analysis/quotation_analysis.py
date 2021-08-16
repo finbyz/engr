@@ -14,10 +14,10 @@ def execute(filters=None):
 
 def get_columns():
 	columns=[
-		{ "label": _("Sales Person"),"fieldname": "sales_person","fieldtype": "Data","width": 100},
-		{ "label": _("Status"),"fieldname": "doc_status","fieldtype": "Data","width": 100},
-		{ "label": _("Status Count"),"fieldname": "total_status_count","fieldtype": "Data","width": 100},
-		{ "label": _("Sum Of Net Amount"),"fieldname": "total_net_amount","fieldtype": "Currency","width": 100},
+		{ "label": _("Sales Person"),"fieldname": "sales_person","fieldtype": "Data","width": 300},
+		{ "label": _("Status"),"fieldname": "doc_status","fieldtype": "Data","width": 200},
+		{ "label": _("Status Count"),"fieldname": "total_status_count","fieldtype": "Data","width": 200},
+		{ "label": _("Sum Of Net Amount"),"fieldname": "total_net_amount","fieldtype": "Currency","width": 200},
 	]
 	return columns
 

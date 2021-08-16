@@ -35,19 +35,16 @@ def get_data(filters, period_list, partner_doctype):
 	sales_users_data = get_parents_data(filters, partner_doctype)
 
 	if not sales_users_data: return
-	sales_users, item_groups = [], []
+	sales_users = []
 
 	for d in sales_users_data:
 		if d.parent not in sales_users:
 			sales_users.append(d.parent)
 
-		if d.item_group not in item_groups:
-			item_groups.append(d.item_group)
-
 	date_field = ("transaction_date"
 		if filters.get('doctype') == "Sales Order" else "posting_date")
 
-	actual_data = get_actual_data(filters, item_groups, sales_users, date_field, sales_field)
+	actual_data = get_actual_data(filters, sales_users, date_field, sales_field)
 
 	return prepare_data(filters, sales_users_data,
 		actual_data, date_field, period_list, sales_field)
@@ -122,7 +119,7 @@ def prepare_data(filters, sales_users_data, actual_data, date_field, period_list
 		if filters.get("target_on") == 'Quantity' else "base_net_amount")
 
 	for d in sales_users_data:
-		key = (d.parent, d.item_group)
+		key = (d.parent)
 		dist_data = get_periodwise_distribution_data(d.distribution_id, period_list, filters.get("period"))
 
 		if key not in rows:
