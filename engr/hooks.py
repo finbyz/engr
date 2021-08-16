@@ -188,3 +188,9 @@ doc_events = {
 from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
 from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
 item_group_wise_sales_target_variance.get_data_column = get_data_column
+
+
+# Override for chart
+from erpnext.selling.report.sales_person_target_variance_based_on_item_group import sales_person_target_variance_based_on_item_group
+from engr.engineering.report.sales_person_target_variance_based_on_item_group import execute
+sales_person_target_variance_based_on_item_group.execute = execute
