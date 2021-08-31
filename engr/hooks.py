@@ -147,6 +147,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
+scheduler_events = {
+	"cron":{
+		"0 5 * * SUN": [
+			"engr.api.sales_invoice_payment_remainder",
+		],
+	}
+}
 # scheduler_events = {
 # 	"all": [
 # 		"engr.tasks.all"

@@ -69,7 +69,7 @@ def validate_inter_company_transaction(doc, doctype):
 @frappe.whitelist()
 def sales_invoice_payment_remainder():
 	# mail on every sunday
-	if getdate().weekday() == 0:
+	if getdate().weekday() == 6:
 		frappe.enqueue(send_sales_invoice_mails, queue='long', timeout=5000, job_name='Payment Reminder Mails')
 		return "Payment Reminder Mails Send"
 
@@ -124,7 +124,7 @@ def send_sales_invoice_mails():
 					</td>
 				</tr></tbody></table></div><br>
 				We request you to look into the matter and release the payment/s without Further delay. <br><br>
-				If you need any clarifications for any of above invoice/s, please reach out to our Accounts Receivable Team by sending email to accounts@innotech.co.in or call Mr. A (079-xxxxxxx).<br><br>
+				If you need any clarifications for any of above invoice/s, please reach out to our Accounts Receivable Team by sending email to accounts@innotech.co.in.<br><br>
 				We will appreciate your immediate response in this regard.<br><br>
 				
 				Thanking you in anticipation.<br><br>For, INNOVATIVE TECHNOLOGIES.
@@ -182,9 +182,8 @@ def send_sales_invoice_mails():
 
 
 		message = header(customer) + '' + table + '' + footer(actual_amount, outstanding)
-		recipients = "anandp@innotech.co.in"
+		# recipients = "anandp@innotech.co.in"
 		try:
-			# frappe.sendmail(recipients='harshdeep.mehta@finbyz.tech',
 			frappe.sendmail(
 				recipients=recipients,
 				cc = 'accounts@innotech.co.in',
