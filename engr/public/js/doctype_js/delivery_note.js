@@ -9,6 +9,14 @@ frappe.ui.form.on('Delivery Note', {
 				}
 			}
 		};
+		cur_frm.fields_dict.target_warehouse.get_query = function(doc) {
+			return {
+				filters: {
+					"company":['in',doc.customer],
+					"is_group": 0
+				}
+			}
+		};
 	},
     billing_address: function(frm) {
 		console.log(frm.doc.shippng_address)

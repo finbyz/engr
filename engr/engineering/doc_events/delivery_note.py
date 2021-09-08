@@ -81,7 +81,7 @@ def create_purchase_receipt(self):
 					"posting_date": "posting_date",
 					"posting_time": "posting_time",
 					"ignore_pricing_rule": "ignore_pricing_rule",
-					"set_target_warehouse": "set_warehouse",
+					"target_warehouse": "set_warehouse",
 					"name": "supplier_delivery_note",
 					"posting_date": "supplier_delivery_note_date",
 					"purchase_naming_series": "naming_series",

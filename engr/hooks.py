@@ -33,6 +33,7 @@ doctype_js = {
 	"Delivery Note": "public/js/doctype_js/delivery_note.js",
 	"Customer":"public/js/doctype_js/customer.js",
 	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
+	"Communication":"public/js/doctype_js/communication.js",
 }
 
 override_doctype_dashboards = {
