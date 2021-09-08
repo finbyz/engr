@@ -33,7 +33,7 @@ class ProformaInvoice(Document):
 		update_proforma_details(self.name,"cancel")
 
 def set_status(self):
-	if flt(self.advance_paid) == flt(self.payment_due_amount):
+	if flt(self.advance_paid) == flt(self.payment_due_amount) or (flt(self.advance_paid) > flt(self.payment_due_amount) and self.allow_over_billing_payment):
 		self.db_set('status','Paid')
 	elif flt(self.advance_paid) > 0:
 		self.db_set('status','Partially Paid')

@@ -37,7 +37,7 @@ def update_proforma_invoice(self,method):
 					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
 
 					doc.db_set("advance_paid",doc.advance_paid + ref.allocated_amount)
-					if flt(doc.advance_paid) > flt(doc.payment_due_amount):
+					if flt(doc.advance_paid) > flt(doc.payment_due_amount) and not doc.allow_over_billing_payment:
 						frappe.throw("You cannot Allocate more than Proforma Amount.")
 					set_status(doc)
 
