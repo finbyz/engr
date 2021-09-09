@@ -53,7 +53,6 @@ frappe.ui.form.on("Communication", {
 					doc: doc
 				},
                 callback: function(r){
-                    console.log(cur_frm.doc.name)
                     cur_frm.set_value('reference_doctype', "Issue")
                     cur_frm.set_value('reference_name' ,r.message.name)
                     cur_frm.set_value('status' , "Linked")
