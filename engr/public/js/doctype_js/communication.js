@@ -46,6 +46,7 @@ frappe.ui.form.on("Communication", {
             doc["communication_medium"] = values.communication_medium;
             doc["raised_by"] = values.raised_by;
             doc["raised_by_phone"] = values.raised_by_phone;
+			doc["first_response_time"] =0;
 			// doc.save();
 			frappe.call({
 				method: "frappe.client.save",
