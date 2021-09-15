@@ -74,6 +74,9 @@ doc_events = {
 		"on_submit":"engr.engineering.doc_events.delivery_note.on_submit",
 		"on_cancel":"engr.engineering.doc_events.delivery_note.on_cancel",
 		"on_trash":"engr.engineering.doc_events.delivery_note.on_trash",
+	},
+	"Salary Slip":{
+		"validate":"engr.engineering.doc_events.salary_slip.validate"
 	}
 }
 # include js, css files in header of web template
