@@ -24,7 +24,7 @@ frappe.ui.form.on("Communication", {
 				{fieldtype: "Link", fieldname: "department", label: __("Department"), reqd: 1,
 					options: "Department",
 				},
-				{fieldtype: "Link", fieldname: "user", label: __("User"), reqd: 0,
+				{fieldtype: "Link", fieldname: "user", label: __("Assign to"), reqd: 0,
 					options: "User",
 				},
 				{fieldtype: "Data", fieldname: "communication_medium", label: __("communication_medium"), reqd: 0,
