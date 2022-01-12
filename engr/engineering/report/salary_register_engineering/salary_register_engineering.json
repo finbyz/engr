@@ -10,8 +10,8 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "P.K. SALES AUTOMATIONS PVT. LTD.",
- "modified": "2021-09-18 11:53:39.734521",
- "modified_by": "Administrator",
+ "modified": "2021-09-29 12:59:27.178253",
+ "modified_by": "anandp@innotech.co.in",
  "module": "Engineering",
  "name": "Salary Register Engineering",
  "owner": "Administrator",
@@ -21,16 +21,10 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "HR User"
+   "role": "Export Manager"
   },
   {
-   "role": "HR User"
-  },
-  {
-   "role": "HR Manager"
-  },
-  {
-   "role": "HR Manager"
+   "role": "Accounts Manager"
   }
  ]
 }

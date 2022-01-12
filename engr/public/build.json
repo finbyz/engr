@@ -1,6 +1,7 @@
 {
     "js/engineering.min.js": [
         "public/js/taxes_and_totals.js",
-        "public/js/transaction.js"
+        "public/js/transaction.js",
+        "public/js/doctype_js/sales_invoice.js"
     ]
 }

@@ -23,6 +23,13 @@ def on_submit(self,method):
 	create_purchase_invoice(self)
 	update_proforma_billed_percent(self,"submit")
 
+def before_cancel(self, method):
+	self.ignore_linked_doctypes = ('Delivery Note')
+	for item in self.items:
+		frappe.db.sql("""update `tabDelivery Note Item` 
+		set si_detail = null, against_sales_invoice = null
+		where si_detail = %s and against_sales_invoice = %s """, (item.name, self.name))
+
 def on_cancel(self,method):
 	cancel_all(self)
 	update_proforma_billed_percent(self,"cancel")

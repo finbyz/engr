@@ -4,7 +4,7 @@ frappe.ui.form.on("Communication", {
             frm.remove_custom_button("Issue", 'Create');
 			frm.add_custom_button(__("Issue "), () => {
 				frm.trigger('quick_entry');
-			}, "Create");
+			});
 		}
     },
     create_issue_from_communication: function(frm){

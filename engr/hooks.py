@@ -56,6 +56,7 @@ doc_events = {
 	"Sales Invoice":{
 		"validate":"engr.engineering.doc_events.sales_invoice.validate",
 		"on_submit":"engr.engineering.doc_events.sales_invoice.on_submit",
+		"before_cancel":"engr.engineering.doc_events.sales_invoice.before_cancel",
 		"on_cancel":"engr.engineering.doc_events.sales_invoice.on_cancel",
 		"on_trash":"engr.engineering.doc_events.sales_invoice.on_trash",
 	},
@@ -153,7 +154,7 @@ doc_events = {
 
 scheduler_events = {
 	"cron":{
-		"0 5 * * SUN": [
+		"0 4 * * SUN": [
 			"engr.api.sales_invoice_payment_remainder",
 		],
 	}

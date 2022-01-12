@@ -13,10 +13,19 @@ def execute(filters=None):
 
 def get_purchase_receipt_data():
 	pr_map = {}
-	data = frappe.db.sql("select purchase_order_item as po_detail,qty from `tabPurchase Receipt Item` where docstatus = 1",as_dict=1)
+	# data = frappe.db.sql("select purchase_order_item as po_detail,qty from `tabPurchase Receipt Item` where docstatus = 1",as_dict=1)
+	data = frappe.db.sql("""
+		select
+			pri.purchase_order_item as po_detail,pri.qty, pr.posting_date
+		from
+			`tabPurchase Receipt Item` as pri
+			JOIN `tabPurchase Receipt` as pr on pr.name = pri.parent
+		where pri.docstatus = 1
+	""",as_dict=1)
+
 	for pr in data:
 		if pr.po_detail:
-			pr_map.setdefault(pr.po_detail,pr.qty)
+			pr_map.setdefault(pr.po_detail,[pr.qty, pr.posting_date])
 	return pr_map
 
 def get_purchase_invoice_data():
@@ -40,6 +49,22 @@ def get_purchase_order_data():
 		if po.material_request_item:
 			po_map.setdefault(po.material_request_item,po)
 	return po_map
+
+def get_sales_invoice_data():
+	si_map = {}
+	data = frappe.db.sql("""
+		select
+			sii.so_detail, si.name, si.posting_date
+		from
+			`tabSales Invoice Item` as sii
+			JOIN `tabSales Invoice` as si on si.name = sii.parent
+		where si.docstatus = 1
+	""",as_dict=1)
+
+	for si in data:
+		if si.so_detail:
+			si_map.setdefault(si.so_detail,[si.name, si.posting_date])
+	return si_map
 
 def get_filters_conditions(filters):
 	conditions = ''
@@ -65,7 +90,7 @@ def get_data(filters):
 		select 
 			so.name,so.status,so.customer,so.transaction_date,soi.item_code,soi.qty,
 			soi.delivered_qty, (soi.qty - soi.delivered_qty) as qty_to_deliver,soi.delivery_date,
-			soi.item_name,soi.item_group,soi.warehouse,
+			soi.item_name,soi.item_group,soi.warehouse, soi.name as so_item_name,
 			b.actual_qty,b.projected_qty,
 			CASE
 				WHEN mr.docstatus=1 THEN mr.parent
@@ -86,9 +111,12 @@ def get_data(filters):
 		order by
 			so.transaction_date asc
 	""".format(conditions),as_dict=1)
+
 	po_map = get_purchase_order_data()
 	pr_map = get_purchase_receipt_data()
 	pi_map = get_purchase_invoice_data()
+	si_map = get_sales_invoice_data()
+
 	for row in data:
 		if row.mr_name:
 			po = po_map.get(row.mr_name)
@@ -99,13 +127,20 @@ def get_data(filters):
 				row.schedule_date = po.schedule_date
 				row.supplier = po.supplier
 		if row.po_detail:
-			qty = pr_map.get(row.po_detail)
-			if qty:
-				row.received_qty = qty
+			qty_date = pr_map.get(row.po_detail)
+			if qty_date and qty_date[0]:
+				row.received_qty = qty_date[0]
+				row.purchase_receipt_date = qty_date[1] 
 			else:
 				qty = pi_map.get(row.po_detail)
 				if qty:
 					row.received_qty = qty
+		
+		if row.so_item_name:
+			si_date = si_map.get(row.so_item_name)
+			if si_date:
+				row.si_name = si_date[0]
+				row.si_date = si_date[1]
 	return data
 
 def get_columns_details():
@@ -115,6 +150,8 @@ def get_columns_details():
 		{ "label": _("Status"),"fieldname": "status","fieldtype": "Data","width": 102},
 		{ "label": _("Customer"),"fieldname": "customer","fieldtype": "Link","options":"Customer","width": 130},
 		{ "label": _("Date"),"fieldname": "transaction_date","fieldtype": "Date","width": 80},
+		{ "label": _("Sales Invoice"),"fieldname": "si_name","fieldtype": "Link","options":"Sales Invoice","width": 130},
+		{ "label": _("Sales Invoice Date"),"fieldname": "si_date","fieldtype": "Date","width": 80},
 		{ "label": _("Item Code"),"fieldname": "item_code","fieldtype": "Link","options":"Item","width": 100},
 		{ "label": _("Qty"),"fieldname": "qty","fieldtype": "Float","width": 70},
 		{ "label": _("Delivered Qty"),"fieldname": "delivered_qty","fieldtype": "Float","width": 70},
@@ -127,6 +164,7 @@ def get_columns_details():
 		{ "label": _("Purchase Order"),"fieldname": "purchase_order","fieldtype": "Link","options":"Purchase Order","width": 120},
 		{ "label": _("PO Qty"),"fieldname": "po_qty","fieldtype": "Float","width": 70},
 		{ "label": _("Received Qty"),"fieldname": "received_qty","fieldtype": "Float","width": 70},
+		{ "label": _("Purchase Receipt Date"),"fieldname": "purchase_receipt_date","fieldtype": "Date","width": 80},
 		{ "label": _("PO Expected Date"),"fieldname": "schedule_date","fieldtype": "Date","width": 80},
 		{ "label": _("PO Supplier"),"fieldname": "supplier","fieldtype": "Link","options":"Supplier","width": 100},
 		{ "label": _("Item Name"),"fieldname": "item_name","fieldtype": "Data","width": 100},

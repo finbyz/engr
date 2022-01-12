@@ -61,7 +61,7 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 	refresh: function(doc, dt, dn) {
 		var me = this;
 		this._super();
-		let allow_delivery = false;
+		let allow_delivery = true;
 
 		if (doc.docstatus==1) {
 
@@ -114,9 +114,25 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 
                         // sales invoice
                         if(flt(doc.per_billed, 6) < 100) {
-                            this.frm.add_custom_button(__('Sales Invoice'), () => me.make_sales_invoice(), __('Create'));
+							this.frm.add_custom_button(__('Sales Invoice'), () => me.make_sales_invoice(), __('Create'));
                         }
+						
                     }
+					// console.log(frappe.db.get_value("Proforma Invoice Item",{"parent":"PI-IT-2122-01249"},'name'))
+					// if(frappe.db.get_value("Proforma Invoice Item",{"sales_order":doc.name},'parent')){
+						// if (frappe.db.get_value("Proforma Invoice",frappe.db.get_value("Proforma Invoice Item",{"sales_order":doc.name},'parent'),'status') == "Paid"){
+							// if (frappe.db.get_value("Proforma Invoice",frappe.db.get_value("Proforma Invoice Item",{"sales_order":doc.name},'parent'),'status'), function(st){
+							// 	if (st.status == "Paid"){
+							// 		this.frm.add_custom_button(__('Delivery Note'), () => this.make_delivery_note_based_on_delivery_date(), __('Create'));
+							// 	}
+							// })
+						// }
+					// }
+					
+					if (doc.status != "Proforma Raised" && doc.proforma_required){
+						this.frm.add_custom_button(__('Delivery Note'), () => this.make_delivery_note_based_on_delivery_date(), __('Create'));
+					}
+
 					// material request
 					if(!doc.order_type || (order_is_a_sale || order_is_a_custom_sale) && flt(doc.per_delivered, 6) < 100) {
 						this.frm.add_custom_button(__('Material Request'), () => this.make_material_request(), __('Create'));

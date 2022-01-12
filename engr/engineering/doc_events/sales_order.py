@@ -53,11 +53,12 @@ def update_proforma_details(docname,action):
 
             sales_order_list = list(set(sales_order_list))
             for so in sales_order_list:
-                so_doc = frappe.get_doc("Sales Order",so)
+                if so:
+                    so_doc = frappe.get_doc("Sales Order",so)
 
-                so_doc.db_set("proforma_amount",flt(doc.payment_due_amount) + flt(so_doc.proforma_amount))
-                so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
-                change_sales_order_status(so_doc)
+                    so_doc.db_set("proforma_amount",flt(doc.payment_due_amount) + flt(so_doc.proforma_amount))
+                    so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
+                    change_sales_order_status(so_doc)
 
         elif action == "cancel":
             sales_order_list = []
@@ -77,7 +78,8 @@ def update_proforma_details(docname,action):
                 if proforma_query:
                     proforma_amount = proforma_query[0][0]
                     net_amount = proforma_query[0][1] 
-                    proforma_percentage = flt(proforma_amount) / flt(net_amount) * 100
+                    if proforma_amount and net_amount:
+                        proforma_percentage = flt(proforma_amount) / flt(net_amount) * 100
 
                     if proforma_amount:
                         frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
@@ -94,11 +96,12 @@ def update_proforma_details(docname,action):
 
             sales_order_list = list(set(sales_order_list))
             for so in sales_order_list:
-                so_doc  = frappe.get_doc("Sales Order",so)
- 
-                so_doc.db_set("proforma_amount",flt(so_doc.proforma_amount) - flt(doc.payment_due_amount))
-                so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
-                change_sales_order_status(so_doc)
+                if so:
+                    so_doc  = frappe.get_doc("Sales Order",so)
+    
+                    so_doc.db_set("proforma_amount",flt(so_doc.proforma_amount) - flt(doc.payment_due_amount))
+                    so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
+                    change_sales_order_status(so_doc)
 
 def change_sales_order_status(so_doc):
     pi_status = frappe.db.sql("""select pi.status

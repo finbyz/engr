@@ -68,10 +68,11 @@ def validate_inter_company_transaction(doc, doctype):
 
 @frappe.whitelist()
 def sales_invoice_payment_remainder():
-	# mail on every sunday
-	if getdate().weekday() == 6:
-		frappe.enqueue(send_sales_invoice_mails, queue='long', timeout=5000, job_name='Payment Reminder Mails')
-		return "Payment Reminder Mails Send"
+	if cint(frappe.db.get_value("Accounts Settings",None,"auto_send_payment_reminder_mails")):
+		# mail on every sunday
+		if getdate().weekday() == 6:
+			frappe.enqueue(send_sales_invoice_mails, queue='long', timeout=8000, job_name='Payment Reminder Mails')
+			return "Payment Reminder Mails Send"
 
 @frappe.whitelist()
 def send_sales_invoice_mails():
@@ -133,7 +134,7 @@ def send_sales_invoice_mails():
 	non_customers = ()
 	data = frappe.get_list("Sales Invoice", filters={
 			'status': ['in', ('Overdue')],
-			'due_date': ("<=", nowdate()),
+			'outstanding_amount':(">", 5000),
 			'currency': 'INR',
 			'docstatus': 1,
 			'customer': ['not in', non_customers],},
