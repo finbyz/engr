@@ -16,7 +16,7 @@ def execute(filters=None):
 	new_data = []
 	if filters.get("ready_to_dispatch"):
 		for row in data:
-			if flt(row.actual_qty) >= flt(row.qty_to_deliver) and row.name not in non_dispatch_list:
+			if flt(row.dispatch_percentage) < 100 and flt(row.actual_qty) >= flt(row.qty_to_deliver) and row.name not in non_dispatch_list:
 				if row.name not in dispatch_dict:
 					dispatch_dict[row.name] = [row]
 				else:
@@ -111,7 +111,7 @@ def get_data(filters):
 	conditions = get_filters_conditions(filters)
 	data = frappe.db.sql("""
 		select 
-			so.name,so.status,so.customer,so.transaction_date,soi.item_code,soi.qty,
+			so.name,so.status,so.customer,so.transaction_date, so.per_delivered as dispatch_percentage, soi.item_code,soi.qty,
 			soi.delivered_qty, (soi.qty - soi.delivered_qty) as qty_to_deliver,soi.delivery_date,
 			soi.item_name,soi.item_group,soi.warehouse, soi.name as so_item_name,
 			b.actual_qty,b.projected_qty,
