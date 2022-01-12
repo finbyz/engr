@@ -28,5 +28,10 @@ frappe.query_reports["SO Delivery Status"] = {
 			"fieldtype":"Link",
 			"options":"Item"			
 		},
+		{
+			"label":"Ready To Dispatch",
+			"fieldname":"ready_to_dispatch",
+			"fieldtype":"Check"
+		},
 	]
 };

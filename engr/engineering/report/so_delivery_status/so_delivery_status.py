@@ -4,11 +4,34 @@
 from __future__ import unicode_literals
 import frappe, json
 from frappe import _
+from frappe.utils import flt
 
 def execute(filters=None):
 	columns, data = [], []
 	columns = get_columns_details()
 	data = get_data(filters)
+
+	dispatch_dict = {}
+	non_dispatch_list = []
+	new_data = []
+	if filters.get("ready_to_dispatch"):
+		for row in data:
+			if flt(row.actual_qty) >= flt(row.qty_to_deliver) and row.name not in non_dispatch_list:
+				if row.name not in dispatch_dict:
+					dispatch_dict[row.name] = [row]
+				else:
+					dispatch_dict[row.name].append(row)
+
+			else:
+				non_dispatch_list.append(row.name)
+				if row.name in dispatch_dict:
+					del dispatch_dict[row.name]
+
+		for so, row in dispatch_dict.items():
+			new_data.extend(row)
+
+		data = new_data
+
 	return columns, data
 
 def get_purchase_receipt_data():
