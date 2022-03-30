@@ -32,13 +32,19 @@ class ProformaInvoice(Document):
 	def on_cancel(self):
 		update_proforma_details(self.name,"cancel")
 
+	@frappe.whitelist()
+	def set_status(self, status):
+		self.db_set('status', status)
+		set_status(self)	
+
 def set_status(self):
-	if flt(self.advance_paid) == flt(self.payment_due_amount) or (flt(self.advance_paid) > flt(self.payment_due_amount) and self.allow_over_billing_payment):
-		self.db_set('status','Paid')
-	elif flt(self.advance_paid) > 0:
-		self.db_set('status','Partially Paid')
-	else:
-		self.db_set('status','Unpaid')
+	if self.status != "Closed":
+		if flt(self.advance_paid) == flt(self.payment_due_amount) or (flt(self.advance_paid) > flt(self.payment_due_amount) and self.allow_over_billing_payment):
+			self.db_set('status','Paid')
+		elif flt(self.advance_paid) > 0:
+			self.db_set('status','Partially Paid')
+		else:
+			self.db_set('status','Unpaid')
 	change_sales_order_status(frappe.get_doc("Sales Order",self.items[0].sales_order))
 
 @frappe.whitelist()

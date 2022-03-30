@@ -13,13 +13,13 @@ from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_ac
 from engr.engineering.doctype.proforma_invoice.proforma_invoice import set_status
 
 def before_validate(self,method):
-	update_performa_reference_si(self)
+	update_proforma_reference_si(self)
 
-def update_performa_reference_si(self):
+def update_proforma_reference_si(self):
 	if self.get('references'):
 		for ref in self.references:
 			if not ref.get('proforma_invoice') and ref.reference_doctype == "Sales Invoice":
-				proforma_invoice = frappe.db.get_value("Sales Invoice Item",{"parent":ref.reference_name,"idx":1,"docstatus":1},"proforma_invoice")
+				proforma_invoice = frappe.db.get_value("Sales Invoice Item",{"parent":ref.reference_name,"docstatus":1},"proforma_invoice", order_by= "idx asc")
 				if proforma_invoice and frappe.db.exists("Proforma Invoice",proforma_invoice) and frappe.db.get_value("Proforma Invoice",proforma_invoice,"docstatus") == 1:
 					ref.proforma_invoice = proforma_invoice	
 
@@ -35,8 +35,8 @@ def update_proforma_invoice(self,method):
 			for ref in self.references:
 				if ref.get('proforma_invoice'):
 					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
-
 					doc.db_set("advance_paid",doc.advance_paid + ref.allocated_amount)
+					
 					if flt(doc.advance_paid) > flt(doc.payment_due_amount) and not doc.allow_over_billing_payment:
 						frappe.throw("You cannot Allocate more than Proforma Amount.")
 					set_status(doc)
@@ -46,7 +46,6 @@ def update_proforma_invoice(self,method):
 			for ref in self.references:
 				if ref.get('proforma_invoice'):
 					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
-
 					doc.db_set("advance_paid",doc.advance_paid - ref.allocated_amount)
 					set_status(doc)
 	

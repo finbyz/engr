@@ -19,7 +19,6 @@ frappe.ui.form.on('Sales Invoice', {
                 })
             }
         }
-        frm.refresh_doc()
 	},
     company: function(frm) {
 		if(frm.doc.company){
@@ -29,6 +28,5 @@ frappe.ui.form.on('Sales Invoice', {
                 })
             }
         }
-        frm.refresh_doc()
 	},
 })

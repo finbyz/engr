@@ -1,6 +1,5 @@
 frappe.ui.form.on('Purchase Order', {
 	refresh:function(frm) {
-		console.log('called')
 		cur_frm.fields_dict.set_supplier_warehouse.get_query = function(doc) {
 			return {
 				filters: {
@@ -11,7 +10,6 @@ frappe.ui.form.on('Purchase Order', {
 		};
 	},
 	billing_address: function(frm) {
-		console.log(frm.doc.billing_address)
     if(frm.doc.billing_address) {
         frappe.call({
             method: "frappe.contacts.doctype.address.address.get_address_display",

@@ -72,6 +72,7 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.sales_order.validate",
 	},
 	"Delivery Note":{
+		"validate":"engr.engineering.doc_events.delivery_note.validate",
 		"on_submit":"engr.engineering.doc_events.delivery_note.on_submit",
 		"on_cancel":"engr.engineering.doc_events.delivery_note.on_cancel",
 		"on_trash":"engr.engineering.doc_events.delivery_note.on_trash",
