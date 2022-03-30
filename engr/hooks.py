@@ -49,7 +49,7 @@ doc_events = {
 		"on_update": "engr.engineering.doc_events.item.on_update",
 	},
 	"Payment Entry":{
-		"before_validate":"engr.engineering.doc_events.payment_entry.before_validate",
+		"validate":"engr.engineering.doc_events.payment_entry.validate",
 		"on_submit":"engr.engineering.doc_events.payment_entry.on_submit",
 		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel"
 	},
