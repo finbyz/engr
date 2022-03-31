@@ -163,10 +163,10 @@ def update_proforma_details(self):
 					{"sales_order": item.sales_order,
 					"sales_order_item": item.so_detail, 
 					"item_code": item.item_code, "docstatus": 1},['name','parent'], order_by= "creation desc", as_dict=True)
-
-			if proforma_item_details.name and proforma_item_details.parent:
-				item.proforma_invoice = proforma_item_details.parent
-				item.proforma_invoice_item = proforma_item_details.name
+			if proforma_item_details:
+				if proforma_item_details.name and proforma_item_details.parent:
+					item.proforma_invoice = proforma_item_details.parent
+					item.proforma_invoice_item = proforma_item_details.name
 
 # def on_submit(self, method):
 	

@@ -28,9 +28,10 @@ def update_proforma_details(self):
 					"sales_order_item": item.so_detail, 
 					"item_code": item.item_code, "docstatus": 1},['name','parent'], order_by= "creation desc", as_dict=True)
 
-			if proforma_item_details.name and proforma_item_details.parent:
-				item.proforma_invoice = proforma_item_details.parent
-				item.proforma_invoice_item = proforma_item_details.name
+			if proforma_item_details:
+				if proforma_item_details.name and proforma_item_details.parent:
+					item.proforma_invoice = proforma_item_details.parent
+					item.proforma_invoice_item = proforma_item_details.name
 
 def create_purchase_receipt(self):
 	def get_purchase_receipt_entry(source_name, target_doc=None, ignore_permissions= True):
