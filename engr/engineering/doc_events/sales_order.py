@@ -103,7 +103,7 @@ def update_proforma_details(docname,action):
                     so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
                     change_sales_order_status(so_doc)
 
-def change_sales_order_status(so_doc):
+def change_sales_order_status(so_doc, update_modified= True):
     pi_status = frappe.db.sql("""select pi.status
         from `tabProforma Invoice` as pi
         JOIN `tabProforma Invoice Item` as pii on pii.parent = pi.name
@@ -111,9 +111,9 @@ def change_sales_order_status(so_doc):
     """.format(so_doc.name),as_dict=1)
     status_list = list(set(status.status for status in pi_status))
     if ("Unpaid" in status_list or "Partially Paid" in status_list) and so_doc.docstatus == 1:
-        so_doc.db_set("status","Proforma Raised")
+        so_doc.db_set("status","Proforma Raised", update_modified= update_modified)
     elif so_doc.docstatus == 1:
-        StatusUpdater.set_status(so_doc,update=True)
+        StatusUpdater.set_status(so_doc,update=True, update_modified=update_modified)
 
 
 @frappe.whitelist()
