@@ -9,8 +9,25 @@ from erpnext.stock.doctype.batch.batch import set_batch_nos
 from erpnext.stock.doctype.delivery_note.delivery_note import DeliveryNote
 from datetime import datetime
 
+def validate(self, method):
+	update_proforma_details(self)
+
 def on_submit(self, method):
 	create_purchase_receipt(self)
+
+def update_proforma_details(self):
+	# Update Last Proforma Details
+	for item in self.items:
+		if (item.so_detail and item.against_sales_order) and not (item.proforma_invoice and item.proforma_invoice_item):
+			proforma_item_details = frappe.db.get_value("Proforma Invoice Item",
+					{"sales_order": item.against_sales_order,
+					"sales_order_item": item.so_detail, 
+					"item_code": item.item_code, "docstatus": 1},['name','parent'], order_by= "creation desc", as_dict=True)
+
+			if proforma_item_details:
+				if proforma_item_details.name and proforma_item_details.parent:
+					item.proforma_invoice = proforma_item_details.parent
+					item.proforma_invoice_item = proforma_item_details.name
 
 def create_purchase_receipt(self):
 	def get_purchase_receipt_entry(source_name, target_doc=None, ignore_permissions= True):

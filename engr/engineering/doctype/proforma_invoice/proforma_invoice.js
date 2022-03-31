@@ -15,6 +15,49 @@ frappe.ui.form.on('Proforma Invoice', {
 			}
         }
 	},
+	refresh: function(frm){
+		if(frm.doc.status != "Paid" && frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Payment'), () => frm.trigger('create_payment_entry'), __('Create'));
+		}
+		if(flt(frm.doc.per_billed, 6) < 100 && frm.doc.docstatus==1) {
+			frm.add_custom_button(__('Sales Invoice'), () => frm.trigger('make_sales_invoice'), __('Create'));
+		}
+		frm.trigger('show_open_close_buttons');
+	},
+	show_open_close_buttons: function(frm){
+		if (frm.doc.docstatus == 1){
+			if (frm.doc.status == "Closed"){
+				frm.add_custom_button(__('Open'), () => 
+					// frm.doc.status = "Submitted",
+					// frm.set_value("status", "Closed"),
+					frm.call({
+						method:"set_status",
+						doc: frm.doc,
+						args:{
+							'status':"Submitted"
+						},
+						callback: function(r) {
+							frm.reload_doc();
+						}
+				}), __('Set Status'));
+			}
+			else{
+				frm.add_custom_button(__('Close'), () => 
+				// frm.doc.status = "Closed",
+					// frm.set_value("status", "Closed"),
+					frm.call({
+						method:"set_status",
+						doc: frm.doc,
+						args:{
+							'status':"Closed"
+						},
+						callback: function(r) {
+							frm.reload_doc();
+						}
+				}), __('Set Status'));
+			}
+		}
+	},
 	tc_name: function(frm){
 		if(frm.doc.tc_name) {
 			return frappe.call({
@@ -37,14 +80,6 @@ frappe.ui.form.on('Proforma Invoice', {
 				})
 			}
         }
-	},
-	refresh: function(frm){
-		if(frm.doc.status != "Paid" && frm.doc.docstatus==1) {
-			frm.add_custom_button(__('Payment'), () => frm.trigger('create_payment_entry'), __('Create'));
-		}
-		if(flt(frm.doc.per_billed, 6) < 100 && frm.doc.docstatus==1) {
-			frm.add_custom_button(__('Sales Invoice'), () => frm.trigger('make_sales_invoice'), __('Create'));
-		}
 	},
 	payment_percentage: function(frm){
 		if (frm.doc.payment_percentage){
