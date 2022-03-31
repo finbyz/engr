@@ -39,11 +39,24 @@ def update_proforma_billed_percent(self,method):
 	pi = self.items[0].proforma_invoice
 	if so and pi:
 		per_billed = frappe.db.get_value("Sales Order",so,"per_billed")
-		frappe.db.set_value("Proforma Invoice",pi,"per_billed",per_billed)
-
-		if method == "cancel" and not frappe.db.exists("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}):
-			frappe.db.set_value("Proforma Invoice",pi,"advance_paid",0)
-			set_status(frappe.get_doc("Proforma Invoice",pi))
+		pi_doc = frappe.get_doc("Proforma Invoice",pi)
+		# frappe.db.set_value("Proforma Invoice",pi,"per_billed",per_billed)
+		pi_doc.db_set("per_billed", per_billed)
+		pi_doc.db_set("status", "Closed")
+		
+		# if method == "cancel" and not frappe.db.exists("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}):
+		if method == "cancel":
+			if not frappe.db.exists("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}):
+				# frappe.db.set_value("Proforma Invoice",pi,"advance_paid",0)
+				pi_doc.db_set("advance_paid", 0)
+			else:
+				advance_paid_amounts = frappe.db.get_all("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}, pluck="allocated_amount")
+				advance_paid = sum([flt(x) for x in advance_paid_amounts])
+				# frappe.db.set_value("Proforma Invoice",pi,"advance_paid",flt(advance_paid))
+				pi_doc.db_set("advance_paid", flt(advance_paid))
+			pi_doc.db_set("status", "Submitted")
+		
+		set_status(pi_doc)
 			
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
@@ -134,12 +147,26 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 def validate(self,method):
 	validate_hsn_code(self)
 	validate_sales_person(self)
+	update_proforma_details(self)
 
 def validate_hsn_code(self):
 	for row in self.items:
 		if row.gst_hsn_code:
 			if len(row.gst_hsn_code) < 6:
 				frappe.throw("Row {}: HSN Code cannot be less then 6 digits".format(row.idx))
+
+def update_proforma_details(self):
+	# Update Last Proforma Details
+	for item in self.items:
+		if (item.so_detail and item.sales_order) and not (item.proforma_invoice and item.proforma_invoice_item):
+			proforma_item_details = frappe.db.get_value("Proforma Invoice Item",
+					{"sales_order": item.sales_order,
+					"sales_order_item": item.so_detail, 
+					"item_code": item.item_code, "docstatus": 1},['name','parent'], order_by= "creation desc", as_dict=True)
+
+			if proforma_item_details.name and proforma_item_details.parent:
+				item.proforma_invoice = proforma_item_details.parent
+				item.proforma_invoice_item = proforma_item_details.name
 
 # def on_submit(self, method):
 	
@@ -440,4 +467,3 @@ def get_internal_party(parties, link_doctype, doc):
 			party = parties[0].name
 
 	return party
-

@@ -5,12 +5,32 @@ import frappe
 from frappe.model.mapper import get_mapped_doc
 from frappe import _
 from frappe.utils import flt, cint, get_url_to_form
+from datetime import datetime
 from erpnext.stock.doctype.batch.batch import set_batch_nos
 from erpnext.stock.doctype.delivery_note.delivery_note import DeliveryNote
-from datetime import datetime
+from frappe.contacts.doctype.address.address import get_company_address
+from frappe.model.utils import get_fetch_values
+from erpnext.stock.doctype.item.item import get_item_defaults
+from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
+
+def validate(self, method):
+	update_proforma_details(self)
 
 def on_submit(self, method):
 	create_purchase_receipt(self)
+
+def update_proforma_details(self):
+	# Update Last Proforma Details
+	for item in self.items:
+		if (item.so_detail and item.against_sales_order) and not (item.proforma_invoice and item.proforma_invoice_item):
+			proforma_item_details = frappe.db.get_value("Proforma Invoice Item",
+					{"sales_order": item.against_sales_order,
+					"sales_order_item": item.so_detail, 
+					"item_code": item.item_code, "docstatus": 1},['name','parent'], order_by= "creation desc", as_dict=True)
+
+			if proforma_item_details.name and proforma_item_details.parent:
+				item.proforma_invoice = proforma_item_details.parent
+				item.proforma_invoice_item = proforma_item_details.name
 
 def create_purchase_receipt(self):
 	def get_purchase_receipt_entry(source_name, target_doc=None, ignore_permissions= True):
@@ -277,4 +297,3 @@ def calculate_pick_delivered(self):
 			else:
 				pick_doc.status = 'To Deliver'
 			pick_doc.save()
-

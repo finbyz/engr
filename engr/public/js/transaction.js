@@ -5,8 +5,6 @@ frappe.provide('erpnext.accounts.dimensions');
 
 erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 	setup: function() {
-		console.log('called')
-
 		this._super();
 		let me = this;
 		frappe.flags.hide_serial_batch_dialog = true;
@@ -224,7 +222,6 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	},
 	onload: function() {
-		console.log('called edf')
 		var me = this;
 		if(this.frm.doc.__islocal) {
 			var currency = frappe.defaults.get_user_default("currency");
