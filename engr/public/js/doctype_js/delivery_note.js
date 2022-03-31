@@ -1,14 +1,13 @@
 frappe.ui.form.on('Delivery Note', {
 	refresh:function(frm) {
-		console.log('called')
-		cur_frm.fields_dict.set_target_warehouse.get_query = function(doc) {
-			return {
-				filters: {
-					"company":['in',doc.customer],
-					"is_group": 0
-				}
-			}
-		};
+		// cur_frm.fields_dict.set_target_warehouse.get_query = function(doc) {
+		// 	return {
+		// 		filters: {
+		// 			"company":['in',doc.customer],
+		// 			"is_group": 0
+		// 		}
+		// 	}
+		// };
 		cur_frm.fields_dict.target_warehouse.get_query = function(doc) {
 			return {
 				filters: {
@@ -19,7 +18,6 @@ frappe.ui.form.on('Delivery Note', {
 		};
 	},
     billing_address: function(frm) {
-		console.log(frm.doc.shippng_address)
     if(frm.doc.shipping_address_name) {
         frappe.call({
             method: "frappe.contacts.doctype.address.address.get_address_display",

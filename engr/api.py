@@ -195,3 +195,20 @@ def send_sales_invoice_mails():
 		except:
 			frappe.log_error("Mail Sending Issue", frappe.get_traceback())
 			continue
+
+#for Reverse Conversion Factor
+@frappe.whitelist()
+def get_conversion_factor(item_code, uom):
+	variant_of = frappe.db.get_value("Item", item_code, "variant_of", cache=True)
+	filters = {"parent": item_code, "uom": uom}
+	if variant_of:
+		filters["parent"] = ("in", (item_code, variant_of))
+	reverse_conversion_factor = frappe.db.get_value("UOM Conversion Detail",
+		filters, "reverse_conversion_factor")
+	conversion_factor = frappe.db.get_value("UOM Conversion Detail",
+		filters, "conversion_factor")
+	if not conversion_factor:
+		stock_uom = frappe.db.get_value("Item", item_code, "stock_uom")
+		conversion_factor = get_uom_conv_factor(uom, stock_uom)
+		reverse_conversion_factor = get_uom_conv_factor(uom, stock_uom)
+	return {"reverse_conversion_factor": reverse_conversion_factor or 1.0, "conversion_factor": conversion_factor or 1.0}

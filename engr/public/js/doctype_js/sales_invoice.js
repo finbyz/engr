@@ -1,11 +1,11 @@
-cur_frm.fields_dict.set_target_warehouse.get_query = function (doc) {
-	return {
-		filters: {
-			"company": doc.customer,
-            "is_group":0,
-		}
-	}
-};
+// cur_frm.fields_dict.set_target_warehouse.get_query = function (doc) {
+// 	return {
+// 		filters: {
+// 			"company": doc.customer,
+//             "is_group":0,
+// 		}
+// 	}
+// };
 frappe.ui.form.on('Sales Invoice', {
 	onload: function(frm) {
 		if(frm.doc.company){

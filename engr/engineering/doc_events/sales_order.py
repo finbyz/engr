@@ -56,7 +56,7 @@ def update_proforma_details(docname,action):
                 so_doc = frappe.get_doc("Sales Order",so)
 
                 so_doc.db_set("proforma_amount",flt(doc.payment_due_amount) + flt(so_doc.proforma_amount))
-                so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
+                so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.total) * 100)
                 change_sales_order_status(so_doc)
 
         elif action == "cancel":

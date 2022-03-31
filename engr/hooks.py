@@ -30,12 +30,19 @@ doctype_list_js = {
 doctype_js = {
 	"Sales Order": "public/js/doctype_js/sales_order.js",
 	"Purchase Order": "public/js/doctype_js/purchase_order.js",
+	"Purchase Receipt": "public/js/doctype_js/purchase_receipt.js",
+	"Purchase Invoice": "public/js/doctype_js/purchase_invoice.js",
 	"Delivery Note": "public/js/doctype_js/delivery_note.js",
 	"Customer":"public/js/doctype_js/customer.js",
 	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
 	"Communication":"public/js/doctype_js/communication.js",
+	"Quotation":"public/js/doctype_js/quotation.js",
+	"Item":"public/js/doctype_js/item.js",
+	"Material Request":"public/js/doctype_js/material_request.js",
+	"Request for Quotation":"public/js/doctype_js/request_for_quotation.js",
+	"Supplier Quotation":"public/js/doctype_js/supplier_quotation.js"
 }
-
+	
 override_doctype_dashboards = {
 	"Sales Order": "engr.engineering.dashboard.sales_order.get_data",
 }
@@ -66,6 +73,12 @@ doc_events = {
 		"on_cancel":"engr.engineering.doc_events.purchase_order.on_cancel",
 		"on_trash":"engr.engineering.doc_events.purchase_order.on_trash",
 
+	},
+	"Purchase Receipt":{
+		"before_validate":"engr.engineering.doc_events.purchase_receipt.before_validate"
+	},
+	"Purchase Invoice":{
+		"before_validate":"engr.engineering.doc_events.purchase_invoice.before_validate"
 	},
 	"Sales Order":{
 		"validate":"engr.engineering.doc_events.sales_order.validate",
@@ -205,3 +218,13 @@ item_group_wise_sales_target_variance.get_data_column = get_data_column
 from erpnext.selling.report.sales_person_target_variance_based_on_item_group import sales_person_target_variance_based_on_item_group
 from engr.engineering.report.sales_person_target_variance_based_on_item_group import execute
 sales_person_target_variance_based_on_item_group.execute = execute
+
+from erpnext.stock.doctype.material_request import material_request
+from engr.engineering.doc_events.material_request import get_default_supplier_query, make_purchase_order
+material_request.get_default_supplier_query = get_default_supplier_query
+material_request.make_purchase_order = make_purchase_order
+
+#over ride report --
+from finbyzerp.finbyzerp.report.activity_analysis import activity_analysis
+from engr.engineering.report.activity_analysis import execute
+activity_analysis.execute = execute

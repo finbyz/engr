@@ -18,9 +18,9 @@ class ProformaInvoice(Document):
 		
 	def validate(self):
 		if self.payment_percentage:
-			self.payment_due_amount = flt(self.rounded_total) * self.payment_percentage / 100
+			self.payment_due_amount = flt(self.total) * flt(self.payment_percentage) / 100
 		for item in self.items:
-			item.payment_amount = flt(item.net_amount) * self.payment_percentage / 100
+			item.payment_amount = flt(item.net_amount) * flt(self.payment_percentage) / 100
 		validate_sales_person(self)
 
 	def on_submit(self):

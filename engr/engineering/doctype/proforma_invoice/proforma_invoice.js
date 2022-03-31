@@ -15,6 +15,20 @@ frappe.ui.form.on('Proforma Invoice', {
 			}
         }
 	},
+	tc_name: function(frm){
+		if(frm.doc.tc_name) {
+			return frappe.call({
+				method: 'erpnext.setup.doctype.terms_and_conditions.terms_and_conditions.get_terms_and_conditions',
+				args: {
+					template_name: frm.doc.tc_name,
+					doc: frm.doc
+				},
+				callback: function(r) {
+					frm.set_value("terms", r.message);
+				}
+			});
+		}
+	},
 	company: function(frm){
 		if(frm.doc.company){
 			if (!frm.doc.bank_account){
@@ -34,7 +48,7 @@ frappe.ui.form.on('Proforma Invoice', {
 	},
 	payment_percentage: function(frm){
 		if (frm.doc.payment_percentage){
-			frm.set_value('payment_due_amount',flt(frm.doc.rounded_total) * frm.doc.payment_percentage / 100)
+			frm.set_value('payment_due_amount',flt(frm.doc.total) * flt(frm.doc.payment_percentage) / 100)
 			frm.doc.items.forEach(function(row){
 				frappe.model.set_value(row.doctype,row.name,'payment_amount',flt(row.net_amount) * frm.doc.payment_percentage / 100)
 			})

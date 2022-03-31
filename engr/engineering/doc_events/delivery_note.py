@@ -201,7 +201,7 @@ def on_cancel(self, method):
 	# calculate_pick_delivered(self)
 
 def cancel_all(self):
-	if self.pr_ref:
+	if self.get('pr_ref'):
 		doc = frappe.get_doc("Purchase Receipt", self.pr_ref)
 
 		if doc.docstatus == 1:
@@ -212,7 +212,7 @@ def on_trash(self, method):
  	delete_all(self)
 
 def delete_all(self):
-	if self.pr_ref:
+	if self.get('pr_ref'):
 		pr_ref = self.pr_ref
 		frappe.db.set_value("Purchase Receipt", self.pr_ref, 'inter_company_delivery_reference', '')
 		frappe.db.set_value("Purchase Receipt", self.pr_ref, 'dn_ref', '')

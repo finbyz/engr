@@ -207,8 +207,8 @@ def create_sales_order(self):
 			
 
 def cancel_sales_order(self):
-	if self.so_ref:
-		so = frappe.get_doc("Sales Order", self.so_ref)
+	if self.get('so_ref'):
+		so = frappe.get_doc("Sales Order", self.get('so_ref'))
 		so.flags.ignore_permissions = True
 		if so.docstatus == 1:
 			so.cancel()
@@ -217,7 +217,7 @@ def cancel_sales_order(self):
 		frappe.msgprint(_("Sales Order <b><a href='{url}'>{name}</a></b> has been cancelled!".format(url=url, name=so.name)), title="Sales Order Cancelled", indicator="red")
 
 def delete_sales_order(self):
-	if self.so_ref:
+	if self.get('so_ref'):
 		frappe.db.set_value("Purchase Order", self.name, 'inter_company_order_reference', '')
 		frappe.db.set_value("Purchase Order", self.name, 'so_ref', '')
 
