@@ -212,3 +212,13 @@ def get_conversion_factor(item_code, uom):
 		conversion_factor = get_uom_conv_factor(uom, stock_uom)
 		reverse_conversion_factor = get_uom_conv_factor(uom, stock_uom)
 	return {"reverse_conversion_factor": reverse_conversion_factor or 1.0, "conversion_factor": conversion_factor or 1.0}
+
+@frappe.whitelist()
+def update_grand_total(docname):
+	doc = frappe.get_doc("BOM",docname)
+	total_op_cost = 0
+	for row in doc.additional_cost:
+		total_op_cost += row.cost
+	doc.db_set('total_operational_cost',flt(total_op_cost))
+	doc.db_set("grand_total_cost",flt(doc.total_cost + doc.total_operational_cost))
+	doc.db_set('per_unit_cost',flt(doc.total_cost + doc.total_operational_cost)/flt(doc.quantity))
