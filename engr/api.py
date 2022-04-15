@@ -12,6 +12,7 @@ import datetime
 from email.utils import formataddr
 from frappe.desk.notifications import get_filters_for
 from frappe.model.mapper import get_mapped_doc
+from erpnext.stock.doctype.item.item import	get_uom_conv_factor
 
 def validate_sales_person(self):
 	if self.sales_team:

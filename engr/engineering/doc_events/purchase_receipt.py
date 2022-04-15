@@ -6,4 +6,4 @@ def before_validate(self, method):
 def set_conversion_fact(self):
 	for row in self.items:
 		if row.qty and row.stock_qty:
-			frappe.db.set_value("Purchases Receipt Item", row.name, "conversion_factor", (row.stock_qty / row.qty))
+			frappe.db.set_value("Purchase Receipt Item", row.name, "conversion_factor", (row.stock_qty / row.qty))

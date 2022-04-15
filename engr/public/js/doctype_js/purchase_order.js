@@ -53,7 +53,9 @@ frappe.ui.form.on('Purchase Order Item', {
     },   
     stock_qty : function(frm,cdt,cdn){
         let d = locals[cdt][cdn];
-        frappe.model.set_value(cdt,cdn,"qty", Math.round(d.stock_qty * d.reverse_conversion_factor))
+        // frappe.model.set_value(cdt,cdn,"qty", Math.round(d.stock_qty * d.reverse_conversion_factor))
+		frappe.model.set_value(cdt,cdn,"reverse_conversion_factor", (d.qty / d.stock_qty))
+		frappe.model.set_value(cdt,cdn,"conversion_factor", (d.qty / d.stock_qty))
     },
     reverse_conversion_factor : function(frm,cdt,cdn){
         let d = locals[cdt][cdn];
