@@ -713,3 +713,16 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 	}
 });
 $.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));
+
+
+frappe.ui.form.on('Sales Order', {
+    refresh: function(frm) {
+      frm.add_custom_button(__('Work Order Master'), function(frm){
+		frappe.model.open_mapped_doc({
+			method : "engr.engineering.doctype.work_order_master.work_order_master.make_WOM",
+			frm : cur_frm,
+		})
+	});
+
+  }
+});

@@ -7,6 +7,15 @@ frappe.ui.form.on('Customer', {
             });
         }, __("Create"));
     },
+    refresh: function(frm) {
+        frm.add_custom_button(__('Work Order Master'), function(frm){
+          frappe.model.open_mapped_doc({
+              method : "engr.engineering.doc_events.customer.make_WOM_from_customer",
+              frm : cur_frm,
+          })
+      });
+  
+    },
     get_item_groups: function(frm) {
         
             frappe.call({
@@ -26,4 +35,6 @@ frappe.ui.form.on('Customer', {
 	},
 
 })
-
+frappe.ui.form.on('Customer', {
+    
+});

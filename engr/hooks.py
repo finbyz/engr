@@ -34,7 +34,7 @@ doctype_js = {
 	"Customer":"public/js/doctype_js/customer.js",
 	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
 	"Communication":"public/js/doctype_js/communication.js",
-}
+}	
 
 override_doctype_dashboards = {
 	"Sales Order": "engr.engineering.dashboard.sales_order.get_data",
@@ -42,7 +42,9 @@ override_doctype_dashboards = {
 
 doc_events = {
 	"Customer":{
-		"validate":"engr.engineering.doc_events.customer.validate_customer_potential"
+		"validate":"engr.engineering.doc_events.customer.validate_customer_potential",
+		"before_validate":"engr.engineering.doc_events.customer.before_validate",
+		
 	},
 	"Item":{
 		"validate": "engr.engineering.doc_events.item.validate",
@@ -79,7 +81,8 @@ doc_events = {
 	},
 	"Salary Slip":{
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
-	}
+	},
+	
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
@@ -153,13 +156,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-	"cron":{
-		"0 4 * * SUN": [
-			"engr.api.sales_invoice_payment_remainder",
-		],
-	}
-}
+# scheduler_events = {
+# 	"cron":{
+# 		"0 4 * * SUN": [
+# 			"engr.api.sales_invoice_payment_remainder",
+# 		],
+# 	}
+# }
 # scheduler_events = {
 # 	"all": [
 # 		"engr.tasks.all"
