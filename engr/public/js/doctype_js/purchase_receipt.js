@@ -14,6 +14,14 @@ frappe.ui.form.on('Purchase Receipt Item', {
     reverse_conversion_factor : function(frm,cdt,cdn){
         let d = locals[cdt][cdn];
         frappe.model.set_value(cdt,cdn,"conversion_factor", (1 / d.reverse_conversion_factor))
+    },
+    accepted_nos:function(frm,cdt,cdn){
+        let d = locals[cdt][cdn];
+        frappe.model.set_value(cdt,cdn,"qty", (d.accepted_nos*d.reverse_conversion_factor))
+    },
+    rejected_nos:function(frm,cdt,cdn){
+        let d = locals[cdt][cdn];
+        frappe.model.set_value(cdt,cdn,"rejected_qty", (d.rejected_nos*d.reverse_conversion_factor))
     }
 })
 function get_conversion_factor(frm,cdt,cdn){
