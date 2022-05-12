@@ -53,7 +53,7 @@ frappe.query_reports["Sales Invoice Trends GraphicArb"] = {
 			],
 			"default": "Item",
 			"on_change": function(){
-				if (frappe.query_report.get_filter_value('group_by') == "Customer"){
+				if (frappe.query_report.get_filter_value('group_by') == "Customer" || frappe.query_report.get_filter_value('based_on') == "Customer"){
 					frappe.query_report.get_filter('customer').toggle(true)
 				}
 				else{
