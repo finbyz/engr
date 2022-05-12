@@ -27,6 +27,10 @@ frappe.ui.form.on('Purchase Order', {
 	},
 });
 frappe.ui.form.on('Purchase Order Item', {
+	quantity_nos:function(frm,cdt,cdn){
+        let d = locals[cdt][cdn];
+        frappe.model.set_value(cdt,cdn,"qty", (d.quantity_nos*d.reverse_conversion_factor))
+    },
 	last_5_transaction: function(frm, cdt, cdn){
 		let d = locals[cdt][cdn];
 		frappe.call({

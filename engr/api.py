@@ -187,7 +187,7 @@ def send_sales_invoice_mails():
 		try:
 			frappe.sendmail(
 				recipients=recipients,
-				cc = 'accounts@innotech.co.in',
+				# cc = 'accounts@innotech.co.in',
 				subject = 'Overdue Invoices: ' + customer,
 				sender = sender,
 				message = message,

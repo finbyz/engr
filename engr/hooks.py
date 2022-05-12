@@ -91,6 +91,9 @@ doc_events = {
 	},
 	"Salary Slip":{
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
+	},
+	"Quotation":{
+		"on_submit":"engr.engineering.doc_events.quotation.on_submit"
 	}
 }
 # include js, css files in header of web template
@@ -165,13 +168,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-	"cron":{
-		"0 5 * * SUN": [
-			"engr.api.sales_invoice_payment_remainder",
-		],
-	}
-}
+# scheduler_events = {
+# 	"cron":{
+# 		"0 5 * * SUN": [
+# 			"engr.api.sales_invoice_payment_remainder",
+# 		],
+# 	}
+# }
 # scheduler_events = {
 # 	"all": [
 # 		"engr.tasks.all"

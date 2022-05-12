@@ -100,13 +100,23 @@ def get_data_details(filters):
 
 def insert_items(data, row, doc, id):
 
-	items = frappe.db.sql("""
-		SELECT
-			item_code as 'Item Name', amount as 'Amount', owner as 'Owner', qty as 'qty', rate as 'rate'
-		FROM
-			`tab{0}`
-		WHERE
-			parent = '{1}' """.format(doc, row['ID']), as_dict=1)
+	if doc == "Stock Entry Detail":
+		items = frappe.db.sql("""
+			SELECT
+				item_code as 'Item Name', amount as 'Amount', owner as 'Owner', qty as 'qty', basic_rate as 'rate'
+			FROM
+				`tab{0}`
+			WHERE
+				parent = '{1}' """.format(doc, row['ID']), as_dict=1)
+		
+	else:
+		items = frappe.db.sql("""
+			SELECT
+				item_code as 'Item Name', amount as 'Amount', owner as 'Owner', qty as 'qty', rate as 'rate'
+			FROM
+				`tab{0}`
+			WHERE
+				parent = '{1}' """.format(doc, row['ID']), as_dict=1)
 
 	if items:
 		row["Item Name"] = items[0]["Item Name"]

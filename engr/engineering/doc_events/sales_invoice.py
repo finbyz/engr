@@ -138,9 +138,19 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 
 
 def validate(self,method):
+	update_discount_on_field(self)
 	validate_hsn_code(self)
 	validate_sales_person(self)
 	update_proforma_details(self)
+	update_branch(self)
+
+def update_branch(self):
+	if self.branch:
+		for row in self.items:
+			row.branch = self.branch
+
+def update_discount_on_field(self):
+	self.apply_discount_on = "Net Total"
 
 def validate_hsn_code(self):
 	for row in self.items:

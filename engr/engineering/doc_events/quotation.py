@@ -1,5 +1,11 @@
 import frappe
 
+def on_submit(self, method):
+    get_submit_user(self)
+
+def get_submit_user(self):
+    self.db_set('submitted_by', frappe.session.user)
+
 @frappe.whitelist()
 def get_tech_specs(item_code = None ):
     if(item_code):
