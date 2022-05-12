@@ -94,6 +94,9 @@ doc_events = {
 	},
 	"Quotation":{
 		"on_submit":"engr.engineering.doc_events.quotation.on_submit"
+	},
+	"Stock Entry":{
+		"before_submit":"engr.engineering.doc_events.stock_entry.validate_work_order_items"
 	}
 }
 # include js, css files in header of web template
