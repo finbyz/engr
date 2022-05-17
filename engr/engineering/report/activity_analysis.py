@@ -12,6 +12,10 @@ def execute(filters=None):
 	filters = frappe.parse_json(filters)
 	if filters.get('timespan') and not filters.timespan == "":
 		filters.from_date, filters.to_date = get_timespan_date_range(filters.timespan)
+
+	if filters.get("doctype") == "Job Card":
+		return [],[]
+
 	if filters.show_details == 1:
 		columns = get_columns_details()
 		data = get_data_details(filters)
@@ -39,9 +43,9 @@ def get_columns_details():
 
 def get_data_details(filters):
 
-	doctype_list = ['Quotation', 'Purchase Order', 'Purchase Receipt', 'Purchase Invoice', 'Sales Order', 'Delivery Note', 'Sales Invoice','Stock Entry']
+	doctype_list = ['Quotation', 'Purchase Order', 'Purchase Receipt', 'Purchase Invoice', 'Sales Order', 'Delivery Note', 'Sales Invoice','Stock Entry', 'Journal Entry', 'Payment Entry']
 	
-	child_doctype_list = ['Quotation Item', 'Purchase Order Item', 'Purchase Receipt Item', 'Purchase Invoice Item', 'Sales Order Item', 'Delivery Note Item', 'Sales Invoice Item','Stock Entry Detail']
+	child_doctype_list = ['Quotation Item', 'Purchase Order Item', 'Purchase Receipt Item', 'Purchase Invoice Item', 'Sales Order Item', 'Delivery Note Item', 'Sales Invoice Item','Stock Entry Detail','Journal Entry Account']
 	doctype = []
 
 	if filters.doctype in doctype_list:
@@ -53,13 +57,19 @@ def get_data_details(filters):
 
 	if filters.get('doctype'):
 		doctype = [filters.doctype]
-		if not filters.doctype == "Stock Entry":
-			child_doctype_list = [filters.doctype + " Item"]
-		else:
+		if filters.doctype == "Stock Entry" :
 			child_doctype_list = [filters.doctype + " Detail"]
+		elif filters.doctype == "Journal Entry":
+			child_doctype_list = [filters.doctype + " Account"]
+		else:
+			child_doctype_list = [filters.doctype + " Item"]
 
 	data = []
 	for idx,doc in enumerate(doctype):
+		if doc == "Payment Entry":
+			other_fields = "party_name as 'Item Name', paid_amount as 'Amount',"
+		else:
+			other_fields = ''
 		title_field = frappe.db.get_value("Property Setter",{"doc_type":doc,"property":'title_field'},'value')
 		if not title_field:
 			title_field = frappe.db.get_value("DocType",doc,'title_field')
@@ -77,30 +87,40 @@ def get_data_details(filters):
 		
 		dt = frappe.db.sql("""
 			SELECT
-				name as 'ID', {date} as 'Date', owner as 'Created By', {title_field} as 'Title'
+				name as 'ID', {date} as 'Date', owner as 'Created By', {other_fields} {title_field} as 'Title'
 			FROM
 				`tab{doc}`
 			WHERE
 				docstatus < 2
 				{conditions}
 			ORDER BY
-				modified DESC""".format(date=date, title_field=title_field,doc=doc, conditions=conditions), as_dict=1)
+				modified DESC""".format(date=date, title_field=title_field, other_fields=other_fields, doc=doc, conditions=conditions), as_dict=1)
 
 		d = dt[:]
 		id = 0
 
 		for row in d:
 			row["Document"] = doc
+			if row['Document'] in ["Payment Entry"]:
+				row["Owner"] = get_user_fullname(row["Created By"])
+			else:
+				id = insert_items(dt, row, child_doctype_list[idx], id+1)
 			row["Created By"] = get_user_fullname(row["Created By"])
-			id = insert_items(dt, row, child_doctype_list[idx], id+1)
 
 		data += dt
 
 	return data
 
 def insert_items(data, row, doc, id):
-
-	if doc == "Stock Entry Detail":
+	if doc == "Journal Entry Account":
+		items = frappe.db.sql("""
+			SELECT
+				account as 'Item Name', if(credit > 0, credit, debit) as 'Amount', owner as 'Owner', 0 as 'qty', 0 as 'rate'
+			FROM
+				`tab{0}`
+			WHERE
+				parent = '{1}' """.format(doc, row['ID']), as_dict=1)
+	elif doc == "Stock Entry Detail":
 		items = frappe.db.sql("""
 			SELECT
 				item_code as 'Item Name', amount as 'Amount', owner as 'Owner', qty as 'qty', basic_rate as 'rate'
@@ -108,7 +128,6 @@ def insert_items(data, row, doc, id):
 				`tab{0}`
 			WHERE
 				parent = '{1}' """.format(doc, row['ID']), as_dict=1)
-		
 	else:
 		items = frappe.db.sql("""
 			SELECT
@@ -116,7 +135,7 @@ def insert_items(data, row, doc, id):
 			FROM
 				`tab{0}`
 			WHERE
-				parent = '{1}' """.format(doc, row['ID']), as_dict=1)
+				parent = "{1}" """.format(doc, row['ID']), as_dict=1)
 
 	if items:
 		row["Item Name"] = items[0]["Item Name"]
@@ -145,7 +164,7 @@ def get_chart_data_details(data, filters):
 		if user:
 			total_entries.append(user_list.count(user))
 			total_items.append(user_item_list.count(user))
-			labels.append((user))
+			labels.append(user)
 
 	datasets = []
 
@@ -181,9 +200,9 @@ def get_columns():
 
 def get_data(filters):
 
-	doctype_list = ['Quotation', 'Purchase Order', 'Purchase Receipt', 'Purchase Invoice', 'Sales Order', 'Delivery Note', 'Sales Invoice','Stock Entry']
+	doctype_list = ['Quotation', 'Purchase Order', 'Purchase Receipt', 'Purchase Invoice', 'Sales Order', 'Delivery Note', 'Sales Invoice','Stock Entry', 'Journal Entry', 'Payment Entry']
 	
-	child_doctype_list = ['Quotation Item', 'Purchase Order Item', 'Purchase Receipt Item', 'Purchase Invoice Item', 'Sales Order Item', 'Delivery Note Item', 'Sales Invoice Item','Stock Entry Detail']
+	child_doctype_list = ['Quotation Item', 'Purchase Order Item', 'Purchase Receipt Item', 'Purchase Invoice Item', 'Sales Order Item', 'Delivery Note Item', 'Sales Invoice Item','Stock Entry Detail', 'Journal Entry Account']
 
 	transaction_date = ['Quotation', 'Sales Order', 'Purchase Order']
 
@@ -191,10 +210,12 @@ def get_data(filters):
 
 	if filters.get('doctype'):
 		doctype_list = [filters.doctype]
-		if not filters.doctype == "Stock Entry":
-			child_doctype_list = [filters.doctype + " Item"]
-		else:
+		if filters.doctype == "Stock Entry":
 			child_doctype_list = [filters.doctype + " Detail"]
+		elif filters.doctype == "Journal Entry":
+			child_doctype_list = [filters.doctype + " Account"]
+		else:
+			child_doctype_list = [filters.doctype + " Item"]
 
 	for idx,doc in enumerate(doctype_list):
 		conditions = ''
@@ -245,26 +266,30 @@ def get_data(filters):
 			if filters.from_date: conditions += " and {0} >= '{1}'".format(date, filters.from_date)
 			if filters.to_date: conditions += " and {0} <= '{1}'".format(date, filters.to_date)
 			if filters.user:conditions += " and p.owner = '{0}'".format(filters.user)
-
-			items = frappe.db.sql("""
-				select child.owner,count(child.name) as total_items
-				from `tab{}` as child
-				JOIN `tab{}` as p on p.name = child.parent and p.owner = child.owner
-				where child.docstatus < 2 {}
-				group by child.owner
-				ORDER BY child.modified desc
-			""".format(child_doctype_list[idx],doc,conditions),as_dict=1)
+			if doc not in ["Payment Entry"]:
+				items = frappe.db.sql("""
+					select child.owner,count(child.name) as total_items
+					from `tab{}` as child
+					JOIN `tab{}` as p on p.name = child.parent and p.owner = child.owner
+					where child.docstatus < 2 {}
+					group by child.owner
+					ORDER BY child.modified desc
+				""".format(child_doctype_list[idx],doc,conditions),as_dict=1)
 
 # Below Code is for Merge Multiple owners with its keys and values 
 # Example: items = [{"admin":{"total_entries":5,"total_items":10}},
 #	{"admin":{"total_entries":10,"total_items":15}},{"user":{"total_entries":2,"total_items":1}}]
 # in above example list it needs to merge same keys('admin') with its value(which also a dict)
 
-			for row in items:
-				owner_list.append(row.owner)	# Owner List
-				entries_list.append({row.owner:dt_map[(row.owner)]})
-				items_list.append({row.owner:row.total_items})
-
+				for row in items:
+					owner_list.append(row.owner)	# Owner List
+					entries_list.append({row.owner:dt_map[(row.owner)]})
+					items_list.append({row.owner:row.total_items})
+			else:
+				for row in dt:
+					owner_list.append(row.owner)
+					entries_list.append({row.owner:dt_map[(row.owner)]})
+					items_list.append({row.owner:int(row.total_entries)})
 	entries_sum = {}
 	for d in entries_list:
 		for k in d.keys():
