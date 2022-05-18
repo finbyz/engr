@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from engr import api
 from . import __version__ as app_version
+
 
 app_name = "engr"
 app_title = "Engineering"
@@ -24,7 +27,8 @@ app_include_js = [
 
 
 doctype_list_js = {
-	"Sales Order" : "public/js/doctype_js/sales_order_list.js"
+	"Sales Order" : "public/js/doctype_js/sales_order_list.js",
+	"Production Plan":"public/js/doctype_js/production plan.js"
 }
 
 doctype_js = {
@@ -40,7 +44,8 @@ doctype_js = {
 	"Item":"public/js/doctype_js/item.js",
 	"Material Request":"public/js/doctype_js/material_request.js",
 	"Request for Quotation":"public/js/doctype_js/request_for_quotation.js",
-	"Supplier Quotation":"public/js/doctype_js/supplier_quotation.js"
+	"Supplier Quotation":"public/js/doctype_js/supplier_quotation.js",
+	
 }
 	
 override_doctype_dashboards = {
@@ -220,6 +225,9 @@ from erpnext.selling.report.sales_partner_target_variance_based_on_item_group im
 from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
 item_group_wise_sales_target_variance.get_data_column = get_data_column
 
+from erpnext.manufacturing.doctype.production_plan import production_plan
+from engr.api import get_sales_orders
+production_plan.get_sales_orders=get_sales_orders
 
 # Override for chart
 from erpnext.selling.report.sales_person_target_variance_based_on_item_group import sales_person_target_variance_based_on_item_group
