@@ -3,8 +3,9 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe, json
 from frappe import _
+from six import string_types
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import flt,cint,get_url_to_form
 from erpnext.controllers.status_updater import StatusUpdater
@@ -18,6 +19,9 @@ from engr.engineering.doctype.proforma_invoice.proforma_invoice import set_statu
 from frappe.model.mapper import get_mapped_doc
 from erpnext.accounts.utils import get_fiscal_year
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice
+from erpnext.selling.doctype.quotation.quotation import _make_customer
+from erpnext.stock.doctype.delivery_note.delivery_note import get_invoiced_qty_map, get_returned_qty_map
+from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no
 
 def on_submit(self,method):
 	create_purchase_invoice(self)
@@ -473,3 +477,256 @@ def get_internal_party(parties, link_doctype, doc):
 
 	return party
 
+@frappe.whitelist()
+def make_sales_invoice_from_quotation(source_name, target_doc=None, args= None):
+	customer = _make_customer(source_name)
+
+	if args is None:
+		args = {}
+	if isinstance(args, string_types):
+		args = json.loads(args)
+
+	def set_missing_values(source, target):
+		if customer:
+			target.customer = customer.name
+			target.customer_name = customer.customer_name
+
+		target.run_method("set_missing_values")
+		target.run_method("calculate_taxes_and_totals")
+
+	def update_item(obj, target, source_parent):
+		target.cost_center = None
+		target.stock_qty = flt(obj.qty) * flt(obj.conversion_factor)
+
+	def select_item(doc):
+		filtered_items = args.get("filtered_children", [])
+		child_filter = doc.name in filtered_items if filtered_items else True
+
+		return child_filter
+
+	doclist = get_mapped_doc(
+		"Quotation",
+		source_name,
+		{
+			"Quotation": {"doctype": "Sales Invoice", "validation": {"docstatus": ["=", 1]}},
+			"Quotation Item": {"doctype": "Sales Invoice Item", "postprocess": update_item, "condition": select_item},
+			"Sales Taxes and Charges": {"doctype": "Sales Taxes and Charges", "add_if_empty": True},
+			"Sales Team": {"doctype": "Sales Team", "add_if_empty": True},
+		},
+		target_doc,
+		set_missing_values,
+	)
+
+	doclist.set_onload("ignore_price_list", True)
+
+	return doclist
+
+@frappe.whitelist()
+def make_sales_invoice_from_order(source_name, target_doc=None, args=None):
+
+	if args is None:
+		args = {}
+	if isinstance(args, string_types):
+		args = json.loads(args)
+
+	def postprocess(source, target):
+		set_missing_values(source, target)
+		# Get the advance paid Journal Entries in Sales Invoice Advance
+		if target.get("allocate_advances_automatically"):
+			target.set_advances()
+
+	def set_missing_values(source, target):
+		target.flags.ignore_permissions = True
+		target.run_method("set_missing_values")
+		target.run_method("set_po_nos")
+		target.run_method("calculate_taxes_and_totals")
+
+		if source.company_address:
+			target.update({"company_address": source.company_address})
+		else:
+			# set company address
+			target.update(get_company_address(target.company))
+
+		if target.company_address:
+			target.update(get_fetch_values("Sales Invoice", "company_address", target.company_address))
+
+		# set the redeem loyalty points if provided via shopping cart
+		if source.loyalty_points and source.order_type == "Shopping Cart":
+			target.redeem_loyalty_points = 1
+
+	def update_item(source, target, source_parent):
+		target.amount = flt(source.amount) - flt(source.billed_amt)
+		target.base_amount = target.amount * flt(source_parent.conversion_rate)
+		target.qty = (
+			target.amount / flt(source.rate)
+			if (source.rate and source.billed_amt)
+			else source.qty - source.returned_qty
+		)
+
+		if source_parent.project:
+			target.cost_center = frappe.db.get_value("Project", source_parent.project, "cost_center")
+		if target.item_code:
+			item = get_item_defaults(target.item_code, source_parent.company)
+			item_group = get_item_group_defaults(target.item_code, source_parent.company)
+			cost_center = item.get("selling_cost_center") or item_group.get("selling_cost_center")
+
+			if cost_center:
+				target.cost_center = cost_center
+
+	def select_item(doc):
+		filtered_items = args.get("filtered_children", [])
+		child_filter = doc.name in filtered_items if filtered_items else True
+
+		return doc.qty and (doc.base_amount == 0 or abs(doc.billed_amt) < abs(doc.amount)) and child_filter
+
+	doclist = get_mapped_doc(
+		"Sales Order",
+		source_name,
+		{
+			"Sales Order": {
+				"doctype": "Sales Invoice",
+				"field_map": {
+					"party_account_currency": "party_account_currency",
+					"payment_terms_template": "payment_terms_template",
+				},
+				"field_no_map": ["payment_terms_template"],
+				"validation": {"docstatus": ["=", 1]},
+			},
+			"Sales Order Item": {
+				"doctype": "Sales Invoice Item",
+				"field_map": {
+					"name": "so_detail",
+					"parent": "sales_order",
+				},
+				"postprocess": update_item,
+				"condition": select_item,
+			},
+			"Sales Taxes and Charges": {"doctype": "Sales Taxes and Charges", "add_if_empty": True},
+			"Sales Team": {"doctype": "Sales Team", "add_if_empty": True},
+		},
+		target_doc,
+		postprocess,
+	)
+
+	automatically_fetch_payment_terms = cint(
+		frappe.db.get_single_value("Accounts Settings", "automatically_fetch_payment_terms")
+	)
+	if automatically_fetch_payment_terms:
+		doclist.set_payment_schedule()
+
+	doclist.set_onload("ignore_price_list", True)
+
+	return doclist
+
+@frappe.whitelist()
+def make_sales_invoice_from_delivery(source_name, target_doc=None, args= None):
+
+	if args is None:
+		args = {}
+	if isinstance(args, string_types):
+		args = json.loads(args)
+
+	doc = frappe.get_doc("Delivery Note", source_name)
+
+	to_make_invoice_qty_map = {}
+	returned_qty_map = get_returned_qty_map(source_name)
+	invoiced_qty_map = get_invoiced_qty_map(source_name)
+
+	def set_missing_values(source, target):
+		target.run_method("set_missing_values")
+		target.run_method("set_po_nos")
+
+		if len(target.get("items")) == 0:
+			frappe.throw(_("All these items have already been Invoiced/Returned"))
+
+		target.run_method("calculate_taxes_and_totals")
+
+		# set company address
+		if source.company_address:
+			target.update({"company_address": source.company_address})
+		else:
+			# set company address
+			target.update(get_company_address(target.company))
+
+		if target.company_address:
+			target.update(get_fetch_values("Sales Invoice", "company_address", target.company_address))
+
+	def update_item(source_doc, target_doc, source_parent):
+		target_doc.qty = to_make_invoice_qty_map[source_doc.name]
+
+		if source_doc.serial_no and source_parent.per_billed > 0 and not source_parent.is_return:
+			target_doc.serial_no = get_delivery_note_serial_no(
+				source_doc.item_code, target_doc.qty, source_parent.name
+			)
+
+	def get_pending_qty(item_row):
+		pending_qty = item_row.qty - invoiced_qty_map.get(item_row.name, 0)
+
+		returned_qty = 0
+		if returned_qty_map.get(item_row.name, 0) > 0:
+			returned_qty = flt(returned_qty_map.get(item_row.name, 0))
+			returned_qty_map[item_row.name] -= pending_qty
+
+		if returned_qty:
+			if returned_qty >= pending_qty:
+				pending_qty = 0
+				returned_qty -= pending_qty
+			else:
+				pending_qty -= returned_qty
+				returned_qty = 0
+
+		to_make_invoice_qty_map[item_row.name] = pending_qty
+
+		return pending_qty
+
+	def select_item(doc):
+		filtered_items = args.get("filtered_children", [])
+		child_filter = doc.name in filtered_items if filtered_items else True
+
+		return child_filter
+
+	doc = get_mapped_doc(
+		"Delivery Note",
+		source_name,
+		{
+			"Delivery Note": {
+				"doctype": "Sales Invoice",
+				"field_map": {"is_return": "is_return"},
+				"validation": {"docstatus": ["=", 1]},
+			},
+			"Delivery Note Item": {
+				"doctype": "Sales Invoice Item",
+				"field_map": {
+					"name": "dn_detail",
+					"parent": "delivery_note",
+					"so_detail": "so_detail",
+					"against_sales_order": "sales_order",
+					"serial_no": "serial_no",
+					"cost_center": "cost_center",
+				},
+				"postprocess": update_item,
+				"filter": lambda d: get_pending_qty(d) <= 0
+				if not doc.get("is_return")
+				else get_pending_qty(d) > 0,
+				"condition": select_item
+			},
+			"Sales Taxes and Charges": {"doctype": "Sales Taxes and Charges", "add_if_empty": True},
+			"Sales Team": {
+				"doctype": "Sales Team",
+				"field_map": {"incentives": "incentives"},
+				"add_if_empty": True,
+			},
+		},
+		target_doc,
+		set_missing_values,
+	)
+
+	automatically_fetch_payment_terms = cint(
+		frappe.db.get_single_value("Accounts Settings", "automatically_fetch_payment_terms")
+	)
+	if automatically_fetch_payment_terms:
+		doc.set_payment_schedule()
+
+	doc.set_onload("ignore_price_list", True)
+
+	return doc

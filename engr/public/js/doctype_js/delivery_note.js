@@ -8,14 +8,14 @@ frappe.ui.form.on('Delivery Note', {
 		// 		}
 		// 	}
 		// };
-		cur_frm.fields_dict.target_warehouse.get_query = function(doc) {
-			return {
-				filters: {
-					"company":['in',doc.customer],
-					"is_group": 0
-				}
-			}
-		};
+		// cur_frm.fields_dict.target_warehouse.get_query = function(doc) {
+		// 	return {
+		// 		filters: {
+		// 			"company":['in',doc.customer],
+		// 			"is_group": 0
+		// 		}
+		// 	}
+		// };
 	},
     billing_address: function(frm) {
     if(frm.doc.shipping_address_name) {
