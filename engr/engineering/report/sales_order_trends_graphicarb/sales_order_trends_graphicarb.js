@@ -66,6 +66,13 @@ frappe.query_reports["Sales Order Trends Graphicarb"] = {
 				return frappe.db.get_link_options('Branch', txt);
 			}
 		},
+		{
+			"fieldname":"customer",
+			"label": __("Customer"),
+			"fieldtype": "Link",
+			"options": "Customer",
+			"hidden":0,
+		},
 	]
 
 };

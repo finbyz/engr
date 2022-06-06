@@ -21,6 +21,20 @@ app_license = "MIT"
 # app_include_css = "/assets/engr/css/engr.css"
 # app_include_js = "/assets/engr/js/engr.js"
 
+from engr.engineering.doc_events.work_order import get_status, update_work_order_qty, update_transaferred_qty_for_required_items, update_consumed_qty_for_required_items
+from erpnext.manufacturing.doctype.work_order.work_order import WorkOrder
+
+# WorkOrder.get_status = get_status
+WorkOrder.update_work_order_qty = update_work_order_qty
+WorkOrder.update_transaferred_qty_for_required_items = update_transaferred_qty_for_required_items
+WorkOrder.update_consumed_qty_for_required_items = update_consumed_qty_for_required_items
+
+# overide reason bcz raw material changes on change event of fg_completed_qty
+from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
+from engr.engineering.doc_events.work_order import get_items
+StockEntry.get_items = get_items
+
+
 app_include_js = [
 	"/assets/js/engineering.min.js" 
 ]
@@ -45,6 +59,7 @@ doctype_js = {
 	"Material Request":"public/js/doctype_js/material_request.js",
 	"Request for Quotation":"public/js/doctype_js/request_for_quotation.js",
 	"Supplier Quotation":"public/js/doctype_js/supplier_quotation.js",
+	"Work Order":"public/js/doctype_js/work_order.js",
 	
 }
 	
