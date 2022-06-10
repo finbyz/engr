@@ -33,7 +33,9 @@ WorkOrder.update_consumed_qty_for_required_items = update_consumed_qty_for_requi
 from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
 from engr.engineering.doc_events.work_order import get_items
 StockEntry.get_items = get_items
-
+from engr.engineering.doc_events.work_order import create_job_card
+from erpnext.manufacturing.doctype.work_order import work_order
+work_order.create_job_card = create_job_card
 
 app_include_js = [
 	"/assets/js/engineering.min.js" 

@@ -2,7 +2,7 @@
 import frappe
 import frappe.defaults
 from frappe import msgprint, _
-from frappe.utils import nowdate, flt, cint, cstr
+from frappe.utils import nowdate, flt, cint, cstr ,get_link_to_form
 from six import itervalues
 from erpnext.manufacturing.doctype.work_order.work_order import StockOverProductionError
 
@@ -480,3 +480,44 @@ def update_consumed_qty_for_required_items(self):
 				})[0][0]
 
 		d.db_set('consumed_qty', flt(consumed_qty), update_modified = False)		
+
+
+def create_job_card(work_order, row, enable_capacity_planning=False, auto_create=False):
+	doc = frappe.new_doc("Job Card")
+	doc.update(
+		{
+			"work_order": work_order.name,
+			"operation": row.get("operation"),
+			"workstation": row.get("workstation"),
+			"posting_date": nowdate(),
+			"for_quantity": row.job_card_qty or work_order.get("qty", 0),
+			"operation_id": row.get("name"),
+			"bom_no": work_order.bom_no,
+			"project": work_order.project,
+			"company": work_order.company,
+			"sequence_id": row.get("sequence_id"),
+			"wip_warehouse": work_order.wip_warehouse,
+			"hour_rate": row.get("hour_rate"),
+			"serial_no": row.get("serial_no"),
+			"parent_work_order":work_order.parent_work_order,
+		}
+	)
+
+	if work_order.transfer_material_against == "Job Card" and not work_order.skip_transfer:
+		doc.get_required_items()
+
+	if auto_create:
+		doc.flags.ignore_mandatory = True
+		if enable_capacity_planning:
+			doc.schedule_time_logs(row)
+
+		doc.insert()
+		frappe.msgprint(
+			_("Job card {0} created").format(get_link_to_form("Job Card", doc.name)), alert=True
+		)
+
+	if enable_capacity_planning:
+		# automatically added scheduling rows shouldn't change status to WIP
+		doc.db_set("status", "Open")
+
+	return doc
