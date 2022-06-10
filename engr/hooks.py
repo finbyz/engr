@@ -117,7 +117,10 @@ doc_events = {
 	},
 	"Stock Entry":{
 		"before_submit":"engr.engineering.doc_events.stock_entry.validate_work_order_items"
-	}
+	},
+	"Job Card":{
+		"before_submit":"engr.engineering.doc_events.job_card.before_submit"
+	},
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
