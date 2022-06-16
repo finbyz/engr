@@ -44,7 +44,8 @@ app_include_js = [
 
 doctype_list_js = {
 	"Sales Order" : "public/js/doctype_js/sales_order_list.js",
-	"Production Plan":"public/js/doctype_js/production plan.js"
+	"Production Plan":"public/js/doctype_js/production plan.js",
+	
 }
 
 doctype_js = {
@@ -62,6 +63,7 @@ doctype_js = {
 	"Request for Quotation":"public/js/doctype_js/request_for_quotation.js",
 	"Supplier Quotation":"public/js/doctype_js/supplier_quotation.js",
 	"Work Order":"public/js/doctype_js/work_order.js",
+	"Stock Entry":"public/js/doctype_js/stock_entry.js",
 	
 }
 	
