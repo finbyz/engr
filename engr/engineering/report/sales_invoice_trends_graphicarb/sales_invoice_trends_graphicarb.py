@@ -112,6 +112,8 @@ def get_data(filters, conditions):
 	if filters.get("customer"):
 		cond += " and t1.customer = '{}'".format(filters.get("customer"))
 
+	cond +=" and (t1.total_qty > 0) or (t1.total_qty < 0 and t1.update_stock = 1) "
+
 	year_start_date, year_end_date = frappe.db.get_value(
 		"Fiscal Year", filters.get("fiscal_year"), [
 			"year_start_date", "year_end_date"]
