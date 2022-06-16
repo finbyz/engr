@@ -94,3 +94,12 @@ def update_item(obj, target, source_parent):
 	target.stock_qty = (target.qty * target.conversion_factor)
 	if getdate(target.schedule_date) < getdate(nowdate()):
 		target.schedule_date = None
+	
+def before_validate(self, method):
+	set_conversion_factor(self)
+
+def set_conversion_factor(self):
+	for row in self.items:
+		if row.stock_uom == row.uom:
+			row.reverse_conversion_factor = row.conversion_factor = 1
+			row.stock_qty = row.qty

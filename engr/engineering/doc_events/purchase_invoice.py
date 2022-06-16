@@ -7,12 +7,16 @@ from erpnext.stock.doctype.item.item import get_item_defaults
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 
 def before_validate(self, method):
-    set_stock_qty(self)
+    set_conversion_factor(self)
 
-def set_stock_qty(self):
+def set_conversion_factor(self):
 	for row in self.items:
-		if row.qty and row.stock_qty:
-			frappe.db.set_value("Purchase Invoice Item", row.name, "stock_qty", round(row.stock_qty / row.qty, 0))
+		if row.stock_uom == row.uom:
+			row.reverse_conversion_factor = row.conversion_factor = 1
+			row.stock_qty = row.qty
+		else:
+			if row.qty and row.stock_qty:
+				frappe.db.set_value("Purchase Invoice Item", row.name, "stock_qty", round(row.stock_qty / row.qty, 0))
 
 @frappe.whitelist()
 def make_purchase_invoice_from_receipt(source_name, target_doc=None, args=None):

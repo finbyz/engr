@@ -92,6 +92,7 @@ doc_events = {
 	},
 	"Purchase Order":{
 		"validate":"engr.engineering.doc_events.purchase_order.validate",
+		"before_validate":"engr.engineering.doc_events.purchase_order.before_validate",
 		"on_update_after_submit":"engr.engineering.doc_events.purchase_order.update_reqd_date",
 		"on_submit":"engr.engineering.doc_events.purchase_order.on_submit",
 		"on_cancel":"engr.engineering.doc_events.purchase_order.on_cancel",
@@ -125,6 +126,9 @@ doc_events = {
 	"Job Card":{
 		"before_submit":"engr.engineering.doc_events.job_card.before_submit"
 	},
+	"Material Request":{
+		"before_validate":"engr.engineering.doc_events.material_request.before_validate"
+	}
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"

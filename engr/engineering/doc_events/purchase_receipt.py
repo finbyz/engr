@@ -9,8 +9,12 @@ def before_validate(self, method):
 
 def set_conversion_fact(self):
 	for row in self.items:
-		if row.qty and row.stock_qty:
-			frappe.db.set_value("Purchase Receipt Item", row.name, "conversion_factor", (row.stock_qty / row.qty))
+		if row.stock_uom == row.uom:
+			row.reverse_conversion_factor = row.conversion_factor = 1
+			row.stock_qty = row.qty
+		else:
+			if row.qty and row.stock_qty:
+				frappe.db.set_value("Purchase Receipt Item", row.name, "stock_qty", round(row.stock_qty / row.qty, 0))
 
 
 @frappe.whitelist()
