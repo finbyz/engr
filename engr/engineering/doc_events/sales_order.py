@@ -154,7 +154,12 @@ def validate_item_group(self):
     for row in self.items:
         if row.item_group=="GENERIC ITEM":
             frappe.throw("Row: {} has item of GENERIC ITEM group.".format(frappe.bold(row.idx)))
+def pending_qty(self,method):
+    for row in self.items:
+        if(row.qty):
+            frappe.db.set_value("Sales Order Item" ,row.name ,"pending_delivered_qty", flt(row.qty - row.delivered_qty))
 
 def validate(self,method):
     validate_sales_person(self)
     validate_item_group(self)
+

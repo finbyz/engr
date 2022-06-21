@@ -9,6 +9,12 @@ from frappe.model.mapper import get_mapped_doc
 def validate(self,method):
 	update_reqd_date(self)
 
+def pending_qty(self,method):
+	for row in self.items:
+		if(row.qty):
+			# frappe.throw(row.qty)
+			frappe.db.set_value("Purchase Order Item" ,row.name ,"pending_qty", flt(row.qty - row.received_qty))
+
 def before_validate(self, method):
 	set_conversion_factor(self)
 
@@ -236,3 +242,4 @@ def delete_sales_order(self):
 		if frappe.db.exists("Sales Order", self.so_ref):
 			frappe.delete_doc("Sales Order", self.so_ref, force = 1, ignore_permissions=True)
 			frappe.msgprint(_("Sales Order <b>{name}</b> has been deleted!".format(name=self.so_ref)), title="Sales Order Deleted", indicator="red")
+

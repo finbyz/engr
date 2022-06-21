@@ -97,6 +97,8 @@ doc_events = {
 		"on_submit":"engr.engineering.doc_events.purchase_order.on_submit",
 		"on_cancel":"engr.engineering.doc_events.purchase_order.on_cancel",
 		"on_trash":"engr.engineering.doc_events.purchase_order.on_trash",
+		"on_update":"engr.engineering.doc_events.purchase_order.pending_qty",
+
 
 	},
 	"Purchase Receipt":{
@@ -107,6 +109,7 @@ doc_events = {
 	},
 	"Sales Order":{
 		"validate":"engr.engineering.doc_events.sales_order.validate",
+		"on_update":"engr.engineering.doc_events.sales_order.pending_qty"
 	},
 	"Delivery Note":{
 		"validate":"engr.engineering.doc_events.delivery_note.validate",
@@ -269,3 +272,7 @@ material_request.make_purchase_order = make_purchase_order
 from finbyzerp.finbyzerp.report.activity_analysis import activity_analysis
 from engr.engineering.report.activity_analysis import execute
 activity_analysis.execute = execute
+
+from finbyzerp.finbyzerp.doctype.bank_statement_transaction_entry.bank_statement_transaction_entry import BankStatementTransactionEntry
+from engr.engineering.doc_events.bank_statement_transaction_entry import create_payment_entry
+BankStatementTransactionEntry.create_payment_entry = create_payment_entry

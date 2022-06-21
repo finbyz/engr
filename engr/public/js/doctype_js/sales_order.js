@@ -10,6 +10,16 @@ frappe.ui.form.on('Sales Order', {
     }
 })
 frappe.ui.form.on('Sales Order Item', {
+
+	delivered_qty:function(frm){
+		
+		frm.doc.items.forEach(d =>{
+			if(d.delivered_qty){
+
+				frappe.model.set_value(d.doctype , d.name , "pending_delivered_qty" ,flt(d.qty - d.delivered_qty))
+			}
+		})
+	},
 	last_5_transaction: function(frm, cdt, cdn){
 		let d = locals[cdt][cdn];
 		frappe.call({
