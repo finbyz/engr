@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "hash",
  "creation": "2013-03-07 11:42:58",
  "doctype": "DocType",
@@ -89,6 +90,7 @@
   "item_tax_rate",
   "transaction_date",
   "references_section",
+  "branch",
   "sales_order",
   "column_break_60",
   "sales_order_item"
@@ -153,7 +155,6 @@
    "oldfieldname": "description",
    "oldfieldtype": "Small Text",
    "print_width": "300px",
-   "reqd": 1,
    "width": "300px"
   },
   {
@@ -803,11 +804,18 @@
    "label": "HSN/SAC",
    "read_only": 1,
    "translatable": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-04-26 16:04:20.457839",
+ "links": [],
+ "modified": "2022-06-23 13:47:22.763482",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Proforma Invoice Item",

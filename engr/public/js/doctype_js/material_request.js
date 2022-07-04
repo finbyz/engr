@@ -1,3 +1,19 @@
+frappe.ui.form.on('Material Request', {
+	branch: function(frm){
+		if(frm.doc.branch){
+			frm.doc.items.forEach((d)=>{
+				frappe.model.set_value(d.doctype , d.name , "branch" ,frm.doc.branch)
+			})
+		}
+	},
+	before_save: function (frm) {
+		if(frm.doc.branch){
+			frm.doc.items.forEach((d)=>{
+				frappe.model.set_value(d.doctype , d.name , "branch" ,frm.doc.branch)
+			})
+		}
+	}
+})
 frappe.ui.form.on('Material Request Item', {
 	item_code : function(frm,cdt,cdn) {
 	    get_conversion_factor(frm,cdt,cdn)

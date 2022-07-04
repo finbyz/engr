@@ -7,7 +7,21 @@ frappe.ui.form.on('Sales Order', {
             method: "engr.engineering.doctype.proforma_invoice.proforma_invoice.create_proforma_invoice",
             frm: frm
         })
-    }
+    },
+	branch: function(frm){
+		if(frm.doc.branch){
+			frm.doc.items.forEach((d)=>{
+				frappe.model.set_value(d.doctype , d.name , "branch" ,frm.doc.branch)
+			})
+		}
+	},
+	before_save: function (frm) {
+		if(frm.doc.branch){
+			frm.doc.items.forEach((d)=>{
+				frappe.model.set_value(d.doctype , d.name , "branch" ,frm.doc.branch)
+			})
+		}
+	}
 })
 frappe.ui.form.on('Sales Order Item', {
 
