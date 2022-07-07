@@ -273,6 +273,10 @@ from finbyzerp.finbyzerp.report.activity_analysis import activity_analysis
 from engr.engineering.report.activity_analysis import execute
 activity_analysis.execute = execute
 
-from finbyzerp.finbyzerp.doctype.bank_statement_transaction_entry.bank_statement_transaction_entry import BankStatementTransactionEntry
-from engr.engineering.doc_events.bank_statement_transaction_entry import create_payment_entry
-BankStatementTransactionEntry.create_payment_entry = create_payment_entry
+from erpnext.manufacturing.doctype.production_plan.production_plan import ProductionPlan
+from engr.engineering.doc_events.production_plan import make_work_order
+ProductionPlan.make_work_order = make_work_order
+
+# from erpnext.manufacturing.doctype.production_plan.production_plan import ProductionPlan
+# from engr.engineering.doc_events.production_plan import make_work_order_for_subassembly_items
+# ProductionPlan.make_work_order_for_subassembly_items = make_work_order_for_subassembly_items
