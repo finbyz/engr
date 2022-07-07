@@ -1,0 +1,64 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-07-01 12:11:49.961217",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "parameter",
+  "result_1",
+  "result_2",
+  "result_3",
+  "result_4",
+  "result_5"
+ ],
+ "fields": [
+  {
+   "fieldname": "result_2",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Result 2"
+  },
+  {
+   "fieldname": "result_3",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Result 3"
+  },
+  {
+   "fieldname": "result_4",
+   "fieldtype": "Data",
+   "label": "Result 4"
+  },
+  {
+   "fieldname": "result_5",
+   "fieldtype": "Data",
+   "label": "Result 5"
+  },
+  {
+   "fieldname": "parameter",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Parameter",
+   "options": "Quality Inspection Parameter"
+  },
+  {
+   "fieldname": "result_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Result 1"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-07-01 12:56:28.138286",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Connection Check",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

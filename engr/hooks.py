@@ -109,7 +109,8 @@ doc_events = {
 	},
 	"Sales Order":{
 		"validate":"engr.engineering.doc_events.sales_order.validate",
-		"on_update":"engr.engineering.doc_events.sales_order.pending_qty"
+		"on_update":"engr.engineering.doc_events.sales_order.pending_qty",
+		"on_update_after_submit":"engr.engineering.doc_events.sales_order.pending_qty"
 	},
 	"Delivery Note":{
 		"validate":"engr.engineering.doc_events.delivery_note.validate",
