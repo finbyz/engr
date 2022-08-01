@@ -229,3 +229,6 @@ from erpnext.selling.doctype.quotation import quotation_dashboard
 from engr.api import get_data 
 quotation_dashboard.get_data = get_data
 
+from finbyzerp.finbyzerp.dashboard import customer
+from engr.engineering.doc_events.customer_dashboard import get_data
+customer.get_data = get_data
