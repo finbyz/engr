@@ -70,7 +70,7 @@ def get_data(conditions, filters):
 		SELECT
 			so.transaction_date as date,
 			soi.delivery_date as delivery_date,
-			so.name as sales_order,
+			so.name as sales_order,soi.rate,
 			so.status, so.customer, soi.item_code,so.branch,
 			DATEDIFF(CURDATE(), soi.delivery_date) as delay_days,
 			IF(so.status in ('Completed','To Bill'), 0, (SELECT delay_days)) as delay,
@@ -129,7 +129,7 @@ def prepare_data(data, filters):
 				so_row["delay"] = min(so_row["delay"], row["delay"])
 
 				# sum numeric columns
-				fields = ["qty", "delivered_qty", "pending_qty", "billed_qty", "qty_to_bill", "amount",
+				fields = ["qty", "delivered_qty", "pending_qty", "billed_qty", "qty_to_bill","rate", "amount",
 					"delivered_qty_amount", "billed_amount", "pending_amount"]
 				for field in fields:
 					so_row[field] = flt(row[field]) + flt(so_row[field])
@@ -244,6 +244,13 @@ def get_columns(filters):
 			"fieldtype": "Float",
 			"width": 80,
 			"convertible": "qty"
+		},
+		{
+			"label": _("Rate"),
+			"fieldname": "rate",
+			"fieldtype": "Float",
+			"width": 80,
+			
 		},
 		{
 			"label": _("Amount"),
