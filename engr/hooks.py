@@ -34,6 +34,7 @@ doctype_js = {
 	"Customer":"public/js/doctype_js/customer.js",
 	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
 	"Communication":"public/js/doctype_js/communication.js",
+	"Quotation":"public/js/doctype_js/quotation.js",
 }	
 
 override_doctype_dashboards = {
@@ -82,7 +83,7 @@ doc_events = {
 	"Salary Slip":{
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
 	},
-	
+		
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
@@ -210,3 +211,21 @@ item_group_wise_sales_target_variance.get_data_column = get_data_column
 from erpnext.selling.report.sales_person_target_variance_based_on_item_group import sales_person_target_variance_based_on_item_group
 from engr.engineering.report.sales_person_target_variance_based_on_item_group import execute
 sales_person_target_variance_based_on_item_group.execute = execute
+
+
+from erpnext.selling.doctype.quotation import quotation
+from engr.engineering.doc_events.quotation import _make_sales_order
+quotation._make_sales_order = _make_sales_order
+
+from erpnext.selling.doctype.sales_order import sales_order
+from engr.engineering.doc_events.sales_order import make_sales_invoice
+sales_order.make_sales_invoice = make_sales_invoice
+
+from erpnext.selling.doctype.customer import customer
+from engr.engineering.doc_events.customer import make_quotation
+customer.make_quotation = make_quotation
+
+from erpnext.selling.doctype.quotation import quotation_dashboard
+from engr.api import get_data 
+quotation_dashboard.get_data = get_data
+

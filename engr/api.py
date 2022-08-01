@@ -196,3 +196,29 @@ def send_sales_invoice_mails():
 		except:
 			frappe.log_error("Mail Sending Issue", frappe.get_traceback())
 			continue
+
+
+
+
+def get_data():
+	return {
+		'fieldname': 'prevdoc_docname',
+		'non_standard_fieldnames': {
+			'Auto Repeat': 'reference_document',
+			'Work Order Master':'quotation_no'
+		},
+		'transactions': [
+			{
+				'label': _('Sales Order'),
+				'items': ['Sales Order']
+			},
+			{
+				'label': _('Subscription'),
+				'items': ['Auto Repeat']
+			},
+			{
+				'label': _('WOM'),
+				'items': ['Work Order Master']
+			},
+		]
+	}

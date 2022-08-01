@@ -21,14 +21,24 @@ class ProformaInvoice(Document):
 			self.payment_due_amount = flt(self.rounded_total) * self.payment_percentage / 100
 		for item in self.items:
 			item.payment_amount = flt(item.net_amount) * self.payment_percentage / 100
-		validate_sales_person(self)
+		validate_sales_person(self)    
 
 	def on_submit(self):
+		self.db_set('submitted_by', frappe.session.user)
 		if self.payment_percentage == 0:
 			frappe.throw("Please Enter Payment Percentage")
 		update_proforma_details(self.name,"submit")
 		set_status(self)
+		if(self.job_id):
+			frappe.db.set_value("Work Order Master",self.work_order_master_ref ,"proforma_invoice",self.name)
+		
+	def before_save(self):
+		if(self.job_id):
+			Wom=frappe.db.exists("Work Order Master",{"job_id":self.job_id})
+			self.work_order_master_ref = Wom
+		
 
+	
 	def on_cancel(self):
 		update_proforma_details(self.name,"cancel")
 
@@ -58,6 +68,7 @@ def create_proforma_invoice(source_name, target_doc=None):
 			"doctype": "Proforma Invoice",
 			"field_map": {
 				"company": "company",
+				"name" : "sales_order"
 			},
 			"field_no_map":{
 				"naming_series",

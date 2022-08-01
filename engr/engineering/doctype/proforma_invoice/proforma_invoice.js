@@ -3,6 +3,7 @@
 {% include 'engr/public/js/sales_common.js' %}
 
 frappe.ui.form.on('Proforma Invoice', {
+	
 	onload: function(frm) {
 		if (!frm.doc.transaction_date && frm.doc.docstatus ==0){
 			frm.set_value('transaction_date', frappe.datetime.get_today())
@@ -66,6 +67,21 @@ frappe.ui.form.on('Proforma Invoice', {
 				})
 			}
         }
+		if (frm.doc.company) {
+			frappe.call({
+				method: "erpnext.setup.doctype.company.company.get_default_company_address",
+				args: {name:frm.doc.company, existing_address: frm.doc.company_address || ""},
+				debounce: 2000,
+				callback: function(r){
+					if (r.message){
+						frm.set_value("company_address",r.message)
+					}
+					else {
+						frm.set_value("company_address","")
+					}
+				}
+			})
+		}
 	},
 
 	payment_percentage: function(frm){

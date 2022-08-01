@@ -1,15 +1,16 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "WOM-.{date}.-.##",
  "creation": "2022-04-22 10:14:55.865904",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "naming_series",
+  "wom_name",
   "name_on_the_test_report",
   "customer_name",
+  "contact_person",
   "customer_address",
   "address",
   "name_of_site",
@@ -21,14 +22,22 @@
   "mobile_no",
   "office_number",
   "test_report",
-  "sales_partner",
+  "referred_by",
   "type_of_work",
+  "branch",
+  "for_customer_section",
+  "to_customer",
+  "section_break_17",
+  "ref_letter",
+  "column_break_19",
+  "po_site_details",
   "section_break_13",
   "item_master",
   "section_break_19",
   "intends_information_action",
   "testing_activities",
   "conformity_statement_in_the_test_report",
+  "decision",
   "for_office_use_section",
   "job_id",
   "customer_id",
@@ -36,6 +45,7 @@
   "column_break_15",
   "proforma_invoice",
   "tax_invoice_no",
+  "quotation_no",
   "mode_of_payment",
   "section_break_22",
   "dose_sample",
@@ -50,18 +60,25 @@
   "intimate",
   "request",
   "difference",
+  "pertinent",
   "section_break_34",
-  "details_of_sample"
+  "details_of_sample",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "name_on_the_test_report",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Name On The Test Report "
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "customer_name",
    "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "customer Name",
    "options": "Customer"
   },
@@ -76,7 +93,6 @@
    "label": "Location Of Site"
   },
   {
-   "fetch_from": "customer_name.email_id",
    "fieldname": "email_id",
    "fieldtype": "Data",
    "label": "Email Id"
@@ -92,7 +108,6 @@
    "options": "Yes\nNo"
   },
   {
-   "fetch_from": "customer_name.mobile_no",
    "fieldname": "mobile_no",
    "fieldtype": "Data",
    "label": "Mobile Number"
@@ -107,11 +122,6 @@
    "fieldtype": "Select",
    "label": "Test Report Required With NABL Symbol ",
    "options": "Yes\nNo"
-  },
-  {
-   "fieldname": "sales_partner",
-   "fieldtype": "Data",
-   "label": "Referred By"
   },
   {
    "description": "Test to be conducted",
@@ -133,7 +143,8 @@
    "fieldtype": "Data",
    "label": "Job Id",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "unique": 1
   },
   {
    "fieldname": "customer_id",
@@ -152,13 +163,15 @@
   {
    "fieldname": "proforma_invoice",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Proforma Invoice",
    "options": "Proforma Invoice"
   },
   {
    "fieldname": "tax_invoice_no",
-   "fieldtype": "Data",
-   "label": "Tax Invoice No"
+   "fieldtype": "Link",
+   "label": "Tax Invoice No",
+   "options": "Sales Invoice"
   },
   {
    "fieldname": "mode_of_payment",
@@ -171,22 +184,22 @@
    "fieldtype": "Section Break"
   },
   {
-   "default": "0",
    "fieldname": "dose_sample",
-   "fieldtype": "Check",
-   "label": "Does sample have sufficient quantity?"
+   "fieldtype": "Select",
+   "label": "Does sample have sufficient quantity?",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
-   "default": "0",
    "fieldname": "dose_sample_have",
-   "fieldtype": "Check",
-   "label": "Does sample have identification/label?"
+   "fieldtype": "Select",
+   "label": "Does sample have identification/label?",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
-   "default": "0",
    "fieldname": "does_sample_is",
-   "fieldtype": "Check",
-   "label": "Does sample is sealed properly?"
+   "fieldtype": "Select",
+   "label": "Does sample is sealed properly?",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
    "fieldname": "sample_condition",
@@ -206,22 +219,22 @@
    "label": "Review Requirement"
   },
   {
-   "default": "0",
    "fieldname": "the_requirements",
-   "fieldtype": "Check",
-   "label": "The requirements, including the test methods to be used are adequately defined, documented, and understood by laboratory"
+   "fieldtype": "Select",
+   "label": "The requirements, including the test methods to be used are adequately defined, documented, and understood by laboratory",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
-   "default": "0",
    "fieldname": "the_laboratory",
-   "fieldtype": "Check",
-   "label": "The laboratory has the capability and resources to meet the requirements"
+   "fieldtype": "Select",
+   "label": "The laboratory has the capability and resources to meet the requirements",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
-   "default": "0",
    "fieldname": "the_appropriate",
-   "fieldtype": "Check",
-   "label": "The appropriate test method is selected and is capable of meeting the customer\u2019s requirements"
+   "fieldtype": "Select",
+   "label": "The appropriate test method is selected and is capable of meeting the customer\u2019s requirements",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
    "fieldname": "intimate",
@@ -233,7 +246,7 @@
    "fieldname": "request",
    "fieldtype": "Select",
    "label": "Request / Contract review process repeated as amendment is received after work has commenced and the amendment has been communicated to lab ",
-   "options": "Acceptable\nNot Acceptable"
+   "options": "Applicable\nNot Applicable"
   },
   {
    "fieldname": "difference",
@@ -272,41 +285,124 @@
   {
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Date"
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Date",
+   "reqd": 1
   },
   {
-   "default": "0",
    "fieldname": "intends_information_action",
-   "fieldtype": "Check",
-   "label": "Information provided by you are intends to place in the public domain by testing laboratory, are you agree?"
+   "fieldtype": "Select",
+   "label": "Information provided by you are intends to place in the public domain by testing laboratory, are you agree?",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
-   "default": "0",
    "fieldname": "testing_activities",
-   "fieldtype": "Check",
-   "label": "In case of the testing laboratory subcontracting of testing activities to competent subcontractor, do you agree?"
+   "fieldtype": "Select",
+   "label": "In case of the testing laboratory subcontracting of testing activities to competent subcontractor, do you agree?",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
-   "default": "0",
    "fieldname": "conformity_statement_in_the_test_report",
-   "fieldtype": "Check",
-   "label": "Do you want to incorporate the conformity statement in the test Report?"
+   "fieldtype": "Select",
+   "label": "Do you want to incorporate the conformity statement in the test Report?",
+   "options": "Yes\nNo\nNot Applicable"
   },
   {
    "fieldname": "section_break_19",
    "fieldtype": "Section Break"
   },
   {
-   "default": "WOM-.YY.MM.DD.##",
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Series",
-   "options": "WOM-.YY.MM.DD.##"
+   "fieldname": "wom_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Wom Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "customer.ref_letter",
+   "fieldname": "ref_letter",
+   "fieldtype": "Small Text",
+   "label": "Ref Letter"
+  },
+  {
+   "fieldname": "column_break_19",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "customer.po_site_details",
+   "fieldname": "po_site_details",
+   "fieldtype": "Small Text",
+   "label": "Po Site Details"
+  },
+  {
+   "fieldname": "referred_by",
+   "fieldtype": "Data",
+   "label": "Referred By"
+  },
+  {
+   "description": "Pertinent discussions with customer relating to the customer\u2019s requirements or the result of the work during the period of execution of the request / contract, if any:",
+   "fieldname": "pertinent",
+   "fieldtype": "Data",
+   "label": "Pertinent Discussions"
+  },
+  {
+   "fieldname": "decision",
+   "fieldtype": "Data",
+   "label": "If Yes, Decision rule to be applied & mentioned in the test report."
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Work Order Master",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "for_customer_section",
+   "fieldtype": "Section Break",
+   "label": "For Customer"
+  },
+  {
+   "default": "Sir, kindly conduct the test for the following material . Details of the material is as below",
+   "fieldname": "to_customer",
+   "fieldtype": "Small Text",
+   "label": "To Customer"
+  },
+  {
+   "fieldname": "quotation_no",
+   "fieldtype": "Data",
+   "label": "Quotation No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contact_person",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Contact Person",
+   "options": "Contact"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Branch",
+   "options": "Branch"
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2022-05-04 17:34:05.457982",
+ "modified": "2022-07-27 11:55:04.528948",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",

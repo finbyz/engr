@@ -10,9 +10,21 @@ from frappe.model.naming import make_autoname
 
 class WorkOrderMaster(Document):
 	def validate(self):
-		self.job_id = self.name.replace("WOM-" + datetime.date.today().strftime('%y'), '')
+		date=datetime.date.today()
+		self.job_id = self.name[9:]
+		date_list = []
 		for row in self.item_master:
 			row.job_id = self.job_id
+			date_list.append(row.expected_date)
+		
+		self.date_of_test_report = max(date_list)
+
+		if(self.tax_invoice_no):
+			frappe.db.set_value("Sales Invoice",self.tax_invoice_no ,"job_id" , self.job_id)
+
+# def item_autoname(self, method):
+# 	date=datetime.date.today()
+# 	self.barcode = make_autoname("SR{}{}{}".format(date.year,date.month,date.day)+".#####")
 
 @frappe.whitelist()
 def make_WOM(source_name, target_doc=None):	
@@ -22,10 +34,12 @@ def make_WOM(source_name, target_doc=None):
 				"field_map": {
 					"name":"sales_order",
 					"customer_name": "customer_name",
-					"sales_partner": "sales_partner",
+					"sales_partner": "referred_by",
 					"contact_mobile":"mobile_no",
 					'address_display':"address",
 					"contact_email":"email_id",
+					"po_no":"ref_letter",
+					"po_site_details":"po_site_details",
 					},
 				},
 				"Sales Order Item": {
@@ -42,3 +56,100 @@ def make_WOM(source_name, target_doc=None):
 
 	return doclist
 
+# @frappe.whitelist()
+# def get_semple_details(self):
+# 	return frappe.db.get_value("item" ,self.item_code , "sample_details")
+
+@frappe.whitelist()
+def make_sales_invoice(source_name, target_doc=None):	
+	doclist = get_mapped_doc("Work Order Master", source_name, {
+			"Work Order Master":{
+				"doctype": "Sales Invoice",
+				"field_map": {
+					"name":"Work Order Master",
+					"customer_name": "customer",
+					"ref_letter":"po_no",
+					"po_site_details":"po_site_details",
+					"job_id":"job_id",
+					"description":"description",
+					},
+				},
+				"Work Order Master Item": {
+					"doctype": "Sales Invoice Item",
+					"field_map":  {
+						"name": "Work Order Master Item",
+						"parent": "sales_invoice",
+						"item_code": "item_code",
+						"item_name": "item_name",
+						"sample_quantity":"qty"
+						
+					}
+			    }
+	}, target_doc)
+
+	return doclist
+
+@frappe.whitelist()
+def make_proforma_invoice(source_name, target_doc=None):	
+	doclist = get_mapped_doc("Work Order Master", source_name, {
+			"Work Order Master":{
+				"doctype": "Proforma Invoice",
+				"field_map": {
+					"name":"Work Order Master",
+					"customer_name": "customer",
+					"job_id":"job_id",
+					"description":"description",
+					"ref_letter":"po_no",
+					"po_site_details":"po_site_details",
+					'work_order_master_ref':'name'
+					
+
+					},
+				},
+				"Work Order Master Item": {
+					"doctype": "Proforma Invoice Item",
+					"field_map":  {
+						"name": "Work Order Master Item",
+						"parent": "Proforma Invoice",
+						"item_code": "item_code",
+						"item_name": "item_name",
+						"sample_quantity":"qty",
+						
+						
+					}
+			    }
+	}, target_doc)
+
+	return doclist
+
+@frappe.whitelist()
+def make_sales_order(source_name, target_doc=None):	
+	doclist = get_mapped_doc("Work Order Master", source_name, {
+			"Work Order Master":{
+				"doctype": "Sales Order",
+				"field_map": {
+					"name":"Work Order Master",
+					"customer_name": "customer",
+					"job_id":"job_id",
+					"description":"description",
+					"ref_letter":"po_no",
+					"po_site_details":"po_site_details",
+					"job_id" : "job_id",
+					"name" : "work_order_master_ref"
+
+					},
+				},
+				"Work Order Master Item": {
+					"doctype": "Sales Order Item",
+					"field_map":  {
+						"name": "Work Order Master Item",
+						"parent": "Sales Order",
+						"item_code": "item_code",
+						"item_name": "item_name",
+						"sample_quantity":"qty"
+						
+					}
+			    }
+	}, target_doc)
+
+	return doclist

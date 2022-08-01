@@ -7,7 +7,19 @@ frappe.ui.form.on('Sales Order', {
             method: "engr.engineering.doctype.proforma_invoice.proforma_invoice.create_proforma_invoice",
             frm: frm
         })
-    }
+    },
+	customer : function(frm){
+		if (frm.doc.customer){
+			frappe.db.get_value("Customer", frm.doc.customer, "customer_type", function(r){
+				if (r.customer_type == "Individual"){
+					frm.set_df_property("tan_no", "reqd", 1);
+				}
+				else{
+					frm.set_df_property("tan_no", "reqd", 0);
+				}
+			})
+		}
+	}
 })
 frappe.ui.form.on('Sales Order Item', {
 	last_5_transaction: function(frm, cdt, cdn){

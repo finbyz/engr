@@ -16,6 +16,8 @@
   "customer_name",
   "order_type",
   "skip_delivery_note",
+  "job_id",
+  "work_order_master_ref",
   "column_break1",
   "amended_from",
   "company",
@@ -23,6 +25,8 @@
   "delivery_date",
   "po_no",
   "po_date",
+  "branch",
+  "sales_order",
   "tax_id",
   "contact_info",
   "customer_address",
@@ -52,6 +56,7 @@
   "set_warehouse",
   "items_section",
   "scan_barcode",
+  "discount",
   "items",
   "pricing_rule_details",
   "pricing_rules",
@@ -152,7 +157,8 @@
   "auto_repeat",
   "update_auto_repeat_reference",
   "fiscal",
-  "company_series"
+  "company_series",
+  "submitted_by"
  ],
  "fields": [
   {
@@ -1310,6 +1316,45 @@
    "fieldname": "allow_over_billing_payment",
    "fieldtype": "Check",
    "label": "Allow Over Billing Payment"
+  },
+  {
+   "fieldname": "submitted_by",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Submitted By",
+   "report_hide": 1,
+   "translatable": 1
+  },
+  {
+   "fieldname": "job_id",
+   "fieldtype": "Data",
+   "label": "Job Id Number",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "discount",
+   "fieldtype": "Check",
+   "label": "Discount in Print"
+  },
+  {
+   "fieldname": "work_order_master_ref",
+   "fieldtype": "Data",
+   "label": "Work Order Master Ref",
+   "read_only": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Data",
+   "label": "Sales Order",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
@@ -1317,7 +1362,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-03-30 12:30:34.196784",
+ "modified": "2022-07-12 14:43:59.319060",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Proforma Invoice",
