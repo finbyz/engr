@@ -14,12 +14,14 @@ from erpnext.stock.doctype.delivery_note.delivery_note import DeliveryNote
 from erpnext.stock.doctype.item.item import get_item_defaults
 from frappe.contacts.doctype.address.address import get_company_address
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
+from engr.engineering.doc_events.sales_order import update_sales_order_pending_qty
 
 def validate(self, method):
 	update_proforma_details(self)
 
 def on_submit(self, method):
 	create_purchase_receipt(self)
+	update_sales_order_pending_qty(self, method)
 
 def update_proforma_details(self):
 	# Update Last Proforma Details
@@ -210,6 +212,7 @@ def create_purchase_receipt(self):
 
 def on_cancel(self, method):
 	cancel_all(self)	
+	update_sales_order_pending_qty(self, method)
 	# update_packages(self, method)
 	# cancel_pallet_stock_entry(self)
 	# for item in self.items:

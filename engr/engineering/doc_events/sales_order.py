@@ -154,6 +154,7 @@ def validate_item_group(self):
     for row in self.items:
         if row.item_group=="GENERIC ITEM":
             frappe.throw("Row: {} has item of GENERIC ITEM group.".format(frappe.bold(row.idx)))
+
 def pending_qty(self,method):
     for row in self.items:
         if(row.qty):
@@ -162,4 +163,15 @@ def pending_qty(self,method):
 def validate(self,method):
     validate_sales_person(self)
     validate_item_group(self)
+    update_pending_delivery_qty(self)
+
+def update_sales_order_pending_qty(self,method):
+    for each in self.items:
+        if each.against_sales_order:
+            so_doc = frappe.get_doc("Sales Order",each.against_sales_order)
+            pending_qty(so_doc,method)
+
+def update_pending_delivery_qty(self):
+    for each in self.items:
+        each.pending_delivered_qty = each.qty - (each.delivered_qty or 0)
 
