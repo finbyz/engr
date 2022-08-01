@@ -170,7 +170,7 @@ def get_items(self):
 def add_additional_cost(stock_entry,self,qty=None):
 	abbr = frappe.db.get_value("Company",self.company,'abbr')
 	bom = frappe.get_doc("BOM",self.bom_no)
-	for additional_cost in bom.additional_cost:
+	for additional_cost in bom.get('additional_cost'):
 		if additional_cost.uom == "FG QTY":
 			stock_entry.append("additional_costs",{
 				'expense_account': 'Expenses Included In Valuation - {}'.format(abbr),
@@ -266,8 +266,8 @@ def get_transfered_raw_materials(self):
 							qty =0
 						else:
 							qty = (req_qty_each * flt(self.fg_completed_qty)) - remaining_qty
-				# else:
-				# 	qty = req_qty_each * flt(self.fg_completed_qty)
+				else:
+					qty = req_qty_each * flt(self.fg_completed_qty)
 
 
 		elif backflushed_materials.get(item.item_code):

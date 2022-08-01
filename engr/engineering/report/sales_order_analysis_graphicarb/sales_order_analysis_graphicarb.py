@@ -89,11 +89,14 @@ def get_data(conditions, filters):
 			`tabSales Order Item` soi
 		LEFT JOIN `tabSales Invoice Item` sii
 			ON sii.so_detail = soi.name and sii.docstatus = 1
+		left join `tabSales Invoice` si
+            on sii.parent=si.name and si.docstatus = 1
 		WHERE
 			soi.parent = so.name
 			and so.status not in ('Stopped', 'Closed', 'On Hold')
 			and so.docstatus = 1
 			{conditions}
+			and (si.is_return = 0 or (si.is_return = 1 and si.update_stock = 1))
 		GROUP BY soi.name
 		ORDER BY so.transaction_date ASC, soi.item_code ASC
 	""".format(conditions=conditions), filters, as_dict=1)
