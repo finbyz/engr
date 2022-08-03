@@ -34,12 +34,13 @@ def get_data(filters,columns):
 	sales_item_dict = {}
 	columns_list = []
 	new_data = []
+	item_group_default={}
 	for row in doc_query:
 		if row.item_group not in columns_list:
 			columns_list.append(row.item_group)
+			item_group_default.update({row.item_group:0.0})
 			columns += [{"label": _(row.item_group), "fieldname": row.item_group, "fieldtype": "Currency", "width": 120},]
 		row[row.item_group] = row.net_amount
-
 		sales_item_dict.setdefault(row.sales_person,{}).setdefault(row.item_group,frappe._dict({
 			"net_amount":0.0
 		}))
@@ -52,6 +53,7 @@ def get_data(filters,columns):
 	for key, value in sales_item_dict.items():
 		total_net_amount = 0
 		dct = frappe._dict({'sales_person':key})
+		dct.update(item_group_default)
 		for k,v in value.items():
 			total_net_amount += v.net_amount
 			dct.update({'total_net_amount':total_net_amount,k:v.net_amount})

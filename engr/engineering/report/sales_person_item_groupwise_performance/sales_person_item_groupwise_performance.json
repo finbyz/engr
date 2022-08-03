@@ -1,14 +1,16 @@
 {
  "add_total_row": 1,
+ "columns": [],
  "creation": "2021-08-16 10:02:55.472293",
  "disable_prepared_report": 0,
  "disabled": 0,
  "docstatus": 0,
  "doctype": "Report",
+ "filters": [],
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "P.K. SALES AUTOMATIONS PVT. LTD.",
- "modified": "2021-08-16 10:02:55.472293",
+ "modified": "2022-07-21 10:34:34.320680",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Sales Person Item Groupwise Performance",
@@ -20,9 +22,6 @@
  "roles": [
   {
    "role": "Sales Manager"
-  },
-  {
-   "role": "Sales User"
   },
   {
    "role": "Sales Master Manager"

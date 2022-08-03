@@ -49,7 +49,7 @@ def get_data(filters):
 	where_clause += " and co.creation between '%s 00:00:00' and '%s 23:59:59' " % (filters.from_date, filters.to_date)
 
 	if not filters.doctype:
-		ref_doctypes = ["'Lead'", "'Customer'", "'Quotation'", "'Opportunity'", "'Sales Order'", "'Sales Invoice'", "'Delivery Note'"]
+		ref_doctypes = ["'Lead'", "'Customer'", "'Quotation'", "'Opportunity'", "'Sales Order'", "'Sales Invoice'", "'Delivery Note'","'Proforma Invoice'"]
 	else:
 		ref_doctypes = ["'"+filters.doctype+"'"]
 		

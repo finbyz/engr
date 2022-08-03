@@ -335,6 +335,7 @@ def make_inter_company_transaction(self, target_doc=None):
 		target_doc.income_account = doc.default_income_account
 		target_doc.expense_account = doc.default_expense_account
 		target_doc.cost_center = source_doc.cost_center.replace(source_company_abbr,target_company_abbr)
+		target_doc.warehouse = source_doc.warehouse.replace(source_company_abbr,target_company_abbr)
 	
 	def post_process(source,target):
 		target_company_abbr = frappe.db.get_value("Company",source.company , "abbr")

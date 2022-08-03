@@ -38,6 +38,7 @@ doctype_js = {
 
 override_doctype_dashboards = {
 	"Sales Order": "engr.engineering.dashboard.sales_order.get_data",
+	"Customer": "engr.engineering.dashboard.customer.get_data",
 }
 
 doc_events = {
@@ -79,6 +80,9 @@ doc_events = {
 	},
 	"Salary Slip":{
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
+	},
+	"Opportunity":{
+		"validate":"engr.engineering.doc_events.opportunity.validate"
 	}
 }
 # include js, css files in header of web template

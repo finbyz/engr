@@ -20,7 +20,7 @@ frappe.query_reports["Sales Comments"] = {
 			fieldname: "doctype",
 			label: __("DocType"),
 			fieldtype: "Select",
-			options: "\nLead\nCustomer\nQuotation\nOpportunity\nSales Invoice\nSales Order\nDelivery Note"
+			options: "\nLead\nCustomer\nQuotation\nOpportunity\nSales Invoice\nSales Order\nProforma Invoice\nDelivery Note"
 		},
 		{
 			fieldname: "user",
