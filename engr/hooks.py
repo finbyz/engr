@@ -83,6 +83,9 @@ doc_events = {
 	"Salary Slip":{
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
 	},
+	"Quotation":{
+		"validate":"engr.engineering.doc_events.quotation.validate"
+	},
 		
 }
 # include js, css files in header of web template

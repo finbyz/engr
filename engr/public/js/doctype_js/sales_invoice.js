@@ -8,9 +8,26 @@ cur_frm.fields_dict.set_target_warehouse.get_query = function (doc) {
 };
 frappe.ui.form.on('Sales Invoice', {
 	refresh:function(frm){
+        if(frm.doc.branch == "Nasik"){
+            frm.set_value("branch_name","NK")
+        }
 	    frm.ignore_doctypes_on_cancel_all = ["Delivery Note"]
+        if(frm.doc.__islocal){
+            frm.set_value("branch_name","")
+        }
 	},
+    branch:function(frm){
+        if(frm.doc.branch == "Nasik"){
+            frm.set_value("branch_name","NK")
+        }
+        if(frm.doc.branch == "Aurangabad"){
+            frm.set_value("branch_name","AU")
+        }
+    },
 	onload: function(frm) {
+        if(frm.doc.branch == "Nasik"){
+            frm.set_value("branch_name","NK")
+        }
         frm.ignore_doctypes_on_cancel_all = ["Delivery Note"]
 		if(frm.doc.company){
             if (!frm.doc.bank_account){
@@ -18,6 +35,9 @@ frappe.ui.form.on('Sales Invoice', {
                     frm.set_value("bank_account",r.name);
                 })
             }
+        }
+        if(frm.doc.__islocal){
+            frm.set_value("branch_name","")
         }
 	},
     company: function(frm) {

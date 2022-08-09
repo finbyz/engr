@@ -31,7 +31,8 @@ def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 				"doctype": "Sales Order",
 				"field_map": {
 					"ref_letter": "ref_letter",
-					"po_site_details":"po_site_details"
+					"po_site_details":"po_site_details",
+					'project':'project'
 				},
 				"validation": {
 					"docstatus": ["=", 1]
@@ -121,7 +122,8 @@ def make_WOM(source_name, target_doc=None):
 					"po_site_details":"po_site_details",
 					'contact_mobile':'mobile_no',
 					'contact_email':'email_id',
-					'name':'quotation_no'
+					'name':'quotation_no',
+					'project':'project'
 					},
 				},
 				"Quotation Item": {
@@ -138,3 +140,9 @@ def make_WOM(source_name, target_doc=None):
 	}, target_doc)
 
 	return doclist
+
+def validate(self,method):
+	if(self.branch == 'Nasik'):
+		self.branch_name = 'NK'
+	if(self.branch == 'Aurangabad'):
+		self.branch_name = 'AU'

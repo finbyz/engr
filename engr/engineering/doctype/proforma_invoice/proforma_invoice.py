@@ -68,7 +68,8 @@ def create_proforma_invoice(source_name, target_doc=None):
 			"doctype": "Proforma Invoice",
 			"field_map": {
 				"company": "company",
-				"name" : "sales_order"
+				"name" : "sales_order",
+				"project":"project",
 			},
 			"field_no_map":{
 				"naming_series",

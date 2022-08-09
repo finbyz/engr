@@ -22,6 +22,10 @@ class WorkOrderMaster(Document):
 		if(self.tax_invoice_no):
 			frappe.db.set_value("Sales Invoice",self.tax_invoice_no ,"job_id" , self.job_id)
 
+		if(self.branch == 'Nasik'):
+			self.branch_name = 'NK'
+		if(self.branch == 'Aurangabad'):
+			self.branch_name = 'AU'
 # def item_autoname(self, method):
 # 	date=datetime.date.today()
 # 	self.barcode = make_autoname("SR{}{}{}".format(date.year,date.month,date.day)+".#####")
@@ -40,6 +44,7 @@ def make_WOM(source_name, target_doc=None):
 					"contact_email":"email_id",
 					"po_no":"ref_letter",
 					"po_site_details":"po_site_details",
+					'project':"project"
 					},
 				},
 				"Sales Order Item": {

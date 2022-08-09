@@ -149,6 +149,10 @@ def validate(self,method):
 	validate_hsn_code(self)
 	validate_sales_person(self)
 	update_proforma_details(self)
+	if(self.branch == 'Nasik'):
+		self.branch_name = 'NK'
+	if(self.branch == 'Aurangabad'):
+		self.branch_name = 'AU'
 
 def validate_hsn_code(self):
 	for row in self.items:
