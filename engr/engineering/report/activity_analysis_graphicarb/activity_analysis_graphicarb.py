@@ -32,6 +32,8 @@ def get_columns_details():
 		{ "label": _("Created By"),"fieldname": "Created By","fieldtype": "Link","options":"User","width": 150},
 		{ "label": _("Title"),"fieldname": "Title","fieldtype": "Data","width": 110},
 		{ "label": _("Item Name"),"fieldname": "Item Name","fieldtype": "Data","width": 180},
+		{ "label": _("Qty"),"fieldname": "qty","fieldtype": "float","width": 140},
+		{ "label": _("Payment Type"),"fieldname": "payment_type","fieldtype": "Select","width": 140},
 		{ "label": _("Amount"),"fieldname": "Amount","fieldtype": "Currency","width": 150}
 	]
 	return columns
@@ -57,7 +59,7 @@ def get_data_details(filters):
 	data = []
 	for idx,doc in enumerate(doctype):
 		if doc == "Payment Entry":
-			other_fields = "party_name as 'Item Name', paid_amount as 'Amount',"
+			other_fields = "party_name as 'Item Name', paid_amount as 'Amount', payment_type as 'payment_type',"
 		else:
 			other_fields = ''
 		title_field = frappe.db.get_value("Property Setter",{"doc_type":doc,"property":'title_field'},'value')
@@ -102,21 +104,32 @@ def get_data_details(filters):
 	return data
 
 def insert_items(data, row, doc, id):
-	items = frappe.db.sql("""
-		SELECT
-			item_code as 'Item Name', amount as 'Amount', owner as 'Owner'
-		FROM
-			`tab{0}`
-		WHERE
-			parent = "{1}" """.format(doc, row['ID']), as_dict=1)
+	if doc == "Payment Entry":
+		items = frappe.db.sql("""
+			SELECT
+				item_code as 'Item Name', amount as 'Amount', owner as 'Owner',payment_type as 'payment_type'
+			FROM
+				`tab{0}`
+			WHERE
+				parent = "{1}" """.format(doc, row['ID']), as_dict=1)
+	else:
+		items = frappe.db.sql("""
+			SELECT
+				item_code as 'Item Name', amount as 'Amount', owner as 'Owner',qty as 'qty'
+			FROM
+				`tab{0}`
+			WHERE
+				parent = "{1}" """.format(doc, row['ID']), as_dict=1)
 
 	if items:
 		row["Item Name"] = items[0]["Item Name"]
 		row["Amount"] = items[0]["Amount"]
 		row["Owner"] = get_user_fullname(items[0]["Owner"])
+		row['qty'] = items[0]['qty']
+		
 
 	for i in items[1:]:
-		data.insert(id, {'Item Name': i['Item Name'], 'Amount': i["Amount"], 'Owner': get_user_fullname(i["Owner"])})
+		data.insert(id, {'Item Name': i['Item Name'], 'Amount': i["Amount"],'qty': i["qty"], 'Owner': get_user_fullname(i["Owner"])})
 		id +=1
 
 	return id
