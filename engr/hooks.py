@@ -98,6 +98,8 @@ doc_events = {
 		"on_cancel":"engr.engineering.doc_events.purchase_order.on_cancel",
 		"on_trash":"engr.engineering.doc_events.purchase_order.on_trash",
 		"on_update":"engr.engineering.doc_events.purchase_order.pending_qty",
+
+
 	},
 	"Purchase Receipt":{
 		"before_validate":"engr.engineering.doc_events.purchase_receipt.before_validate"
@@ -279,3 +281,6 @@ from erpnext.manufacturing.doctype.production_plan.production_plan import Produc
 from engr.engineering.doc_events.production_plan import make_work_order
 ProductionPlan.make_work_order = make_work_order
 
+# from erpnext.manufacturing.doctype.production_plan.production_plan import ProductionPlan
+# from engr.engineering.doc_events.production_plan import make_work_order_for_subassembly_items
+# ProductionPlan.make_work_order_for_subassembly_items = make_work_order_for_subassembly_items
