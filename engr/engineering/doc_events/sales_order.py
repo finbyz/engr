@@ -28,7 +28,11 @@ def update_proforma_details(docname,action):
                     and pi.name != '{}' and pi.docstatus=1
                 """.format(item.sales_order,item.sales_order_item,doc.name))
  
-                sales_order_list.append(item.sales_order)
+                if item.sales_order:
+                    sales_order_list.append(item.sales_order)
+                else:
+                    frappe.throw(f"Row {item.idx}:Please create Proforma Invoice from Sales Order")
+
 
                 update_value = False
                 if proforma_query:

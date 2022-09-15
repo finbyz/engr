@@ -90,13 +90,12 @@ def get_data(conditions, filters):
 		LEFT JOIN `tabSales Invoice Item` sii
 			ON sii.so_detail = soi.name and sii.docstatus = 1
 		left join `tabSales Invoice` si
-            on sii.parent=si.name and si.docstatus = 1
+            on sii.parent=si.name and si.docstatus = 1 and (si.is_return = 0 or (si.is_return = 1 and si.update_stock = 1))
 		WHERE
 			soi.parent = so.name
 			and so.status not in ('Stopped', 'Closed', 'On Hold')
 			and so.docstatus = 1
 			{conditions}
-			and (si.is_return = 0 or (si.is_return = 1 and si.update_stock = 1))
 		GROUP BY soi.name
 		ORDER BY so.transaction_date ASC, soi.item_code ASC
 	""".format(conditions=conditions), filters, as_dict=1)
@@ -234,20 +233,20 @@ def get_columns(filters):
 			"width": 120,
 			"convertible": "qty"
 		},
-		{
-			"label": _("Billed Qty"),
-			"fieldname": "billed_qty",
-			"fieldtype": "Float",
-			"width": 80,
-			"convertible": "qty"
-		},
-		{
-			"label": _("Qty to Bill"),
-			"fieldname": "qty_to_bill",
-			"fieldtype": "Float",
-			"width": 80,
-			"convertible": "qty"
-		},
+		# {
+		# 	"label": _("Billed Qty"),
+		# 	"fieldname": "billed_qty",
+		# 	"fieldtype": "Float",
+		# 	"width": 80,
+		# 	"convertible": "qty"
+		# },
+		# {
+		# 	"label": _("Qty to Bill"),
+		# 	"fieldname": "qty_to_bill",
+		# 	"fieldtype": "Float",
+		# 	"width": 80,
+		# 	"convertible": "qty"
+		# },
 		{
 			"label": _("Rate"),
 			"fieldname": "rate",
@@ -263,22 +262,23 @@ def get_columns(filters):
 			"options": "Company:company:default_currency",
 			"convertible": "rate"
 		},
-		{
-			"label": _("Billed Amount"),
-			"fieldname": "billed_amount",
-			"fieldtype": "Currency",
-			"width": 110,
-			"options": "Company:company:default_currency",
-			"convertible": "rate"
-		},
-		{
-			"label": _("Pending Amount"),
-			"fieldname": "pending_amount",
-			"fieldtype": "Currency",
-			"width": 130,
-			"options": "Company:company:default_currency",
-			"convertible": "rate"
-		},
+		 #both comment is clint requirement
+		# {
+		# 	"label": _("Billed Amount"),
+		# 	"fieldname": "billed_amount",
+		# 	"fieldtype": "Currency",
+		# 	"width": 110,
+		# 	"options": "Company:company:default_currency",
+		# 	"convertible": "rate"
+		# },
+		# {
+		# 	"label": _("Pending Amount"),
+		# 	"fieldname": "pending_amount",
+		# 	"fieldtype": "Currency",
+		# 	"width": 130,
+		# 	"options": "Company:company:default_currency",
+		# 	"convertible": "rate"
+		# },
 		{
 			"label": _("Amount Delivered"),
 			"fieldname": "delivered_qty_amount",

@@ -60,7 +60,9 @@ def get_data_details(filters):
 	for idx,doc in enumerate(doctype):
 		if doc == "Payment Entry":
 			other_fields = "party_name as 'Item Name', paid_amount as 'Amount', payment_type as 'payment_type',"
+			order_by = "payment_type DESC ,"
 		else:
+			order_by = ""
 			other_fields = ''
 		title_field = frappe.db.get_value("Property Setter",{"doc_type":doc,"property":'title_field'},'value')
 		if not title_field:
@@ -86,7 +88,7 @@ def get_data_details(filters):
 				docstatus < 2
 				{conditions}
 			ORDER BY
-				modified DESC""".format(date=date, title_field=title_field, other_fields=other_fields, doc=doc, conditions=conditions), as_dict=1)
+				{order_by} modified DESC""".format(date=date, title_field=title_field, other_fields=other_fields, doc=doc, conditions=conditions,order_by=order_by), as_dict=1)
 
 		d = dt[:]
 		id = 0
