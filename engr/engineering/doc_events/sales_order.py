@@ -167,15 +167,6 @@ def validate_item_group(self):
 def validate(self,method):
 	validate_sales_person(self)
 	validate_item_group(self)
-	set_branch_name(self)
-	
-def set_branch_name(self):
-	if self.branch == 'Nasik':
-		self.branch_name = 'NSK'
-	if self.branch == 'Aurangabad':
-		self.branch_name = 'AUB'
-	
-
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
@@ -229,6 +220,8 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 				"payment_terms_template": "payment_terms_template",
 				"ref_letter":"ref_letter",
 				"po_site_details":"po_site_details",
+				"work_order_master_ref":"work_order_master_ref",
+				"job_id":"job_id"
 			},
 			"field_no_map": ["payment_terms_template"],
 			"validation": {
@@ -240,7 +233,8 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			"field_map": {
 				"name": "so_detail",
 				"parent": "sales_order",
-				'rate':"rate"
+				'rate':"rate",
+				"qty":'so_quantity',
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: doc.qty and (doc.base_amount==0 or abs(doc.billed_amt) < abs(doc.amount))
@@ -260,3 +254,25 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 		doclist.set_payment_schedule()
 
 	return doclist
+
+
+
+def set_payment_status(self , method):
+	if(self.work_order_master_ref):
+		contract_work = frappe.db.get_value("Work Order Master" , self.work_order_master_ref ,"contract_work")
+	if self.per_billed == 0.0  and self.work_order_master_ref and contract_work != 1:
+		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Unpaid",update_modified=False)
+	if self.per_billed == 0.0 and self.work_order_master_ref and contract_work == 1:
+		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Unpaid-Contract Work",update_modified=False)
+	if self.per_billed > 0 and round(self.per_billed) < 100 and self.work_order_master_ref:
+		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Partially paid",update_modified=False)
+	if round(self.per_billed) == 100 and self.work_order_master_ref:
+		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Paid",update_modified=False)
+	if round(self.advance_paid)  == round(self.grand_total) and self.work_order_master_ref:
+		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Advance Paid",update_modified=False)
+
+def set_quotation_ref(self,method):
+	if not self.quotation_no:
+		self.quotation_no = frappe.db.get_value("Work Order Master",self.work_order_master_ref,'quotation_no')
+	if self.quotation_no:
+		frappe.db.set_value('Quotation',self.quotation_no,'status','Ordered',update_modified=False)

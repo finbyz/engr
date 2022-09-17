@@ -9,9 +9,20 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.model.naming import make_autoname
 
 class WorkOrderMaster(Document):
+	def before_naming(self):
+		date = frappe.format(self.date , {'fieldtype':'Date'})
+		date = date.split('-')
+		if(self.branch == 'Nasik'):
+			self.branch_name = 'NK'
+		if(self.branch == 'Aurangabad'):
+			self.branch_name = 'AU'
+		self.wom_name = make_autoname("WOM-{}{}-{}-{}-{}".format(self.branch_name,date[2],date[1],date[0],".##"))
+		job_id = self.wom_name.split("-")
+		self.job_id = "{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1])
+
 	def validate(self):
-		date=datetime.date.today()
-		self.job_id = self.name[9:]
+		if(self.contract_work or self.contract_work == 1):
+			self.payment_status = 'Unpaid-Contract Work'
 		date_list = []
 		for row in self.item_master:
 			row.job_id = self.job_id
@@ -21,11 +32,10 @@ class WorkOrderMaster(Document):
 
 		if(self.tax_invoice_no):
 			frappe.db.set_value("Sales Invoice",self.tax_invoice_no ,"job_id" , self.job_id)
+	def after_rename(self, olddn, newdn, merge=False):
+		job_id = newdn.split("-")
+		self.job_id = "{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1])
 
-		if(self.branch == 'Nasik'):
-			self.branch_name = 'NK'
-		if(self.branch == 'Aurangabad'):
-			self.branch_name = 'AU'
 # def item_autoname(self, method):
 # 	date=datetime.date.today()
 # 	self.barcode = make_autoname("SR{}{}{}".format(date.year,date.month,date.day)+".#####")
@@ -128,7 +138,11 @@ def make_proforma_invoice(source_name, target_doc=None):
 	return doclist
 
 @frappe.whitelist()
-def make_sales_order(source_name, target_doc=None):	
+def make_sales_order(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		target.ignore_pricing_rule = 1
+		target.flags.ignore_permissions = True
+		target.run_method("set_missing_values")
 	doclist = get_mapped_doc("Work Order Master", source_name, {
 			"Work Order Master":{
 				"doctype": "Sales Order",
@@ -140,8 +154,9 @@ def make_sales_order(source_name, target_doc=None):
 					"ref_letter":"po_no",
 					"po_site_details":"po_site_details",
 					"job_id" : "job_id",
-					"name" : "work_order_master_ref"
-
+					"name" : "work_order_master_ref",
+					"ignore_pricing_rule":"ignore_pricing_rule",
+					"taxes_and_charges":"taxes_and_charges",
 					},
 				},
 				"Work Order Master Item": {
@@ -151,10 +166,11 @@ def make_sales_order(source_name, target_doc=None):
 						"parent": "Sales Order",
 						"item_code": "item_code",
 						"item_name": "item_name",
-						"sample_quantity":"qty"
-						
+						"sample_quantity":"qty",
+						"rate":"rate",
 					}
 			    }
-	}, target_doc)
+	}, target_doc,set_missing_values)
+
 
 	return doclist

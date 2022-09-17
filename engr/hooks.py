@@ -73,6 +73,8 @@ doc_events = {
 	},
 	"Sales Order":{
 		"validate":"engr.engineering.doc_events.sales_order.validate",
+		"on_update":"engr.engineering.doc_events.sales_order.set_payment_status",
+		"on_submit":"engr.engineering.doc_events.sales_order.set_quotation_ref",
 	},
 	"Delivery Note":{
 		"validate":"engr.engineering.doc_events.delivery_note.validate",
@@ -84,8 +86,12 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
 	},
 	"Quotation":{
-		"validate":"engr.engineering.doc_events.quotation.validate"
+		"on_update_after_submit":"engr.engineering.doc_events.quotation.update_quotation_status"
 	},
+	"Payment Entry":{
+		"on_submit":"engr.engineering.doc_events.payment_entry.set_payment_entry_ref"
+	},
+
 		
 }
 # include js, css files in header of web template

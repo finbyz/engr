@@ -123,7 +123,8 @@ def make_WOM(source_name, target_doc=None):
 					'contact_mobile':'mobile_no',
 					'contact_email':'email_id',
 					'name':'quotation_no',
-					'project':'project'
+					'project':'project',
+					'taxes_and_charges':'taxes_and_charges'
 					},
 				},
 				"Quotation Item": {
@@ -134,15 +135,15 @@ def make_WOM(source_name, target_doc=None):
 						"item_code": "item_code",
 						"item_name": "item_name",
 						"item_group": "item_group",
-						'rate':'rate'
+						'rate':'rate',
+						'qty':'sample_quantity',
+						'sample_quantity':'qty'
 					}
-			    }
+			    },
 	}, target_doc)
 
 	return doclist
 
-def validate(self,method):
-	if(self.branch == 'Nasik'):
-		self.branch_name = 'NK'
-	if(self.branch == 'Aurangabad'):
-		self.branch_name = 'AU'
+def update_quotation_status(self,method=None):
+	if self.sales_order:
+		frappe.db.set_value("Quotation",self.name,'status','Ordered')

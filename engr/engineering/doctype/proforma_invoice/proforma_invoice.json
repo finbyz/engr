@@ -17,7 +17,6 @@
   "order_type",
   "skip_delivery_note",
   "job_id",
-  "work_order_master_ref",
   "column_break1",
   "amended_from",
   "company",
@@ -1338,12 +1337,6 @@
    "label": "Discount in Print"
   },
   {
-   "fieldname": "work_order_master_ref",
-   "fieldtype": "Data",
-   "label": "Work Order Master Ref",
-   "read_only": 1
-  },
-  {
    "fieldname": "branch",
    "fieldtype": "Link",
    "label": "Branch",
@@ -1362,7 +1355,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-12 14:43:59.319060",
+ "modified": "2022-08-31 13:44:16.681650",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Proforma Invoice",

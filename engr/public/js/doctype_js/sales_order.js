@@ -1,6 +1,11 @@
 frappe.ui.form.on('Sales Order', {
+	onload:function(frm){
+		frm.ignore_doctypes_on_cancel_all = ['Quotation']; 
+	},
     refresh: function(frm) {
+		if(frm.doc.status != 'Draft'){
             frm.add_custom_button(__('Proforma Invoice'),function() {frm.trigger('create_proforma_invoice')}, __('Create'));
+		}
 	},
     create_proforma_invoice: function(frm){
         frappe.model.open_mapped_doc({
@@ -737,4 +742,13 @@ frappe.ui.form.on('Sales Order', {
 	});
 
   }
+});
+frappe.ui.form.on("Sales Order Item", {
+    item_code:function(frm,cdt,cdn){
+        let d  = locals[cdt][cdn]
+        frappe.model.get_value("Item",d.item_code,"stock_uom"),(r)=>{
+            d.uom = r.stock_uom
+        }
+        
+    } 
 });

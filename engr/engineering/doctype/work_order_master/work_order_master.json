@@ -1,12 +1,15 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "WOM-.{date}.-.##",
+ "autoname": "field:wom_name",
  "creation": "2022-04-22 10:14:55.865904",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "for_final_report_submition_section",
+  "final_report",
+  "section_break_3",
+  "contract_work",
   "wom_name",
   "name_on_the_test_report",
   "customer_name",
@@ -25,6 +28,7 @@
   "referred_by",
   "type_of_work",
   "branch",
+  "branch_name",
   "project",
   "for_customer_section",
   "to_customer",
@@ -48,6 +52,7 @@
   "tax_invoice_no",
   "quotation_no",
   "mode_of_payment",
+  "payment_ref",
   "section_break_22",
   "dose_sample",
   "dose_sample_have",
@@ -64,7 +69,13 @@
   "pertinent",
   "section_break_34",
   "details_of_sample",
-  "amended_from"
+  "amended_from",
+  "ignore_pricing_rule",
+  "payment_status_section",
+  "payment_status",
+  "section_break_67",
+  "taxes_and_charges",
+  "taxes"
  ],
  "fields": [
   {
@@ -144,8 +155,7 @@
    "fieldtype": "Data",
    "label": "Job Id",
    "no_copy": 1,
-   "read_only": 1,
-   "unique": 1
+   "read_only": 1
   },
   {
    "fieldname": "customer_id",
@@ -163,11 +173,10 @@
   },
   {
    "fieldname": "proforma_invoice",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Proforma Invoice",
-   "options": "Proforma Invoice"
+   "label": "Proforma Invoice"
   },
   {
    "fieldname": "tax_invoice_no",
@@ -383,6 +392,7 @@
    "fieldname": "quotation_no",
    "fieldtype": "Data",
    "label": "Quotation No",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -399,19 +409,89 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Branch",
-   "options": "Branch"
+   "options": "Branch",
+   "reqd": 1
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project"
+  },
+  {
+   "default": "1",
+   "fieldname": "ignore_pricing_rule",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Ignore Pricing Rule"
+  },
+  {
+   "fetch_from": "branch.naming",
+   "fieldname": "branch_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Branch Name"
+  },
+  {
+   "fieldname": "payment_status_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Status"
+  },
+  {
+   "fieldname": "payment_status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Payment Status",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "contract_work",
+   "fieldtype": "Check",
+   "label": "Contract Work"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "for_final_report_submition_section",
+   "fieldtype": "Section Break",
+   "label": "For Final Report Submition"
+  },
+  {
+   "fieldname": "final_report",
+   "fieldtype": "Attach",
+   "label": "Final Report"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_67",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "taxes_and_charges",
+   "fieldtype": "Link",
+   "label": "Sales Taxes and Charges Template",
+   "options": "Sales Taxes and Charges Template"
+  },
+  {
+   "fieldname": "taxes",
+   "fieldtype": "Table",
+   "label": "Sales Taxes and Charges",
+   "options": "Sales Taxes and Charges"
+  },
+  {
+   "fieldname": "payment_ref",
+   "fieldtype": "Data",
+   "label": "Payment Ref",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-08-05 14:53:05.976538",
+ "modified": "2022-09-16 12:24:27.065609",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",
@@ -427,6 +507,23 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Local Admin",
+   "select": 1,
+   "set_user_permissions": 1,
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

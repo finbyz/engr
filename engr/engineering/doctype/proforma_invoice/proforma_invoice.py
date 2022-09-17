@@ -18,11 +18,37 @@ class ProformaInvoice(Document):
 		
 	def validate(self):
 		if self.payment_percentage:
-			self.payment_due_amount = flt(self.rounded_total) * self.payment_percentage / 100
+			self.payment_due_amount = flt(self.rounded_total) * flt(self.payment_percentage) / 100
 		for item in self.items:
-			item.payment_amount = flt(item.net_amount) * self.payment_percentage / 100
-		validate_sales_person(self)    
-
+			item.payment_amount = flt(item.net_amount) * flt(self.payment_percentage) / 100
+		validate_sales_person(self)  
+		self.set_taxes_on_payment_percentage()  
+	def set_taxes_on_payment_percentage(self):
+		if self.gst_paid: 
+			doc = frappe.get_doc('GST Settings')
+			account_list = []
+			for row in doc.get('gst_accounts'):
+				account_list.append(row.get('cgst_account'))
+				account_list.append(row.get('sgst_account'))
+				account_list.append(row.get('igst_account'))
+			self.sgst = None
+			self.cgst = None
+			self.igst = None
+			if self.taxes:
+				for row in self.taxes:
+					if row.account_head in account_list:
+						if "SGST" in str(row.account_head) or "sgst" in str(row.account_head):
+							payment_percent = (flt(self.total) * flt(self.payment_percentage))/100
+							sgst_percent = (payment_percent * row.rate)/100
+							self.sgst = sgst_percent 
+						if "CGST" in str(row.account_head) or "cgst" in str(row.account_head):
+							payment_percent = (flt(self.total) * flt(self.payment_percentage))/100
+							cgst_percent = (payment_percent * row.rate)/100
+							self.cgst = cgst_percent
+						if "IGST" in str(row.account_head) or "igst" in str(row.account_head):
+							payment_percent = (flt(self.total) * flt(self.payment_percentage))/100
+							igst_percent = (flt(payment_percent) * flt(row.rate))/100
+							self.igst = igst_percent
 	def on_submit(self):
 		self.db_set('submitted_by', frappe.session.user)
 		if self.payment_percentage == 0:
@@ -31,7 +57,8 @@ class ProformaInvoice(Document):
 		set_status(self)
 		if(self.job_id):
 			frappe.db.set_value("Work Order Master",self.work_order_master_ref ,"proforma_invoice",self.name)
-		
+		if(self.work_order_master_ref):
+			frappe.db.set_value("Work Order Master",self.work_order_master_ref ,"proforma_invoice",self.name)
 	def before_save(self):
 		if(self.job_id):
 			Wom=frappe.db.exists("Work Order Master",{"job_id":self.job_id})
@@ -105,3 +132,4 @@ def create_proforma_invoice(source_name, target_doc=None):
 	return doclist
 
 
+	

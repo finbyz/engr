@@ -14,6 +14,7 @@ from engr.engineering.doctype.proforma_invoice.proforma_invoice import set_statu
 
 def validate(self,method):
 	update_proforma_reference_si(self)
+	
 
 def update_proforma_reference_si(self):
 	if self.get('references'):
@@ -25,6 +26,7 @@ def update_proforma_reference_si(self):
 
 def on_submit(self,method):
 	update_proforma_invoice(self,"submit")
+	set_payment_entry_ref(self)
 
 def on_cancel(self,method):
 	update_proforma_invoice(self,"cancel")
@@ -142,3 +144,44 @@ def create_payment_entry(dt, dn, ref_dt, ref_dn):
 		pe.set_exchange_rate()
 		pe.set_amounts()
 	return pe
+
+def set_payment_entry_ref(self,method):
+	if self.references:
+		for row in self.references:
+			if row.reference_doctype != 'Purchase Invoice':
+				doc = frappe.get_doc(row.reference_doctype,row.reference_name)
+				if doc.work_order_master_ref:
+					frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+					frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_ref',self.mode_of_payment,update_modified = False)
+				if row.reference_doctype == 'Sales Order':
+					per_billed = frappe.db.get_value("Sales Order",row.reference_name , 'per_billed')
+					if round(per_billed) == 100:
+						doc = frappe.get_doc("Sales Order",row.reference_name)
+						if doc.work_order_master_ref:
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status','Paid',update_modified = False)
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+					if round(per_billed) < 100:
+						doc = frappe.get_doc("Sales Order",row.reference_name)
+						if doc.work_order_master_ref:
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status','Partially Paid',update_modified = False)
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+				if row.reference_doctype == "Sales Invoice":
+					doc = frappe.get_doc("Sales Invoice",row.reference_name)
+					if round(doc.grand_total) == round(self.paid_amount):
+						if doc.work_order_master_ref:
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status',doc.status,update_modified = False)
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+					if round(doc.grand_total) > round(self.paid_amount):
+						if doc.work_order_master_ref:
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status',doc.status,update_modified = False)
+							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+					wom_doc = frappe.db.exists("Work Order Master",{"tax_invoice_no":row.reference_name})
+					if wom_doc:
+						frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status',doc.status,update_modified = False)
+						frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+					if row.proforma_invoice:
+						doc = frappe.get_doc("Proforma Invoice",row.proforma_invoice)
+						if doc.work_order_master_ref:
+							if round(doc.grand_total) == round(self.paid_amount):
+								frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status','Paid',update_modified = False)
+								frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
