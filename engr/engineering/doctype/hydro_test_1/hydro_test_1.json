@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-11-07 17:05:56.266622",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "hydro_test__parameter",
+  "required",
+  "tested",
+  "duration",
+  "result"
+ ],
+ "fields": [
+  {
+   "fieldname": "hydro_test__parameter",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Hydro Test  Parameter",
+   "options": "Quality Inspection Parameter"
+  },
+  {
+   "fieldname": "required",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Required"
+  },
+  {
+   "fieldname": "tested",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tested"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Duration"
+  },
+  {
+   "fieldname": "result",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Result",
+   "options": "Ok"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-11-07 17:05:56.266622",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Hydro test 1",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

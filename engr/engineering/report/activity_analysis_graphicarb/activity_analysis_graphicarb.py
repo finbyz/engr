@@ -26,15 +26,15 @@ def execute(filters=None):
 
 def get_columns_details():
 	columns = [
-		{ "label": _("Document"),"fieldname": "Document","fieldtype": "Data","width": 100},
-		{ "label": _("ID"),"fieldname": "ID","fieldtype": "Dynamic Link","options":"Document","width": 100},
-		{ "label": _("Date"),"fieldname": "Date","fieldtype": "Date","width": 100},
 		{ "label": _("Created By"),"fieldname": "Created By","fieldtype": "Link","options":"User","width": 150},
+		{ "label": _("Date"),"fieldname": "Date","fieldtype": "Date","width": 100},
+		{ "label": _("ID"),"fieldname": "ID","fieldtype": "Dynamic Link","options":"Document","width": 100},
+		{ "label": _("Document"),"fieldname": "Document","fieldtype": "Data","width": 100},
 		{ "label": _("Title"),"fieldname": "Title","fieldtype": "Data","width": 110},
 		{ "label": _("Item Name"),"fieldname": "Item Name","fieldtype": "Data","width": 180},
 		{ "label": _("Qty"),"fieldname": "qty","fieldtype": "float","width": 140},
+		{ "label": _("Amount"),"fieldname": "Amount","fieldtype": "Currency","width": 150},
 		{ "label": _("Payment Type"),"fieldname": "payment_type","fieldtype": "Select","width": 140},
-		{ "label": _("Amount"),"fieldname": "Amount","fieldtype": "Currency","width": 150}
 	]
 	return columns
 

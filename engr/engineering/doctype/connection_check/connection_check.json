@@ -11,29 +11,40 @@
   "result_2",
   "result_3",
   "result_4",
-  "result_5"
+  "result_5",
+  "result_6",
+  "result_7",
+  "result_8",
+  "result_9",
+  "result_10"
  ],
  "fields": [
   {
+   "columns": 1,
    "fieldname": "result_2",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Result 2"
   },
   {
+   "columns": 1,
    "fieldname": "result_3",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Result 3"
   },
   {
+   "columns": 1,
    "fieldname": "result_4",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Result 4"
   },
   {
+   "columns": 1,
    "fieldname": "result_5",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Result 5"
   },
   {
@@ -44,16 +55,48 @@
    "options": "Quality Inspection Parameter"
   },
   {
+   "columns": 1,
    "fieldname": "result_1",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Result 1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "result_6",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Result 6"
+  },
+  {
+   "columns": 1,
+   "fieldname": "result_7",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Result 7"
+  },
+  {
+   "columns": 1,
+   "fieldname": "result_8",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Result 8"
+  },
+  {
+   "fieldname": "result_9",
+   "fieldtype": "Data",
+   "label": "Result 9"
+  },
+  {
+   "fieldname": "result_10",
+   "fieldtype": "Data",
+   "label": "Result 10"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-07-01 12:56:28.138286",
+ "modified": "2022-11-07 17:32:47.392375",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Connection Check",
