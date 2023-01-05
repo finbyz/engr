@@ -96,6 +96,9 @@ doc_events = {
 	"Event":{
 		"on_submit":"engr.engineering.doc_events.event.on_submit"
 	},
+	"Bank Statement Transaction Entry":{
+		'before_naming':"engr.api.before_naming"
+	}
 
 		
 }
