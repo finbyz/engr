@@ -3,6 +3,13 @@ from frappe.utils import flt, getdate, nowdate
 from frappe import _
 from erpnext.controllers.selling_controller import SellingController
 from frappe.model.mapper import get_mapped_doc
+from frappe.model.naming import make_autoname
+
+def validate(self,method):
+	self.inquiry_no = make_autoname("INQ-{}".format('.####'))
+	update_quotation_status(self , method = None)
+def on_submit(self,method):
+	update_quotation_status(self , method = None)
 def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 	customer = _make_customer(source_name, ignore_permissions)
 

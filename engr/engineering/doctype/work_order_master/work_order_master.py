@@ -7,6 +7,21 @@ import frappe , datetime
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.naming import make_autoname
+from datetime import datetime
+import datetime 
+from frappe.utils import (
+	add_days,
+	add_months,
+	cint,
+	date_diff,
+	flt,
+	get_first_day,
+	get_last_day,
+	get_link_to_form,
+	getdate,
+	rounded,
+	today,
+)
 
 class WorkOrderMaster(Document):
 	def before_naming(self):
@@ -36,9 +51,20 @@ class WorkOrderMaster(Document):
 		job_id = newdn.split("-")
 		self.job_id = "{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1])
 
-# def item_autoname(self, method):
-# 	date=datetime.date.today()
-# 	self.barcode = make_autoname("SR{}{}{}".format(date.year,date.month,date.day)+".#####")
+	def on_submit(self):
+		if self.workflow_state == 'Test in Progress':
+			for i , row in enumerate(self.item_master):
+				if not row.assign_to_user:
+					frappe.throw('Please Assign to User For Test Item <b>{}</b>'.format(row.item_code))
+	def on_update_after_submit(self):
+		if self.workflow_state == 'Test Report Preparation':
+			for row in self.item_master:
+				if not row.test_report_prepared:
+					frappe.throw('Test report is not Prepared for Item {} '.format(row.item_code))
+		if self.workflow_state == 'Final Report Prepared':
+			for row in self.item_master:
+				if not row.report_delivered:
+					frappe.throw('<p>If Report is Ready To Send ,<br> tick check Box Report Delivered in row {} </p>'.format(i))
 
 @frappe.whitelist()
 def make_WOM(source_name, target_doc=None):	
@@ -70,10 +96,6 @@ def make_WOM(source_name, target_doc=None):
 	}, target_doc)
 
 	return doclist
-
-# @frappe.whitelist()
-# def get_semple_details(self):
-# 	return frappe.db.get_value("item" ,self.item_code , "sample_details")
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None):	
@@ -174,3 +196,41 @@ def make_sales_order(source_name, target_doc=None):
 
 
 	return doclist
+
+@frappe.whitelist()
+def get_events(start, end, filters=None):
+	"""Returns events for Gantt / Calendar view rendering.
+	:param start: Start date-time.
+	:param end: End date-time.
+	:param filters: Filters (JSON).
+	"""
+	#filters = json.loads(filters)
+	from frappe.desk.calendar import get_event_conditions
+	conditions = get_event_conditions("Work Order Master", filters).replace("`tabWork Order Master`.","wom.")
+
+	data = frappe.db.sql("""
+			select 
+				womi.description, womi.parent as name,womi.expected_date,wom.workflow_state,CONCAT(womi.job_id, ' ', IFNULL(womi.priority,' ')) as job_id , womi.report_delivered
+			from 
+				`tabWork Order Master Item` as womi
+			left join 
+				`tabWork Order Master` as wom on womi.parent= wom.name
+			where
+				(womi.expected_date <= %(end)s and womi.expected_date >= %(start)s) {conditions}
+			""".format(conditions=conditions),
+				{
+					"start": start,
+					"end": end
+				}, as_dict=True, update={"allDay": 1})
+
+	return data
+
+	# if not data:
+	# 	return []
+		
+	# data = [x.name for x in data]
+
+	# return frappe.db.get_list("Meeting",
+	# 	{ "name": ("in", data), "docstatus":1 },
+	# 	["name", "meeting_from", "meeting_to", "organization", "party"]
+	# )

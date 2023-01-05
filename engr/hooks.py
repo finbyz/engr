@@ -73,7 +73,7 @@ doc_events = {
 	},
 	"Sales Order":{
 		"validate":"engr.engineering.doc_events.sales_order.validate",
-		"on_update":"engr.engineering.doc_events.sales_order.set_payment_status",
+		"on_update_after_submit":"engr.engineering.doc_events.sales_order.set_payment_status",
 		"on_submit":"engr.engineering.doc_events.sales_order.set_quotation_ref",
 	},
 	"Delivery Note":{
@@ -86,10 +86,15 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.salary_slip.validate"
 	},
 	"Quotation":{
-		"on_update_after_submit":"engr.engineering.doc_events.quotation.update_quotation_status"
+		"on_update_after_submit":"engr.engineering.doc_events.quotation.update_quotation_status",
+		"validate":"engr.engineering.doc_events.quotation.validate",
+		"on_submit":"engr.engineering.doc_events.quotation.update_quotation_status"
 	},
 	"Payment Entry":{
 		"on_submit":"engr.engineering.doc_events.payment_entry.set_payment_entry_ref"
+	},
+	"Event":{
+		"on_submit":"engr.engineering.doc_events.event.on_submit"
 	},
 
 		

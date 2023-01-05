@@ -112,6 +112,9 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 
 				if ((!item.qty) && me.frm.doc.is_return) {
 					item.amount = flt(item.rate * -1, precision("amount", item));
+				} 
+				else if (item.uom == 'Percent') {
+					item.amount = flt((item.rate * item.qty)/100, precision("amount", item)); //changes only for civil tech
 				} else {
 					item.amount = flt(item.rate * item.qty, precision("amount", item));
 				}

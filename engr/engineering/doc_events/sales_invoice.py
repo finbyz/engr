@@ -158,7 +158,10 @@ def validate(self,method):
     if self.audited or self.audited == 1:
         if self.percentage > 0 and self.percentage < 1 :
             for row in self.items:
-                row.qty = self.percentage * row.so_quantity
+                row.qty = flt(self.percentage/100) * flt(row.so_quantity)
+    # for row in self.items:
+    #     if row.uom == 'Percent':
+    #         row.amount = (row.qty*row.rate)/100          
 def validate_hsn_code(self):
     for row in self.items:
         if row.gst_hsn_code:

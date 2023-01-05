@@ -6,6 +6,13 @@ cur_frm.fields_dict.set_target_warehouse.get_query = function (doc) {
 		}
 	}
 };
+cur_frm.fields_dict.project.get_query = function (doc) {
+	return {
+		filters: {
+			"customer":doc.customer
+		}
+	}
+};
 frappe.ui.form.on('Sales Invoice', {
 	refresh:function(frm){
 	    frm.ignore_doctypes_on_cancel_all = ["Delivery Note"]
@@ -19,6 +26,15 @@ frappe.ui.form.on('Sales Invoice', {
                 })
             }
         }
+       
+        frm.set_query('project', function(doc) {
+            return {
+                filters: {
+                    "customer":doc.customer
+                }
+            };
+        });
+        
 	},
     company: function(frm) {
 		if(frm.doc.company){
@@ -30,15 +46,12 @@ frappe.ui.form.on('Sales Invoice', {
         }
 	},
     percentage:function(frm){
-        if (frm.doc.percentage > 0 && frm.doc.percentage < 1){
-            frm.doc.items.forEach(d=>{
-                d.qty = frm.doc.percentage * d.so_quantity;
-            })
-            cur_frm.refresh_field("items")
-        }
-        else{
-            frappe.throw("Enter Percentage Between 0 to 1")
-        }
+        frm.doc.items.forEach(d=>{
+            d.qty = (frm.doc.percentage/100) * (d.qty);
+            // console.log(d.so_quantity)
+        })
+        cur_frm.refresh_field("items")
+        
 	},
     
 })
@@ -49,5 +62,15 @@ frappe.ui.form.on("Sales Invoice Item", {
             d.uom = r.stock_uom
         }
         
-    } 
+    },
+    qty:function(frm,cdt,cdn){
+        let d  = locals[cdt][cdn]
+        if (d.uom == 'Percent'){
+            let amount = (d.qty*d.rate)/100
+
+            frappe.model.set_value(cdt,cdn,'amount',amount)
+            
+        }
+        cur_frm.refresh_field("items")
+    }
 });

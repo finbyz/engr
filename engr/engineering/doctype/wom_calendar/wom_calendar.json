@@ -1,0 +1,207 @@
+{
+ "actions": [],
+ "autoname": "WOM-.#####",
+ "creation": "2022-10-06 17:03:33.791930",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_1",
+  "wom_reference",
+  "column_break_3",
+  "customer_name",
+  "section_break_3",
+  "item_code",
+  "item_name",
+  "item_group",
+  "job_id",
+  "priority",
+  "expected_date",
+  "rate",
+  "column_break_4",
+  "assign_to_user",
+  "blank_format",
+  "sample_provided",
+  "sample_quantity",
+  "test_method_section",
+  "test_method",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "wom_reference",
+   "fieldtype": "Link",
+   "label": "WOM Reference",
+   "options": "Work Order Master"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "label": "Customer Name",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_group",
+   "fieldname": "item_group",
+   "fieldtype": "Data",
+   "label": "Item Group"
+  },
+  {
+   "fieldname": "job_id",
+   "fieldtype": "Data",
+   "label": "Job Id"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Priority"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "expected_date",
+   "fieldtype": "Date",
+   "label": "Expected Date",
+   "no_copy": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "assign_to_user",
+   "fieldtype": "Link",
+   "label": "Assign To User",
+   "options": "User"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "blank_format",
+   "fieldtype": "Attach",
+   "label": "Blank Format"
+  },
+  {
+   "fieldname": "sample_provided",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Sample Provided"
+  },
+  {
+   "fieldname": "sample_quantity",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Sample Quantity"
+  },
+  {
+   "fieldname": "test_method_section",
+   "fieldtype": "Section Break",
+   "label": "Test Method"
+  },
+  {
+   "fieldname": "test_method",
+   "fieldtype": "Small Text",
+   "label": "Test Method "
+  },
+  {
+   "fetch_from": "item_code.description",
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-10-31 10:40:09.039388",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "WOM Calendar",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Local Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Quality Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

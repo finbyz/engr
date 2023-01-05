@@ -33,6 +33,7 @@
   "for_customer_section",
   "to_customer",
   "section_break_17",
+  "reference_letter",
   "ref_letter",
   "column_break_19",
   "po_site_details",
@@ -75,7 +76,9 @@
   "payment_status",
   "section_break_67",
   "taxes_and_charges",
-  "taxes"
+  "taxes",
+  "purchase_attechment_section",
+  "scane_copy_of_po"
  ],
  "fields": [
   {
@@ -154,8 +157,7 @@
    "fieldname": "job_id",
    "fieldtype": "Data",
    "label": "Job Id",
-   "no_copy": 1,
-   "read_only": 1
+   "no_copy": 1
   },
   {
    "fieldname": "customer_id",
@@ -172,18 +174,21 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "proforma_invoice",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Proforma Invoice"
+   "label": "Proforma Invoice",
+   "no_copy": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "tax_invoice_no",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Tax Invoice No",
-   "options": "Sales Invoice"
+   "no_copy": 1
   },
   {
    "fieldname": "mode_of_payment",
@@ -392,8 +397,7 @@
    "fieldname": "quotation_no",
    "fieldtype": "Data",
    "label": "Quotation No",
-   "no_copy": 1,
-   "read_only": 1
+   "no_copy": 1
   },
   {
    "fieldname": "contact_person",
@@ -451,6 +455,7 @@
    "label": "Contract Work"
   },
   {
+   "allow_on_submit": 1,
    "collapsible": 1,
    "fieldname": "for_final_report_submition_section",
    "fieldtype": "Section Break",
@@ -486,12 +491,30 @@
    "fieldtype": "Data",
    "label": "Payment Ref",
    "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "reference_letter",
+   "fieldtype": "Attach",
+   "label": "Reference Letter"
+  },
+  {
+   "fieldname": "purchase_attechment_section",
+   "fieldtype": "Section Break",
+   "label": "Purchase Attechment"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "scane_copy_of_po",
+   "fieldtype": "Attach",
+   "label": "Scane Copy of PO",
+   "permlevel": 2
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-09-16 12:24:27.065609",
+ "modified": "2022-11-23 14:35:27.151028",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",

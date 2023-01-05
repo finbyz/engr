@@ -10,12 +10,11 @@ frappe.ui.form.on('Quotation', {
         
     },
 });
+
 cur_frm.fields_dict.project.get_query = function(doc) {
 	return {
 		filters: {
 			"customer": doc.customer,
-           
-
 		}
 	}
 };
