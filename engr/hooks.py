@@ -214,9 +214,9 @@ doc_events = {
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-# 	"Task": "engr.task.get_dashboard_data"
-# }
+override_doctype_dashboards = {
+	"Customer": "engr.engineering.doc_events.customer_dashboard.get_data"
+}
 
 # Sales Partner target report changes for all fetch all item groups instead of one item group
 from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
@@ -246,6 +246,6 @@ from erpnext.selling.doctype.quotation import quotation_dashboard
 from engr.api import get_data 
 quotation_dashboard.get_data = get_data
 
-from finbyzerp.finbyzerp.dashboard import customer
-from engr.engineering.doc_events.customer_dashboard import get_data
-customer.get_data = get_data
+# from finbyzerp.finbyzerp.dashboard import customer
+# from engr.engineering.doc_events.customer_dashboard import get_data
+# customer.get_data = get_data
