@@ -30,6 +30,7 @@
   "branch",
   "branch_name",
   "project",
+  "audited",
   "for_customer_section",
   "to_customer",
   "section_break_17",
@@ -509,12 +510,20 @@
    "fieldtype": "Attach",
    "label": "Scane Copy of PO",
    "permlevel": 2
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "audited",
+   "fieldtype": "Check",
+   "label": "Audited",
+   "options": "0"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-11-23 14:35:27.151028",
+ "modified": "2023-01-30 12:25:46.122265",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",

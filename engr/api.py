@@ -223,7 +223,7 @@ def get_data():
 		]
 	}
 
-def before_naming(self):
+def before_naming(self,method):
 	self.name = self.bank_account + "-" + self.from_date + "-" + self.to_date
 	if self.bank:
 		mapper_name = self.bank + "-Statement-Settings"

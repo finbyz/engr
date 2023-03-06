@@ -148,7 +148,7 @@ def create_payment_entry(dt, dn, ref_dt, ref_dn):
 def set_payment_entry_ref(self,method):
 	if self.references:
 		for row in self.references:
-			if row.reference_doctype != 'Purchase Invoice':
+			if row.reference_doctype not in ['Purchase Invoice', 'Employee Advance']:
 				doc = frappe.get_doc(row.reference_doctype,row.reference_name)
 				if doc.work_order_master_ref:
 					frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
