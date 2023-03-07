@@ -218,6 +218,10 @@ override_doctype_dashboards = {
 	"Customer": "engr.engineering.doc_events.customer_dashboard.get_data"
 }
 
+# override_doctype_class = {
+# 	"Opening Invoice Creation Tool": "engr.engineering.doc_events.opening_invoice_creation_tool.CustomOpeningInvoiceCreationTool"
+# }
+
 # Sales Partner target report changes for all fetch all item groups instead of one item group
 from erpnext.selling.report.sales_partner_target_variance_based_on_item_group import item_group_wise_sales_target_variance
 from engr.engineering.report.item_group_wise_sales_target_variance import get_data_column
