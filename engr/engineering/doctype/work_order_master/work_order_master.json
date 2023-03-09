@@ -15,6 +15,7 @@
   "customer_name",
   "contact_person",
   "customer_address",
+  "city",
   "address",
   "name_of_site",
   "location_of_site",
@@ -518,15 +519,25 @@
    "fieldtype": "Check",
    "label": "Audited",
    "options": "0"
+  },
+  {
+   "fetch_from": "customer_address.city",
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "City",
+   "no_copy": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-30 12:25:46.122265",
+ "modified": "2023-03-09 17:41:33.592475",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -560,5 +571,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }
