@@ -142,16 +142,16 @@ frappe.ui.form.on('Proforma Invoice', {
 	},
 });
 
-erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend({
-	onload: function(doc, dt, dn) {
+erpnext.selling.SalesOrderController = class SalesOrderController extends erpnext.selling.SellingController{
+	onload (){
 		this._super();
-	},
+	}
 
-	refresh: function(doc, dt, dn) {
+	refresh (){
 		var me = this;
 		this._super();
 		let allow_delivery = false;
-	},
+	}
 
-});
+}
 $.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));

@@ -37,6 +37,10 @@ doctype_js = {
 	"Quotation":"public/js/doctype_js/quotation.js",
 }	
 
+override_doctype_class = {
+    "Opening Invoice Creation Tool" : "engr.engineering.doc_events.opening_invoice_creation_tool.CustomOpeningInvoiceCreationTool"
+}
+
 override_doctype_dashboards = {
 	"Sales Order": "engr.engineering.dashboard.sales_order.get_data",
 }
