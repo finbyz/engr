@@ -18,9 +18,10 @@ app_license = "MIT"
 # app_include_css = "/assets/engr/css/engr.css"
 # app_include_js = "/assets/engr/js/engr.js"
 
-app_include_js = [
-	"/assets/js/engineering.min.js" 
-]
+# app_include_js = [
+# 	"/assets/js/engineering.min.js" 
+# ]
+app_include_js = ['engr.bundle.js']
 
 
 doctype_list_js = {
