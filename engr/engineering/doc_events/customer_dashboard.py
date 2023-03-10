@@ -15,7 +15,8 @@ def get_data(data):
 			"Meeting": "party",
 			"Meeting Schedule": "party",
 			"Work Order Master": "customer_name",
-			'Proforma Invoice':'customer'
+			'Proforma Invoice':'customer',
+			"Sales Invoice": 'customer'
 			
 		},
 		'dynamic_links': {
