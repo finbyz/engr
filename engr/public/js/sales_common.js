@@ -11,13 +11,13 @@ cur_frm.email_field = "contact_email";
 frappe.provide("erpnext.selling");
 erpnext.selling.SellingController = class SellingController extends erpnext.TransactionController{
 	setup () {
-		this._super();
+		super.setup();
 		this.frm.add_fetch("sales_partner", "commission_rate", "commission_rate");
 		this.frm.add_fetch("sales_person", "commission_rate", "commission_rate");
 	}
 
 	onload () {
-		this._super();
+		super.onload();
 		this.setup_queries();
 		this.frm.set_query('shipping_rule', function() {
 			return {
@@ -84,7 +84,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	}
 
 	refresh () {
-		this._super();
+		super.refresh();
 
 		frappe.dynamic_link = {doc: this.frm.doc, fieldname: 'customer', doctype: 'Customer'}
 
@@ -315,7 +315,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	}
 
 	set_dynamic_labels () {
-		this._super();
+		super.set_dynamic_labels();
 		this.set_product_bundle_help(this.frm.doc);
 	}
 
@@ -357,7 +357,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	}
 
 	conversion_factor (dont_fetch_price_list_rate) {
-	    this._super(doc, cdt, cdn, dont_fetch_price_list_rate);
+	    super.conversion_factor(doc, cdt, cdn, dont_fetch_price_list_rate);
 		if(frappe.meta.get_docfield(cdt, "stock_qty", cdn) &&
 			in_list(['Delivery Note', 'Sales Invoice'], doc.doctype)) {
 				if (doc.doctype === 'Sales Invoice' && (!doc.update_stock)) return;
@@ -366,11 +366,11 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	}
 
 	batch_no () {
-		this._super(doc, cdt, cdn);
+		super.batch_no(doc, cdt, cdn);
 	}
 
 	qty () {
-		this._super(doc, cdt, cdn);
+		super.qty(doc, cdt, cdn);
 
 		if(in_list(['Delivery Note', 'Sales Invoice'], doc.doctype)) {
 			if (doc.doctype === 'Sales Invoice' && (!doc.update_stock)) return;

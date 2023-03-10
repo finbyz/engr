@@ -144,12 +144,12 @@ frappe.ui.form.on('Proforma Invoice', {
 
 erpnext.selling.SalesOrderController = class SalesOrderController extends erpnext.selling.SellingController{
 	onload (){
-		this._super();
+		super.onload();
 	}
 
 	refresh (){
 		var me = this;
-		this._super();
+		super.refresh();
 		let allow_delivery = false;
 	}
 

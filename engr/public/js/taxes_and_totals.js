@@ -171,7 +171,7 @@ erpnext.taxes_and_totals = class TaxesAndTotals extends erpnext.payments {
 					"account_list": frappe.flags.round_off_applicable_accounts
 				},
 				callback: function(r) {
-					frappe.flags.round_off_applicable_accounts.push(...r.message);
+					frappe.flags.round_off_applicable_accounts.push(r.message);
 				}
 			});
 		}

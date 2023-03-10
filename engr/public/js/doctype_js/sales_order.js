@@ -72,12 +72,12 @@ frappe.ui.keys.on('ctrl+i', function(e) {
 
 erpnext.selling.SalesOrderController = class SalesOrderController extends erpnext.selling.SellingController {
 	onload(doc, dt, dn) {
-		this._super();
+		super.onload();
 	}
 
 	refresh(doc, dt, dn) {
 		var me = this;
-		this._super();
+		super.refresh();
 		let allow_delivery = true;
 
 		if (doc.docstatus==1) {

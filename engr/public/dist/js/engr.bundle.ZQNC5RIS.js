@@ -629,7 +629,7 @@
   frappe.provide("erpnext.accounts.dimensions");
   erpnext.TransactionController = class TransactionController extends erpnext.taxes_and_totals {
     setup() {
-      this._super();
+      super.setup();
       let me = this;
       frappe.flags.hide_serial_batch_dialog = true;
       frappe.ui.form.on(this.frm.doctype + " Item", "rate", function(frm, cdt, cdn) {
@@ -2657,4 +2657,4 @@
     });
   };
 })();
-//# sourceMappingURL=engr.bundle.XH22VO4J.js.map
+//# sourceMappingURL=engr.bundle.ZQNC5RIS.js.map
