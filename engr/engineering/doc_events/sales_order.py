@@ -26,88 +26,92 @@ def update_proforma_details(docname,action):
 			sales_order_list = []
 
 			for item in doc.items:
-				proforma_query = frappe.db.sql("""
-					select sum(poi.payment_amount) as payment_amount,soi.net_amount
-					from `tabProforma Invoice Item` as poi
-					JOIN `tabProforma Invoice` as pi on pi.name = poi.parent
-					JOIN `tabSales Order Item` as soi on soi.name = poi.sales_order_item
-					where poi.sales_order = '{}' and poi.sales_order_item = '{}'
-					and pi.name != '{}' and pi.docstatus=1
-				""".format(item.sales_order,item.sales_order_item,doc.name))
- 
-				sales_order_list.append(item.sales_order)
+				if item.sales_order and item.sales_order_item:
+					proforma_query = frappe.db.sql("""
+						select sum(poi.payment_amount) as payment_amount,soi.net_amount
+						from `tabProforma Invoice Item` as poi
+						JOIN `tabProforma Invoice` as pi on pi.name = poi.parent
+						JOIN `tabSales Order Item` as soi on soi.name = poi.sales_order_item
+						where poi.sales_order = '{}' and poi.sales_order_item = '{}'
+						and pi.name != '{}' and pi.docstatus=1
+					""".format(item.sales_order,item.sales_order_item,doc.name))
+	
+					sales_order_list.append(item.sales_order)
 
-				update_value = False
-				if proforma_query:
-					proforma_amount = proforma_query[0][0]
-					net_amount = proforma_query[0][1] 
-					if proforma_amount:
-						proforma_percentage = (flt(proforma_amount) + flt(item.payment_amount)) / flt(net_amount) * 100
-						if cint(proforma_percentage) > 100:
-							frappe.throw("<b>Row {}</b>: Proforma Invoice has already been raised".format(item.idx))
+					update_value = False
+					if proforma_query:
+						proforma_amount = proforma_query[0][0]
+						net_amount = proforma_query[0][1] 
+						if proforma_amount:
+							proforma_percentage = (flt(proforma_amount) + flt(item.payment_amount)) / flt(net_amount) * 100
+							if cint(proforma_percentage) > 100:
+								frappe.throw("<b>Row {}</b>: Proforma Invoice has already been raised".format(item.idx))
 
+							frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
+								'proforma_amount',flt(proforma_amount) + flt(item.payment_amount))
+							frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
+								'proforma_percentage',proforma_percentage)
+							update_value = True
+	
+					if not update_value:
 						frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-							'proforma_amount',flt(proforma_amount) + flt(item.payment_amount))
+							'proforma_amount',item.payment_amount)
 						frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-							'proforma_percentage',proforma_percentage)
-						update_value = True
-  
-				if not update_value:
-					frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-						'proforma_amount',item.payment_amount)
-					frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-						'proforma_percentage',doc.payment_percentage)
+							'proforma_percentage',doc.payment_percentage)
 
 			sales_order_list = list(set(sales_order_list))
-			for so in sales_order_list:
-				if so:
-					so_doc = frappe.get_doc("Sales Order",so)
+			if sales_order_list:
+				for so in sales_order_list:
+					if so:
+						so_doc = frappe.get_doc("Sales Order",so)
 
-					so_doc.db_set("proforma_amount",flt(doc.payment_due_amount) + flt(so_doc.proforma_amount))
-					so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
-					change_sales_order_status(so_doc)
+						so_doc.db_set("proforma_amount",flt(doc.payment_due_amount) + flt(so_doc.proforma_amount))
+						so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
+						change_sales_order_status(so_doc)
 
 		elif action == "cancel":
 			sales_order_list = []
 			for item in doc.items:
-				proforma_query = frappe.db.sql("""
-					select sum(poi.payment_amount) as payment_amount,soi.net_amount
-					from `tabProforma Invoice Item` as poi
-					JOIN `tabProforma Invoice` as pi on pi.name = poi.parent
-					JOIN `tabSales Order Item` as soi on soi.name = poi.sales_order_item
-					where poi.sales_order = '{}' and poi.sales_order_item = '{}'
-					and pi.name != '{}' and pi.docstatus=1
-				""".format(item.sales_order,item.sales_order_item,doc.name))
+				if item.sales_order and item.sales_order_item:
+					proforma_query = frappe.db.sql("""
+						select sum(poi.payment_amount) as payment_amount,soi.net_amount
+						from `tabProforma Invoice Item` as poi
+						JOIN `tabProforma Invoice` as pi on pi.name = poi.parent
+						JOIN `tabSales Order Item` as soi on soi.name = poi.sales_order_item
+						where poi.sales_order = '{}' and poi.sales_order_item = '{}'
+						and pi.name != '{}' and pi.docstatus=1
+					""".format(item.sales_order,item.sales_order_item,doc.name))
 
-				sales_order_list.append(item.sales_order)
+					sales_order_list.append(item.sales_order)
 
-				update_value = False
-				if proforma_query:
-					proforma_amount = proforma_query[0][0]
-					net_amount = proforma_query[0][1] 
-					if proforma_amount and net_amount:
-						proforma_percentage = flt(proforma_amount) / flt(net_amount) * 100
+					update_value = False
+					if proforma_query:
+						proforma_amount = proforma_query[0][0]
+						net_amount = proforma_query[0][1] 
+						if proforma_amount and net_amount:
+							proforma_percentage = flt(proforma_amount) / flt(net_amount) * 100
 
-					if proforma_amount:
+						if proforma_amount:
+							frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
+								'proforma_amount',proforma_amount)
+							frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
+								'proforma_percentage',proforma_percentage)
+							update_value = True
+
+					if not update_value:
 						frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-							'proforma_amount',proforma_amount)
+							'proforma_amount',0)                    
 						frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-							'proforma_percentage',proforma_percentage)
-						update_value = True
-
-				if not update_value:
-					frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-						'proforma_amount',0)                    
-					frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-						'proforma_percentage',0)
+							'proforma_percentage',0)
 
 			sales_order_list = list(set(sales_order_list))
-			for so in sales_order_list:
-				if so:
-					so_doc  = frappe.get_doc("Sales Order",so)
-					so_doc.db_set("proforma_amount",flt(so_doc.proforma_amount) - flt(doc.payment_due_amount))
-					so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
-					change_sales_order_status(so_doc)
+			if sales_order_list:
+				for so in sales_order_list:
+					if so:
+						so_doc  = frappe.get_doc("Sales Order",so)
+						so_doc.db_set("proforma_amount",flt(so_doc.proforma_amount) - flt(doc.payment_due_amount))
+						so_doc.db_set("proforma_percentage",flt(so_doc.proforma_amount) / flt(so_doc.rounded_total) * 100)
+						change_sales_order_status(so_doc)
 
 def change_sales_order_status(so_doc, update_modified= True):
 	pi_status = frappe.db.sql("""select pi.status
