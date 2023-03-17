@@ -19,7 +19,7 @@ frappe.ui.form.on('Sales Invoice', {
 	},
 	onload: function(frm) {
         frm.ignore_doctypes_on_cancel_all = ["Delivery Note","Work Order Master"]
-		if(frm.doc.company){
+		if(frm.doc.company && frm.doc.docstatus == 0){
             if (!frm.doc.bank_account){
                 frappe.db.get_value("Bank Account",{"company":frm.doc.company,"is_company_account":1,"is_default":1},"name", function(r){
                     frm.set_value("bank_account",r.name);
