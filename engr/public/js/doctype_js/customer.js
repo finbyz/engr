@@ -35,6 +35,14 @@ frappe.ui.form.on('Customer', {
 	},
 
 })
+
 frappe.ui.form.on('Customer', {
+
+    refresh:function(frm){
+        frm.add_custom_button(__('Payment Reconciliation'), function(){
+            window.open(window.location.href.split('app')[0] + "app/payment-reconciliation/Payment Reconciliation" + "/?" + "party_type=" + "Customer" + "&" + "party=" + frm.doc.name)
+
+        }, __("Make"));
+    },
     
 });

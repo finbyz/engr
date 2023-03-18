@@ -140,7 +140,7 @@
             "account_list": frappe.flags.round_off_applicable_accounts
           },
           callback: function(r) {
-            frappe.flags.round_off_applicable_accounts.push(...r.message);
+            frappe.flags.round_off_applicable_accounts.push(r.message);
           }
         });
       }
@@ -2657,4 +2657,4 @@
     });
   };
 })();
-//# sourceMappingURL=engr.bundle.ZQNC5RIS.js.map
+//# sourceMappingURL=engr.bundle.BGXVTIUI.js.map
