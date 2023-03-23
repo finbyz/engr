@@ -17,6 +17,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	}
 
 	onload () {
+		console.log("hello")
 		super.onload();
 		this.setup_queries();
 		this.frm.set_query('shipping_rule', function() {
@@ -127,13 +128,13 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		this.set_dynamic_labels();
 	}
 
-	discount_percentage () {
+	discount_percentage (doc, cdt, cdn) {
 		var item = frappe.get_doc(cdt, cdn);
 		item.discount_amount = 0.0;
 		this.apply_discount_on_item(doc, cdt, cdn, 'discount_percentage');
 	}
 
-	discount_amount () {
+	discount_amount (doc, cdt, cdn) {
 
 		if(doc.name === cdn) {
 			return;
@@ -144,7 +145,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		this.apply_discount_on_item(doc, cdt, cdn, 'discount_amount');
 	}
 
-	apply_discount_on_item (field) {
+	apply_discount_on_item (doc, cdt, cdn, field) {
 		var item = frappe.get_doc(cdt, cdn);
 		if(!item.price_list_rate) {
 			item[field] = 0.0;
@@ -177,7 +178,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		}
 	}
 
-	allocated_percentage () {
+	allocated_percentage (doc, cdt, cdn) {
 		var sales_person = frappe.get_doc(cdt, cdn);
 		if(sales_person.allocated_percentage) {
 
@@ -195,13 +196,13 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		}
 	}
 
-	sales_person (){
+	sales_person (doc, cdt, cdn){
 		var row = frappe.get_doc(cdt, cdn);
 		this.calculate_incentive(row);
 		refresh_field("incentives",row.name,row.parentfield);
 	}
 
-	warehouse () {
+	warehouse (doc, cdt, cdn) {
 		var me = this;
 		var item = frappe.get_doc(cdt, cdn);
 
@@ -285,7 +286,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		}
 	}
 
-	batch_no () {
+	batch_no (doc, cdt, cdn) {
 		var me = this;
 		var item = frappe.get_doc(cdt, cdn);
 
@@ -319,7 +320,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		this.set_product_bundle_help(this.frm.doc);
 	}
 
-	set_product_bundle_help () {
+	set_product_bundle_help (doc) {
 		if(!cur_frm.fields_dict.packing_list) return;
 		if ((doc.packed_items || []).length) {
 			$(cur_frm.fields_dict.packing_list.row.wrapper).toggle(true);
@@ -356,7 +357,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 		}
 	}
 
-	conversion_factor (dont_fetch_price_list_rate) {
+	conversion_factor (doc, cdt, cdn, dont_fetch_price_list_rate) {
 	    super.conversion_factor(doc, cdt, cdn, dont_fetch_price_list_rate);
 		if(frappe.meta.get_docfield(cdt, "stock_qty", cdn) &&
 			in_list(['Delivery Note', 'Sales Invoice'], doc.doctype)) {
@@ -365,11 +366,11 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 			}
 	}
 
-	batch_no () {
+	batch_no (doc, cdt, cdn) {
 		super.batch_no(doc, cdt, cdn);
 	}
 
-	qty () {
+	qty (doc, cdt, cdn) {
 		super.qty(doc, cdt, cdn);
 
 		if(in_list(['Delivery Note', 'Sales Invoice'], doc.doctype)) {
@@ -382,7 +383,7 @@ erpnext.selling.SellingController = class SellingController extends erpnext.Tran
 	* @param {string} cdt - Document Doctype
 	* @param {string} cdn - Document name
 	*/
-	set_batch_number () {
+	set_batch_number (cdt, cdn) {
 		const doc = frappe.get_doc(cdt, cdn);
 		if (doc && doc.has_batch_no && doc.warehouse) {
 			this._set_batch_number(doc);

@@ -729,7 +729,7 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 		});
 	}
 };
-$.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));
+extend_cscript(cur_frm.cscript, new engr.selling.SalesOrderController({frm: cur_frm}));
 
 
 frappe.ui.form.on('Sales Order', {

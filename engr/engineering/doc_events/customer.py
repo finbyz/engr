@@ -22,7 +22,7 @@ def get_item_group_list():
 
 
 def validate_customer_potential(self,method):
-	if self.customer_potential:
+	if self.get('customer_potential'):
 		to_remove=[]
 		for row in self.customer_potential:
 			if not row.target and not row.potential:
