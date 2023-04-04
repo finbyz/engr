@@ -160,9 +160,10 @@ def set_payment_entry_ref(self,method):
 						if doc.work_order_master_ref:
 							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status','Paid',update_modified = False)
 							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
-					if round(per_billed) < 100:
+					if round(per_billed) < 100 and round(per_billed > 0):
 						doc = frappe.get_doc("Sales Order",row.reference_name)
 						if doc.work_order_master_ref:
+							frappe.msgprint("payment status partially paid")
 							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status','Partially Paid',update_modified = False)
 							frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
 				if row.reference_doctype == "Sales Invoice":
