@@ -269,6 +269,7 @@ def set_payment_status(self , method):
 	if self.per_billed == 0.0 and self.work_order_master_ref and contract_work == 1:
 		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Unpaid-Contract Work",update_modified=False)
 	if self.per_billed > 0 and round(self.per_billed) < 100 and self.work_order_master_ref:
+		frappe.msgprint("payment status paid ")
 		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Partially paid",update_modified=False)
 	if round(self.per_billed) == 100 and self.work_order_master_ref:
 		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Paid",update_modified=False)
