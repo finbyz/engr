@@ -22,7 +22,8 @@ class ProformaInvoice(Document):
         for item in self.items:
             item.payment_amount = flt(item.net_amount) * flt(self.payment_percentage) / 100
         validate_sales_person(self)  
-        self.set_taxes_on_payment_percentage()  
+        self.set_taxes_on_payment_percentage() 
+         
     def set_taxes_on_payment_percentage(self):
         if self.gst_paid: 
             doc = frappe.get_doc('GST Settings')

@@ -50,7 +50,7 @@ def _execute(filters, additional_table_columns=None, additional_query_columns=No
 		cost_center = list(set(invoice_cc_wh_map.get(inv.name, {}).get("cost_center", [])))
 		warehouse = list(set(invoice_cc_wh_map.get(inv.name, {}).get("warehouse", [])))
 		
-       
+	   
 		row = {
 			"invoice": inv.name,
 			"posting_date": inv.posting_date,

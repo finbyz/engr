@@ -27,6 +27,7 @@ def update_proforma_reference_si(self):
 def on_submit(self,method):
 	update_proforma_invoice(self,"submit")
 	set_payment_entry_ref(self)
+	update_status_pi(self)
 
 def on_cancel(self,method):
 	update_proforma_invoice(self,"cancel")
@@ -186,3 +187,16 @@ def set_payment_entry_ref(self,method):
 							if round(doc.grand_total) == round(self.paid_amount):
 								frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'payment_status','Paid',update_modified = False)
 								frappe.db.set_value("Work Order Master",doc.work_order_master_ref,'mode_of_payment',self.mode_of_payment,update_modified = False)
+
+
+def update_status_pi(self):
+	if self.get('references'):
+		for ref in self.references:
+			if ref.reference_doctype == "Sales Order":
+				if ref.reference_name:
+					doc = frappe.get_doc("Sales Order", ref.reference_name)
+					doc.db_set("per_billed", "100")
+					if doc.per_billed == "100":
+						pi = ref.proforma_invoice
+						pi_doc = frappe.get_doc("Proforma Invoice", pi)
+						pi_doc.db_set("status", "Paid")

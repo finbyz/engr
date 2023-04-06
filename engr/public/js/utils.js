@@ -199,6 +199,7 @@ $.extend(erpnext.utils, {
 					let found = filters.some(el => el.fieldname === dimension['fieldname']);
 
 					if (!found) {
+						console.log("Called")
 						filters.splice(index, 0, {
 							"fieldname": dimension["fieldname"],
 							"label": __(dimension["label"]),
