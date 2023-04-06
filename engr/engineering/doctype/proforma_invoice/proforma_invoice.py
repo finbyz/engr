@@ -110,6 +110,7 @@ def create_proforma_invoice(source_name, target_doc=None):
                 "company": "company",
                 "name" : "sales_order",
                 "project":"project",
+                'items':"items"
             },
             "field_no_map":{
                 "naming_series",
