@@ -25,32 +25,31 @@ def update_proforma_reference_si(self):
 					ref.proforma_invoice = proforma_invoice	
 
 def on_submit(self,method):
-	update_proforma_invoice(self,"submit")
+	update_proforma_invoice_on_submit(self)
 	set_payment_entry_ref(self)
 	update_status_pi(self)
 
 def on_cancel(self,method):
-	update_proforma_invoice(self,"cancel")
+	update_proforma_invoice_on_cancel(self)
 
-def update_proforma_invoice(self,method):
-	if method == "submit":
-		if self.get('references'):
-			for ref in self.references:
-				if ref.get('proforma_invoice'):
-					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
-					doc.db_set("advance_paid",doc.advance_paid + ref.allocated_amount)
-					
-					if flt(doc.advance_paid) > flt(doc.payment_due_amount) and not doc.allow_over_billing_payment:
-						frappe.throw("You cannot Allocate more than Proforma Amount.")
-					set_status(doc)
+def update_proforma_invoice_on_submit(self):
+	if self.get('references'):
+		for ref in self.references:
+			if ref.get('proforma_invoice'):
+				doc = frappe.get_doc("Proforma Invoice", ref.proforma_invoice)
+				doc.db_set("advance_paid",doc.advance_paid + ref.allocated_amount)
+				
+				if flt(doc.advance_paid) > flt(doc.payment_due_amount) and not doc.allow_over_billing_payment:
+					frappe.throw("You cannot Allocate more than Proforma Amount.")
+				set_status(doc)
 
-	elif method == "cancel":
-		if self.get('references'):
-			for ref in self.references:
-				if ref.get('proforma_invoice'):
-					doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
-					doc.db_set("advance_paid",doc.advance_paid - ref.allocated_amount)
-					set_status(doc)
+def update_proforma_invoice_on_cancel(self):
+	if self.get('references'):
+		for ref in self.references:
+			if ref.get('proforma_invoice'):
+				doc = frappe.get_doc("Proforma Invoice",ref.proforma_invoice)
+				doc.db_set("advance_paid",doc.advance_paid - ref.allocated_amount)
+				set_status(doc)
 	
 @frappe.whitelist()
 def create_payment_entry(dt, dn, ref_dt, ref_dn):
