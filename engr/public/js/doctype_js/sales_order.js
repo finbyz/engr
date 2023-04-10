@@ -4,6 +4,7 @@ frappe.ui.form.on('Sales Order', {
 	},
     refresh: function(frm) {
 		if(frm.doc.status != 'Draft'){
+			frm.remove_custom_button("Proforma Invoice", "Create")
             frm.add_custom_button(__('Proforma Invoice'),function() {frm.trigger('create_proforma_invoice')}, __('Create'));
 		}
 	},
@@ -193,6 +194,8 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 				}
 				// payment request
 				if(flt(doc.per_billed)<100) {
+					frm.remove_custom_button("Payment Request", "Create")
+					frm.remove_custom_button("Payment", "Create")
 					this.frm.add_custom_button(__('Payment Request'), () => this.make_payment_request(), __('Create'));
 					this.frm.add_custom_button(__('Payment'), () => this.make_payment_entry(), __('Create'));
 				}
