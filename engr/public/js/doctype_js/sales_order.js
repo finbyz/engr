@@ -115,7 +115,7 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 							this.frm.add_custom_button(__('Close'), () => this.close_sales_order(), __("Status"))
 						}
 					}
-
+					this.frm.remove_custom_button("Pick List", "Create")
 					this.frm.add_custom_button(__('Pick List'), () => this.create_pick_list(), __('Create'));
 
 					const order_is_a_sale = ["Sales", "Shopping Cart"].indexOf(doc.order_type) !== -1;
@@ -126,6 +126,7 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
                     if (!doc.proforma_required){
 					// delivery note
                         if(flt(doc.per_delivered, 6) < 100 && (order_is_a_sale || order_is_a_custom_sale) && allow_delivery) {
+							this.frm.remove_custom_button("Delivery Note", "Create")
                             this.frm.add_custom_button(__('Delivery Note'), () => this.make_delivery_note_based_on_delivery_date(), __('Create'));
                             this.frm.add_custom_button(__('Work Order'), () => this.make_work_order(), __('Create'));
                         }
@@ -148,17 +149,23 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 					// }
 					
 					if (doc.status != "Proforma Raised" && doc.proforma_required){
+						this.frm.remove_custom_button("Delivery Note", "Create")
 						this.frm.add_custom_button(__('Delivery Note'), () => this.make_delivery_note_based_on_delivery_date(), __('Create'));
 					}
 
 					// material request
 					if(!doc.order_type || (order_is_a_sale || order_is_a_custom_sale) && flt(doc.per_delivered, 6) < 100) {
+						this.frm.remove_custom_button("Material Request", "Create")
+						this.frm.remove_custom_button("Request for Raw Materials", "Create")
+
 						this.frm.add_custom_button(__('Material Request'), () => this.make_material_request(), __('Create'));
 						this.frm.add_custom_button(__('Request for Raw Materials'), () => this.make_raw_material_request(), __('Create'));
 					}
 
 					// Make Purchase Order
 					if (!this.frm.doc.is_internal_customer) {
+						this.frm.remove_custom_button("Purchase Order", "Create")
+
 						this.frm.add_custom_button(__('Purchase Order'), () => this.make_purchase_order(), __('Create'));
 					}
 
@@ -170,10 +177,14 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 
 					// project
 					if(flt(doc.per_delivered, 2) < 100) {
-							this.frm.add_custom_button(__('Project'), () => this.make_project(), __('Create'));
+						this.frm.remove_custom_button("Project", "Create")
+
+						this.frm.add_custom_button(__('Project'), () => this.make_project(), __('Create'));
 					}
 
 					if(!doc.auto_repeat) {
+						this.frm.remove_custom_button("Subscription", "Create")
+
 						this.frm.add_custom_button(__('Subscription'), function() {
 							erpnext.utils.make_subscription(doc.doctype, doc.name)
 						}, __('Create'))
