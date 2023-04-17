@@ -205,8 +205,8 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 				}
 				// payment request
 				if(flt(doc.per_billed)<100) {
-					frm.remove_custom_button("Payment Request", "Create")
-					frm.remove_custom_button("Payment", "Create")
+					this.frm.remove_custom_button("Payment Request", "Create")
+					this.frm.remove_custom_button("Payment", "Create")
 					this.frm.add_custom_button(__('Payment Request'), () => this.make_payment_request(), __('Create'));
 					this.frm.add_custom_button(__('Payment'), () => this.make_payment_entry(), __('Create'));
 				}

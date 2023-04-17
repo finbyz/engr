@@ -98,9 +98,9 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.quotation.validate",
 		"on_submit":"engr.engineering.doc_events.quotation.update_quotation_status"
 	},
-	"Payment Entry":{
-		"on_submit":"engr.engineering.doc_events.payment_entry.set_payment_entry_ref"
-	},
+	# "Payment Entry":{
+	# 	"on_submit":"engr.engineering.doc_events.payment_entry.set_payment_entry_ref"
+	# },
 	"Event":{
 		"on_submit":"engr.engineering.doc_events.event.on_submit"
 	},
