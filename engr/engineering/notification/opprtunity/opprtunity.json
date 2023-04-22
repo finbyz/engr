@@ -1,0 +1,39 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "doc.assigned_to_sales_territory and doc.assigned_to_category_team and doc.email_sent",
+ "creation": "2022-11-18 14:48:08.314111",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Opportunity",
+ "enabled": 1,
+ "event": "Save",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "Oportunity Come From {{ doc.opportunity_from or \"\"}}<br>\nParty Name :- {{ doc.party_name or \"\"}}<br>\nStatus :- {{ doc.status or \"\"}}<br>\nNext Contect By :- {{ doc.contact_by or \"\" }}<br>\nItem Group :- {{ doc.item_group or \"\"}}<br>\nContact Person :- {{ doc.contact_person or \"\" }}<br>\nContact :- {{ doc.contact_display  or \"\"}}<br>\nEmail :- {{ doc.contact_email }}<br>\nContact Number :- {{ doc.contact_number or \"\"}}",
+ "method": "before_validate",
+ "modified": "2022-12-13 15:29:17.736959",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Opprtunity",
+ "owner": "Administrator",
+ "property_value": "",
+ "recipients": [
+  {
+   "condition": "doc.assigned_to_category_team",
+   "receiver_by_document_field": "assigned_to_category_team"
+  },
+  {
+   "condition": "doc.assigned_to_sales_territory",
+   "receiver_by_document_field": "assigned_to_sales_territory"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "sender": "Enquiry @ Innovative Technologies",
+ "sender_email": "enquiry@innotech.co.in",
+ "set_property_after_alert": "",
+ "subject": "Opprtunity",
+ "value_changed": "email_sent"
+}

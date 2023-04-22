@@ -1,0 +1,37 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2021-05-14 14:41:41.001826",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[[\"Sales Order\",\"company\",\"!=\",\"DUMMY COMPANY\",false],[\"Sales Order\",\"docstatus\",\"!=\",\"2\",false],[\"Sales Order\",\"customer\",\"!=\",\"P.K.SALES AUTOMATIONS PVT.LTD.\",false],[\"Sales Order\",\"customer\",\"!=\",\"INNOVATIVE TECHNOLOGIES\",false],[\"Sales Order\",\"customer\",\"!=\",\"INNOVATIVE TECHNOLOGIES FPIA (INDIA) PRIVATE LIMITED\",false],[\"Sales Order\",\"docstatus\",\"!=\",\"0\",false]],\"fields\":[[\"name\",\"Sales Order\"],[\"docstatus\",\"Sales Order\"],[\"customer_name\",\"Sales Order\"],[\"address_display\",\"Sales Order\"],[\"territory\",\"Sales Order\"],[\"company\",\"Sales Order\"],[\"transaction_date\",\"Sales Order\"],[\"po_no\",\"Sales Order\"],[\"po_date\",\"Sales Order\"],[\"per_billed\",\"Sales Order\"],[\"item_code\",\"Sales Order Item\"],[\"item_name\",\"Sales Order Item\"],[\"item_group\",\"Sales Order Item\"],[\"brand\",\"Sales Order Item\"],[\"qty\",\"Sales Order Item\"],[\"rate\",\"Sales Order Item\"],[\"net_rate\",\"Sales Order Item\"],[\"net_amount\",\"Sales Order Item\"],[\"sales_person\",\"Sales Team\"]],\"order_by\":\"`tabSales Order`.`modified` desc\",\"add_totals_row\":true,\"page_length\":500,\"column_widths\":{\"name\":120,\"customer_name\":120,\"address_display\":120,\"territory\":120,\"company\":150,\"transaction_date\":160,\"po_no\":100,\"po_date\":100,\"per_billed\":100,\"Sales Order Item:item_code\":150,\"Sales Order Item:item_name\":150,\"Sales Order Item:item_group\":120,\"Sales Order Item:brand\":120,\"Sales Order Item:qty\":100,\"Sales Order Item:rate\":120,\"Sales Order Item:net_rate\":120,\"Sales Order Item:net_amount\":120,\"Sales Team:sales_person\":200},\"group_by\":null}",
+ "letter_head": "INNOVATIVE TECHNOLOGIES",
+ "modified": "2023-04-22 09:49:45.241837",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Sales Order Net Sale SDD",
+ "owner": "anandp@innotech.co.in",
+ "prepared_report": 0,
+ "ref_doctype": "Sales Order",
+ "report_name": "Sales Order Net Sale SDD",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Sales Representative"
+  },
+  {
+   "role": "Export Manager"
+  },
+  {
+   "role": "Sales User"
+  }
+ ]
+}

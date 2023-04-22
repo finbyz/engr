@@ -1,0 +1,37 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2021-10-23 15:04:50.435894",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[[\"Purchase Order\",\"company\",\"=\",\"INNOVATIVE TECHNOLOGIES\"]],\"fields\":[[\"name\",\"Purchase Order\"],[\"docstatus\",\"Purchase Order\"],[\"supplier_name\",\"Purchase Order\"],[\"sales_order\",\"Purchase Order Item\"],[\"customer\",\"Purchase Order\"],[\"company\",\"Purchase Order\"],[\"transaction_date\",\"Purchase Order\"],[\"item_code\",\"Purchase Order Item\"],[\"item_name\",\"Purchase Order Item\"],[\"item_group\",\"Purchase Order Item\"],[\"qty\",\"Purchase Order Item\"],[\"rate\",\"Purchase Order Item\"],[\"amount\",\"Purchase Order Item\"],[\"per_received\",\"Purchase Order\"],[\"received_qty\",\"Purchase Order Item\"],[\"order_confirmation_no\",\"Purchase Order\"],[\"schedule_date\",\"Purchase Order Item\"]],\"order_by\":\"`tabPurchase Order`.`modified` desc\",\"add_totals_row\":0,\"page_length\":500,\"column_widths\":{\"name\":120,\"supplier_name\":120,\"Purchase Order Item:sales_order\":120,\"customer\":120,\"company\":120,\"transaction_date\":120,\"Purchase Order Item:item_code\":120,\"Purchase Order Item:item_name\":120,\"Purchase Order Item:item_group\":120,\"Purchase Order Item:qty\":60,\"Purchase Order Item:rate\":120,\"Purchase Order Item:amount\":120,\"per_received\":120,\"Purchase Order Item:received_qty\":120,\"order_confirmation_no\":120,\"Purchase Order Item:schedule_date\":120},\"group_by\":null}",
+ "letter_head": "INNOVATIVE TECHNOLOGIES",
+ "modified": "2023-04-22 09:44:55.268137",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Purchase Order AP",
+ "owner": "anandp@innotech.co.in",
+ "prepared_report": 0,
+ "ref_doctype": "Purchase Order",
+ "report_name": "Purchase Order AP",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "Purchase Manager"
+  },
+  {
+   "role": "Export Manager"
+  },
+  {
+   "role": "Support Team"
+  },
+  {
+   "role": "Sales Manager"
+  }
+ ]
+}

@@ -1,3 +1,4 @@
+#innovative hooks
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from . import __version__ as app_version
@@ -162,7 +163,13 @@ scheduler_events = {
 		"0 4 * * SUN": [
 			"engr.api.sales_invoice_payment_remainder",
 		],
-	}
+		"0 17 * * SUN": [
+			"engr.api.proforma_invoice_payment_remainder",
+		],
+	},
+	# "daily": [
+	# 	"engr.api.proforma_invoice_payment_remainder",
+	# ],
 }
 # scheduler_events = {
 # 	"all": [
@@ -190,9 +197,9 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "engr.event.get_events"
-# }
+override_whitelisted_methods = {
+	"erpnext.hr.doctype.attendance.attendance.mark_bulk_attendance": "engr.engr.api.mark_bulk_attendance"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
@@ -211,3 +218,7 @@ item_group_wise_sales_target_variance.get_data_column = get_data_column
 from erpnext.selling.report.sales_person_target_variance_based_on_item_group import sales_person_target_variance_based_on_item_group
 from engr.engineering.report.sales_person_target_variance_based_on_item_group import execute
 sales_person_target_variance_based_on_item_group.execute = execute
+
+from finbyzerp import e_invoice_override
+from engr.e_invoice_override import get_item_list
+e_invoice_override.get_item_list = get_item_list

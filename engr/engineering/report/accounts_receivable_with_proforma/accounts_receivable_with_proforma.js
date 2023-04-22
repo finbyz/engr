@@ -135,6 +135,17 @@ frappe.query_reports["Accounts Receivable With Proforma"] = {
 		{
 			"fieldname": "show_proforma_invoices",
 			"label": __("Show Proforma Invoices"),
+			"fieldtype": "Check",
+			"default" : 1,
+			on_change : () => {
+				let filter_based_on = frappe.query_report.get_filter_value('show_proforma_invoices');
+				frappe.query_report.toggle_filter_display('Show_invoice_with_term_like_against_pi', filter_based_on === 0);
+				frappe.query_report.refresh();
+			}
+		},
+		{
+			"fieldname": "Show_invoice_with_term_like_against_pi",
+			"label": __("Show PI with Term like Against PI"),
 			"fieldtype": "Check"
 		},
 		// {

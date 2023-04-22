@@ -10,8 +10,8 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "P.K. SALES AUTOMATIONS PVT. LTD.",
- "modified": "2022-07-21 10:34:34.320680",
- "modified_by": "Administrator",
+ "modified": "2023-02-17 13:16:39.066936",
+ "modified_by": "anandp@innotech.co.in",
  "module": "Engineering",
  "name": "Sales Person Item Groupwise Performance",
  "owner": "Administrator",
@@ -25,6 +25,9 @@
   },
   {
    "role": "Sales Master Manager"
+  },
+  {
+   "role": "HR Manager"
   }
  ]
 }

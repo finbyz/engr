@@ -620,6 +620,9 @@ class ReceivablePayableReport(object):
 				where exists(select name from `tabTerritory` where lft >= {lft} and rgt <= {rgt}
 					and name = `tabCustomer`.territory))""".format(
 						lft=lft, rgt=rgt)
+		
+		if self.filters.get("Show_invoice_with_term_like_against_pi"):
+			conditions += f""" and LOWER(pi.payment_terms_template) like '%against pi%'"""
 
 		proforma_query = frappe.db.sql("""
 			select

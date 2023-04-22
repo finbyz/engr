@@ -1,11 +1,3 @@
-cur_frm.fields_dict.set_target_warehouse.get_query = function (doc) {
-	return {
-		filters: {
-			"company": doc.customer,
-            "is_group":0,
-		}
-	}
-};
 frappe.ui.form.on('Sales Invoice', {
 	refresh:function(frm){
 	    frm.ignore_doctypes_on_cancel_all = ["Delivery Note"]
@@ -30,3 +22,11 @@ frappe.ui.form.on('Sales Invoice', {
         }
 	},
 })
+cur_frm.fields_dict.set_target_warehouse.get_query = function (doc) {
+	return {
+		filters: {
+			"company": doc.customer,
+            "is_group":0,
+		}
+	}
+};

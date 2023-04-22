@@ -48,9 +48,9 @@ def update_proforma_details(docname,action):
                 if not update_value:
                     frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
                         'proforma_amount',item.payment_amount)
+                    proforma_percentage = frappe.db.get_value("Sales Order Item", {"name":item.sales_order_item,"parent":item.sales_order}, 'net_amount') or 0
                     frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
-                        'proforma_percentage',doc.payment_percentage)
-
+                        'proforma_percentage',((flt(item.payment_amount) / flt(proforma_percentage)) * 100))
             sales_order_list = list(set(sales_order_list))
             for so in sales_order_list:
                 if so:
@@ -112,7 +112,7 @@ def change_sales_order_status(so_doc, update_modified= True):
     status_list = list(set(status.status for status in pi_status))
     if ("Unpaid" in status_list or "Partially Paid" in status_list) and so_doc.docstatus == 1:
         so_doc.db_set("status","Proforma Raised", update_modified= update_modified)
-    elif so_doc.docstatus == 1:
+    elif so_doc.get('docstatus') == 1:
         StatusUpdater.set_status(so_doc,update=True, update_modified=update_modified)
 
 
