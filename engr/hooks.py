@@ -61,7 +61,8 @@ doc_events = {
 	"Payment Entry":{
 		"validate":"engr.engineering.doc_events.payment_entry.validate",
 		"on_submit":"engr.engineering.doc_events.payment_entry.on_submit",
-		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel"
+		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel",
+        "on_update_after_submit":"engr.engineering.doc_events.payment_entry.on_update_after_submit"
 	},
 	"Sales Invoice":{
 		"validate":"engr.engineering.doc_events.sales_invoice.validate",

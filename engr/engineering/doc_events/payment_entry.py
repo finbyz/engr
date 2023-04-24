@@ -236,3 +236,9 @@ def set_payment_entry_ref(self,method):
 						if wom_doc:
 							frappe.db.set_value("Work Order Master",wom_doc,'payment_status',doc.status,update_modified = False)
 							frappe.db.set_value("Work Order Master",wom_doc,'mode_of_payment',self.mode_of_payment,update_modified = False)
+
+
+
+def on_update_after_submit(self , method):
+	if len(self.references):
+		self.db_set("is_advance" , 0)
