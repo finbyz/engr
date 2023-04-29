@@ -42,6 +42,8 @@ class WorkOrderMaster(Document):
 		for row in self.item_master:
 			row.job_id = self.job_id
 			date_list.append(row.expected_date)
+		if self.quotation_no:
+			self.prevdoc_docname = self.quotation_no
 		
 		self.date_of_test_report = max(date_list)
 
