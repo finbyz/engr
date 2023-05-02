@@ -34,6 +34,14 @@ frappe.ui.form.on('Sales Invoice', {
                 }
             };
         });
+        frm.set_query("work_order_master_ref", function(doc) {
+            return {
+                "filters": {
+                    "branch": doc.branch
+                    
+                }
+            };
+        });    
         
 	},
     company: function(frm) {

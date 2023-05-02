@@ -11,7 +11,7 @@ frappe.ui.form.on('Sales Order', {
     create_proforma_invoice: function(frm){
         frappe.model.open_mapped_doc({
             method: "engr.engineering.doctype.proforma_invoice.proforma_invoice.create_proforma_invoice",
-            frm: frm
+            frm: cur_frm,
         })
     },
 	customer : function(frm){
@@ -754,9 +754,18 @@ frappe.ui.form.on('Sales Order', {
 			frm : cur_frm,
 		})
 	});
+	frm.set_query("work_order_master_ref", function(doc) {
+		return {
+			"filters": {
+				"branch": doc.branch
+				
+			}
+		};
+	});
 
   }
 });
+	
 frappe.ui.form.on("Sales Order Item", {
     item_code:function(frm,cdt,cdn){
         let d  = locals[cdt][cdn]

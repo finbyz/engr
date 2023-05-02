@@ -131,7 +131,7 @@ def create_proforma_invoice(source_name, target_doc=None):
                 "parent": "sales_order",
                 "name":"sales_order_item",
             },
-            "condition": lambda doc: (doc.proforma_percentage) < 100
+            # "condition": lambda doc: (doc.proforma_percentage) < 100
         },
     }
     doclist = get_mapped_doc(
