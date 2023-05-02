@@ -38,7 +38,7 @@ doctype_js = {
 	"Quotation":"public/js/doctype_js/quotation.js",
     "Payment Reconciliation": "public/js/doctype_js/payment_reconciliation.js",
     "Supplier": "public/js/doctype_js/supplier.js",
-	"Proforma Invoice": "public/js/doctype_js/proforma_invoice.js"
+	# "Proforma Invoice": "public/js/doctype_js/proforma_invoice.js"
 }	
 
 override_doctype_class = {

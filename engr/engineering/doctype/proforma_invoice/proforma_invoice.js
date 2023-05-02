@@ -24,7 +24,16 @@ frappe.ui.form.on('Proforma Invoice', {
 			frm.add_custom_button(__('Sales Invoice'), () => frm.trigger('make_sales_invoice'), __('Create'));
 		}
 		frm.trigger('show_open_close_buttons');
+
+		frm.set_query("work_order_master_ref", function(doc) {
+			return {
+				"filters": {
+					"branch": doc.branch
+				}
+			};
+		});
 	},
+	
 	show_open_close_buttons: function(frm){
 		if (frm.doc.docstatus == 1){
 			if (frm.doc.status == "Closed"){
