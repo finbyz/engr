@@ -60,6 +60,7 @@ class ProformaInvoice(Document):
             frappe.db.set_value("Work Order Master",self.work_order_master_ref ,"proforma_invoice",self.name)
         if(self.work_order_master_ref):
             frappe.db.set_value("Work Order Master",self.work_order_master_ref ,"proforma_invoice",self.name)
+
     def before_save(self):
         if(self.job_id):
             Wom=frappe.db.exists("Work Order Master",{"job_id":self.job_id})
