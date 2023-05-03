@@ -29,9 +29,9 @@ class WorkOrderMaster(Document):
 		date = date.split('-')
 
 		if(self.branch == 'Nasik'):
-			self.branch_name = 'NK'
+			self.branch_name = frappe.db.get_value("Branch", self.branch, "naming")
 		if(self.branch == 'Aurangabad'):
-			self.branch_name = 'AU'
+			self.branch_name = frappe.db.get_value("Branch", self.branch, "naming")
 		self.wom_name = make_autoname("WOM-{}{}-{}-{}-{}".format(self.branch_name,date[2],date[1],date[0],".##"))
 		job_id = self.wom_name.split("-")
 		self.job_id = "{}-{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1], self.branch_name)
