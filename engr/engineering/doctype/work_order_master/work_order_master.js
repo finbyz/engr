@@ -3,25 +3,25 @@
 
 frappe.ui.form.on('Work Order Master', {
     refresh: function(frm) {
-        if(!frm.doc.__islocal) {
-            frm.remove_custom_button('Sales Invoice', 'Create');
-            frm.add_custom_button(__('Sales Invoice'), function(){
-                frappe.model.open_mapped_doc({
-                    method: 'engr.engineering.doctype.work_order_master.work_order_master.make_sales_invoice',
-                    frm: frm,
-                });
-            }, __("Create"));
-        };
-        // if(frappe.perm.has_perm("Proforma Invoice", 0, "read"))  {
-            if(!frm.doc.__islocal) {
-                frm.remove_custom_button('Proforma Invoice', 'Create');
-                frm.add_custom_button(__('Proforma Invoice'), function(){
-                    frappe.model.open_mapped_doc({
-                        method: 'engr.engineering.doctype.work_order_master.work_order_master.make_proforma_invoice',
-                        frm: frm,
-                    });
-                }, __("Create"));
-            };
+        // if(!frm.doc.__islocal) {
+        //     frm.remove_custom_button('Sales Invoice', 'Create');
+        //     frm.add_custom_button(__('Sales Invoice'), function(){
+        //         frappe.model.open_mapped_doc({
+        //             method: 'engr.engineering.doctype.work_order_master.work_order_master.make_sales_invoice',
+        //             frm: frm,
+        //         });
+        //     }, __("Create"));
+        // };
+        // // if(frappe.perm.has_perm("Proforma Invoice", 0, "read"))  {
+        //     if(!frm.doc.__islocal) {
+        //         frm.remove_custom_button('Proforma Invoice', 'Create');
+        //         frm.add_custom_button(__('Proforma Invoice'), function(){
+        //             frappe.model.open_mapped_doc({
+        //                 method: 'engr.engineering.doctype.work_order_master.work_order_master.make_proforma_invoice',
+        //                 frm: frm,
+        //             });
+        //         }, __("Create"));
+        //     };
         // if(frappe.perm.has_perm("Sales Order", 0, "read")) {
             if(!frm.doc.__islocal) {
                 frm.remove_custom_button('Sales Order', 'Create');

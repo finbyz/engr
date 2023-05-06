@@ -23,7 +23,10 @@ class ProformaInvoice(Document):
             item.payment_amount = flt(item.net_amount) * flt(self.payment_percentage) / 100
         validate_sales_person(self)  
         self.set_taxes_on_payment_percentage() 
-         
+        if not self.items[0].sales_order:
+            frappe.throw("Sales Order is Mandatory to Create Proforma Invoice")
+    
+    
     def set_taxes_on_payment_percentage(self):
         if self.gst_paid: 
             doc = frappe.get_doc('GST Settings')

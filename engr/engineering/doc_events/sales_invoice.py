@@ -159,9 +159,8 @@ def validate(self,method):
         if self.percentage > 0 and self.percentage < 1 :
             for row in self.items:
                 row.qty = flt(self.percentage/100) * flt(row.so_quantity)
-    # for row in self.items:
-    #     if row.uom == 'Percent':
-    #         row.amount = (row.qty*row.rate)/100          
+    if not self.items[0].proforma_invoice:
+        frappe.throw("Proforma Invoice Is Mandatory To Create Sales Invoice")        
 def validate_hsn_code(self):
     for row in self.items:
         if row.gst_hsn_code:
