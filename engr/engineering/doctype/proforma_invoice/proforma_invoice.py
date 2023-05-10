@@ -134,6 +134,7 @@ def create_proforma_invoice(source_name, target_doc=None):
             "field_map": {
                 "parent": "sales_order",
                 "name":"sales_order_item",
+                "description": "description"
             },
             # "condition": lambda doc: (doc.proforma_percentage) < 100
         },
