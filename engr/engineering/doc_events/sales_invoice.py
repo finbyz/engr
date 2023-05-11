@@ -168,7 +168,9 @@ def validate(self,method):
             for row in self.items:
                 row.qty = flt(self.percentage/100) * flt(row.so_quantity)
     if not self.items[0].proforma_invoice:
-        frappe.throw("Proforma Invoice Is Mandatory To Create Sales Invoice")        
+        frappe.throw("Proforma Invoice Is Mandatory To Create Sales Invoice") 
+    if self.items[0].proforma_invoice:
+        frappe.db.set_value("Work Order Master" , self.work_order_master , 'tax_invoice_no' , self.name)       
 def validate_hsn_code(self):
     for row in self.items:
         if row.gst_hsn_code:
