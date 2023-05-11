@@ -183,7 +183,7 @@ doc_events = {
 
 scheduler_events = {
 	"cron":{
-		"1 * * * *": [
+		"*/1 * * * *": [
 			"engr.api.set_wom_status"
 		],
 	}
