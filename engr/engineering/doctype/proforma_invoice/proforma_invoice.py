@@ -74,6 +74,9 @@ class ProformaInvoice(Document):
     def on_cancel(self):
         update_proforma_details(self.name,"cancel")
         self.check_nextdoc_docstatus()
+        if self.work_order_master_ref:
+            frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'proforma_invoice' , "" , update_modified = False)
+
 
     def check_nextdoc_docstatus(self):
         submit_rv = frappe.db.sql_list("""select t1.name
