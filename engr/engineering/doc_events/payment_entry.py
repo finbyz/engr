@@ -26,8 +26,7 @@ def update_proforma_reference_si(self):
 
 def on_submit(self,method):
 	update_proforma_invoice_on_submit(self)
-	set_payment_entry_ref(self, method)
-
+	
 def on_cancel(self,method):
 	update_proforma_invoice_on_cancel(self)
 
