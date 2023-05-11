@@ -230,3 +230,11 @@ def before_naming(self,method):
 		if not frappe.db.exists("Bank Statement Settings", mapper_name):
 			self.create_settings(self.bank)
 		self.bank_settings = mapper_name
+
+def set_wom_status():
+	doc_list = frappe.db.sql(""" SELECT name , status , work_order_master_ref From `tabSales Invoice` Where docstatus = 1 Order by modified desc LIMIT 100 """ , as_dict = 1)
+	for row in doc_list:
+		if row.get('status') in ["Paid" , "Partly Paid"]:
+			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , row.get('status'))
+		if row.get('status') in ["Overdue" , "Unpaid"]:
+			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Unpaid")

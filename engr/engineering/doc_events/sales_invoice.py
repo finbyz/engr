@@ -23,11 +23,6 @@ def on_submit(self,method):
     create_purchase_invoice(self)
     update_proforma_billed_percent(self,"submit")
 
-def on_update_after_submit(self , method):
-    if self.work_order_master_ref:
-        frappe.db.set_value("Work Order Master" , self.work_order_master_ref  , "payment_status" , self.status)
-
-
 def before_cancel(self, method):
     self.ignore_linked_doctypes = ('Delivery Note')
     for item in self.items:

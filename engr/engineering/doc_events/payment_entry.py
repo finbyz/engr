@@ -240,5 +240,12 @@ def set_payment_entry_ref(self,method):
 
 
 def on_update_after_submit(self , method):
+	# set_payment_entry_ref(self , method)
 	if len(self.references):
 		self.db_set("is_advance" , 0)
+		for row in self.references:
+			doc = frappe.get_doc(row.reference_doctype , row.reference_name)
+			doc_status = frappe.db.get_value(row.reference_doctype , row.reference_name , 'status')
+			# if doc.work_order_master_ref:
+			# 	# frappe.throw(str(doc_status))
+			# 	frappe.db.set_value("Work Order Master" , doc.work_order_master_ref , "payment_status" , doc.status)
