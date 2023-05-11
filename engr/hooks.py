@@ -63,7 +63,7 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.payment_entry.validate",
 		"on_submit":"engr.engineering.doc_events.payment_entry.on_submit",
 		"on_cancel":"engr.engineering.doc_events.payment_entry.on_cancel",
-        "on_update_after_submit":"engr.engineering.doc_events.payment_entry.on_update_after_submit"
+        "on_update_after_submit":"engr.engineering.doc_events.payment_entry.on_update_after_submit",
 	},
 	"Sales Invoice":{
 		"validate":"engr.engineering.doc_events.sales_invoice.validate",
@@ -100,9 +100,6 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.quotation.validate",
 		"on_submit":"engr.engineering.doc_events.quotation.update_quotation_status"
 	},
-	# "Payment Entry":{
-	# 	"on_submit":"engr.engineering.doc_events.payment_entry.set_payment_entry_ref"
-	# },
 	"Event":{
 		"on_submit":"engr.engineering.doc_events.event.on_submit"
 	},
@@ -184,13 +181,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"cron":{
-# 		"0 4 * * SUN": [
-# 			"engr.api.sales_invoice_payment_remainder",
-# 		],
-# 	}
-# }
+scheduler_events = {
+	"cron":{
+		"1 * * * *": [
+			"engr.api.set_wom_status"
+		],
+	}
+}
 # scheduler_events = {
 # 	"all": [
 # 		"engr.tasks.all"
