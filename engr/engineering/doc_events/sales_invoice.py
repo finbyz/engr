@@ -162,7 +162,7 @@ def validate(self,method):
         if self.percentage > 0 and self.percentage < 1 :
             for row in self.items:
                 row.qty = flt(self.percentage/100) * flt(row.so_quantity)
-    if not self.items[0].proforma_invoice:
+    if not self.items[0].proforma_invoice and is_opening == "No":
         frappe.throw("Proforma Invoice Is Mandatory To Create Sales Invoice") 
     if self.items[0].proforma_invoice:
         frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'tax_invoice_no' , self.name)       
