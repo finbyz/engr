@@ -232,9 +232,12 @@ def before_naming(self,method):
 		self.bank_settings = mapper_name
 
 def set_wom_status():
-	doc_list = frappe.db.sql(""" SELECT name , status , work_order_master_ref From `tabSales Invoice` Where docstatus = 1 Order by modified desc LIMIT 2000 """ , as_dict = 1)
-	for row in doc_list:
-		if row.get('status') in ["Paid" , "Partly Paid"]:
-			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , row.get('status') , update_modified=False)
-		if row.get('status') in ["Overdue" , "Unpaid"]:
-			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Unpaid" , update_modified=False)
+	from datetime import datetime
+	now = datetime.now()
+	if str(now) > "07:00:00" and str(now) < "22:00:00":
+		doc_list = frappe.db.sql(""" SELECT name , status , work_order_master_ref From `tabSales Invoice` Where docstatus = 1 Order by modified desc LIMIT 50 """ , as_dict = 1)
+		for row in doc_list:
+			if row.get('status') in ["Paid" , "Partly Paid"]:
+				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , row.get('status') , update_modified=False)
+			if row.get('status') in ["Overdue" , "Unpaid"]:
+				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Unpaid" , update_modified=False)
