@@ -241,11 +241,21 @@ def set_wom_status():
 				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , row.get('status') , update_modified=False)
 			if row.get('status') in ["Overdue" , "Unpaid"]:
 				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Unpaid" , update_modified=False)
+	set_wom_status_from_pro()
 	import datetime
 	current_datetime = datetime.datetime.now()
 	new_datetime = current_datetime - datetime.timedelta(minutes=5)
 	frappe.db.delete("Scheduled Job Log" , {"creation":["<",str(new_datetime)] , 'scheduled_job_type':"api.set_wom_status"})
 	
+def set_wom_status_from_pro():
+	doc_list = frappe.db.sql(""" SELECT name , status , work_order_master_ref From `tabProforma Invoice` Where docstatus = 1 Order by modified desc LIMIT 2000 """ , as_dict = 1)
+	for row in doc_list:
+		if row.get('status') == "Paid":
+			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Paid" , update_modified=False)
+		if row.get('status') == "Partially Paid":
+			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Partly Paid" , update_modified=False)
+		if row.get('status') in ["Overdue" , "Unpaid"]:
+			frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Unpaid" , update_modified=False)
 
 def delete_schedule_job_log():
 	import datetime
