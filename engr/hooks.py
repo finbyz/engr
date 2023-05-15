@@ -186,7 +186,11 @@ scheduler_events = {
 		"*/1 * * * *": [
 			"engr.api.set_wom_status"
 		],
-	}
+        
+	},
+    "daily": [
+            "engr.api.delete_schedule_job_log"
+		]
 }
 # scheduler_events = {
 # 	"all": [

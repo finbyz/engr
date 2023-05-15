@@ -241,3 +241,15 @@ def set_wom_status():
 				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , row.get('status') , update_modified=False)
 			if row.get('status') in ["Overdue" , "Unpaid"]:
 				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , "Unpaid" , update_modified=False)
+	import datetime
+	current_datetime = datetime.datetime.now()
+	new_datetime = current_datetime - datetime.timedelta(minutes=5)
+	frappe.db.delete("Scheduled Job Log" , {"creation":["<",str(new_datetime)] , 'scheduled_job_type':"api.set_wom_status"})
+	
+
+def delete_schedule_job_log():
+	import datetime
+	tod = datetime.datetime.now()
+	d = datetime.timedelta(days = 2)
+	a = tod -d
+	frappe.db.delete("Scheduled Job Log" , {"creation":["<",str(a)]})
