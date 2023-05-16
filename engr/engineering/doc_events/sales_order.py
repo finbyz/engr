@@ -163,6 +163,14 @@ def get_last_5_transaction_details(name, item_code, customer):
 	"""
 	return table
 
+def on_trash(self , method):
+	if self.work_order_master_ref:
+		frappe.db.set_value("Work Order Master" , self.work_order_master_ref , "sales_order" , None)
+
+def on_cancel(self , method):
+	if self.work_order_master_ref:
+		frappe.db.set_value("Work Order Master" , self.work_order_master_ref , "sales_order" , None)
+
 def validate_item_group(self):
 	for row in self.items:
 		if row.item_group=="GENERIC ITEM":
@@ -171,6 +179,11 @@ def validate_item_group(self):
 def validate(self,method):
 	validate_sales_person(self)
 	validate_item_group(self)
+	validate_wom(self)
+
+def validate_wom(self):
+	if self.work_order_master_ref:
+		frappe.db.set_value("Work Order Master" , self.work_order_master_ref , "sales_order" , self.name)
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
@@ -269,7 +282,6 @@ def set_payment_status(self , method):
 	if self.per_billed == 0.0 and self.work_order_master_ref and contract_work == 1:
 		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Unpaid-Contract Work",update_modified=False)
 	if self.per_billed > 0 and round(self.per_billed) < 100 and self.work_order_master_ref:
-		frappe.msgprint("payment status paid ")
 		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Partially paid",update_modified=False)
 	if round(self.per_billed) == 100 and self.work_order_master_ref:
 		frappe.db.set_value("Work Order Master",self.work_order_master_ref,"payment_status","Paid",update_modified=False)

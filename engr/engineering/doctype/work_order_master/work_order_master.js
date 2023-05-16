@@ -23,7 +23,7 @@ frappe.ui.form.on('Work Order Master', {
         //         }, __("Create"));
         //     };
         // if(frappe.perm.has_perm("Sales Order", 0, "read")) {
-            if(!frm.doc.__islocal) {
+            if(!frm.doc.__islocal && !frm.doc.sales_order) {
                 frm.remove_custom_button('Sales Order', 'Create');
                 frm.add_custom_button(__('Sales Order'), function(){
                     frappe.model.open_mapped_doc({

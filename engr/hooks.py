@@ -84,7 +84,9 @@ doc_events = {
 		"validate":"engr.engineering.doc_events.sales_order.validate",
 		"on_update_after_submit":"engr.engineering.doc_events.sales_order.set_payment_status",
 		"on_submit":"engr.engineering.doc_events.sales_order.set_quotation_ref",
-        "on_submit":"engr.engineering.doc_events.sales_order.set_payment_status"
+        "on_submit":"engr.engineering.doc_events.sales_order.set_payment_status",
+        "on_cancel":"engr.engineering.doc_events.sales_order.on_cancel",
+        "on_trash":"engr.engineering.doc_events.sales_order.on_trash",
 	},
 	"Delivery Note":{
 		"validate":"engr.engineering.doc_events.delivery_note.validate",
