@@ -1,10 +1,10 @@
 import frappe
-def update_job_id():
-    doc_list = frappe.db.get_list("Work Order Master" , pluck="name")
-    for row in doc_list:
-        doc = frappe.get_doc("Work Order Master" , row)
-        if doc.proforma_invoice:
-            pro_doc = frappe.db.get_value("Proforma Invoice" , doc.proforma_invoice , 'customer')
-            if doc.customer_name == pro_doc:
-                frappe.db.set_value("Proforma Invoice" , doc.proforma_invoice , 'wom_ref' , row , update_modified =False)
-                frappe.db.set_value("Proforma Invoice" , doc.proforma_invoice , 'work_order_master_ref' , row , update_modified =False)
+def execute():
+	remove_cancel_referance()
+def remove_cancel_referance():
+	doc_list = frappe.db.get_list("Sales Invoice" ,{'docstatus' : 2})
+	for row in doc_list:
+		doc = frappe.get_doc("Sales Invoice" , row.get('name'))
+		if doc.work_order_master_ref:
+			if frappe.db.get_value("Work Order Master", doc.work_order_master_ref , 'tax_invoice_no') == doc.name:
+				frappe.db.set_value("Work Order Master" , doc.work_order_master_ref , 'tax_invoice_no' , None , update_modified = False)
