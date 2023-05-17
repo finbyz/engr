@@ -34,7 +34,7 @@ def on_cancel(self,method):
     cancel_all(self)
     update_proforma_billed_percent(self,"cancel")
     if self.work_order_master_ref:
-        frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'tax_invoice_no' , "" , update_modified = False)
+        frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'tax_invoice_no' , None , update_modified = False)
    
     
 def update_proforma_billed_percent(self,method):
