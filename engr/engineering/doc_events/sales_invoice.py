@@ -162,9 +162,7 @@ def validate(self,method):
         if self.percentage > 0 and self.percentage < 1 :
             for row in self.items:
                 row.qty = flt(self.percentage/100) * flt(row.so_quantity)
-    if not self.items[0].proforma_invoice and self.is_opening == "No":
-        frappe.throw("Proforma Invoice Is Mandatory To Create Sales Invoice") 
-    if self.items[0].proforma_invoice:
+    if self.work_order_master_ref:
         frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'tax_invoice_no' , self.name)       
 def validate_hsn_code(self):
     for row in self.items:
