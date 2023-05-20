@@ -97,9 +97,15 @@ def update_item(obj, target, source_parent):
 	
 def before_validate(self, method):
 	set_conversion_factor(self)
+	set_branch(self)
 
 def set_conversion_factor(self):
 	for row in self.items:
 		if row.stock_uom == row.uom:
 			row.reverse_conversion_factor = row.conversion_factor = 1
 			row.stock_qty = row.qty
+
+def set_branch(self):
+	if self.branch:
+		for row in self.items:
+			row.branch=self.branch

@@ -61,3 +61,11 @@ frappe.ui.form.on("Stock Entry", {
         }
     }
 });
+frappe.ui.form.on('Stock Entry Detail', {
+    batch_no:function(frm,cdt,cdn){
+        let d = locals[cdt][cdn];
+        frappe.model.get_value('Batch' , d.batch , 'lot_no' , (r) =>{
+            frappe.model.set_value(cdt,cdn , 'lot_no' , r.lot_no)
+        })
+    }
+})

@@ -22,7 +22,9 @@ def validate(self, method):
 def on_submit(self, method):
 	create_purchase_receipt(self)
 	update_sales_order_pending_qty(self, method)
-
+	for row in self.items:
+		if row.batch_no and row.lot_no:
+			frappe.db.set_value('Batch' , row.batch_no , 'lot_no' , row.lot_no)
 def update_proforma_details(self):
 	# Update Last Proforma Details
 	for item in self.items:

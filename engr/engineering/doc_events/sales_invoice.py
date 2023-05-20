@@ -175,6 +175,8 @@ def update_proforma_details(self):
 				if proforma_item_details.name and proforma_item_details.parent:
 					item.proforma_invoice = proforma_item_details.parent
 					item.proforma_invoice_item = proforma_item_details.name
+					frappe.db.set_value("Sales Invoice Item" , item.name , "proforma_invoice" , proforma_item_details.parent)
+					frappe.db.set_value("Sales Invoice Item" , item.name , "proforma_invoice_item" , proforma_item_details.name)
 
 
 # def on_submit(self, method):

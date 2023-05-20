@@ -8,3 +8,8 @@ def validate_work_order_items(self,method):
             for x in wo_item_list:
                 if x not in st_item_list:
                     frappe.throw(f"Item :{frappe.bold(x)} is required to Manufacture material" )
+
+def validate_stock_entry(self,method):
+    for row in self.items:
+        if row.lot_no and row.batch_no:
+            frappe.db.set_value('Batch' , row.batch_no , 'lot_no' , row.lot_no)

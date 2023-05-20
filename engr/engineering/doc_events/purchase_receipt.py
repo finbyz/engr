@@ -16,7 +16,16 @@ def set_conversion_fact(self):
 			if row.qty and row.stock_qty:
 				frappe.db.set_value("Purchase Receipt Item", row.name, "stock_qty", round(row.stock_qty / row.qty, 0))
 
+def on_submit(self , method):
+	set_lot_no(self)
 
+
+def set_lot_no(self):
+	for row in self.items:
+		if row.lot_no and row.batch_no:
+			frappe.db.set_value('Batch' , row.batch_no , 'lot_no' , row.lot_no)
+
+			
 @frappe.whitelist()
 def make_purchase_receipt_from_order(source_name, target_doc=None, args=None):
 	

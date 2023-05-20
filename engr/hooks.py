@@ -41,7 +41,9 @@ app_include_js = [
 	"/assets/js/engineering.min.js" 
 ]
 
-
+override_doctype_class = {
+	'Sales Invoice': 'engr.engineering.doc_events.SalesInvoiceclass.SalesInvoice'
+}
 doctype_list_js = {
 	"Sales Order" : "public/js/doctype_js/sales_order_list.js",
 	"Production Plan":"public/js/doctype_js/production plan.js",
@@ -102,7 +104,8 @@ doc_events = {
 
 	},
 	"Purchase Receipt":{
-		"before_validate":"engr.engineering.doc_events.purchase_receipt.before_validate"
+		"before_validate":"engr.engineering.doc_events.purchase_receipt.before_validate",
+		"on_submit":'engr.engineering.doc_events.purchase_receipt.on_submit'
 	},
 	"Purchase Invoice":{
 		"before_validate":"engr.engineering.doc_events.purchase_invoice.before_validate"
@@ -132,10 +135,14 @@ doc_events = {
 	},
 	"Material Request":{
 		"before_validate":"engr.engineering.doc_events.material_request.before_validate"
+		
 	},
 	'Proforma Invoice':{
 		'on_cancel':'engr.engineering.doc_events.proforma_invoice.check_nextdoc_docstatus'
 	},
+	'Stock Entry':{
+		'on_submit':'engr.engineering.doc_events.stock_entry.validate_stock_entry'
+	}
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
@@ -284,3 +291,9 @@ ProductionPlan.make_work_order = make_work_order
 # from erpnext.manufacturing.doctype.production_plan.production_plan import ProductionPlan
 # from engr.engineering.doc_events.production_plan import make_work_order_for_subassembly_items
 # ProductionPlan.make_work_order_for_subassembly_items = make_work_order_for_subassembly_items
+
+
+
+from erpnext.manufacturing.doctype.production_plan.production_plan import ProductionPlan
+from engr.engineering.doc_events.production_plan import make_material_request
+ProductionPlan.make_material_request = make_material_request
