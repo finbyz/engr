@@ -27,7 +27,7 @@
   "office_number",
   "test_report",
   "referred_by",
-  "new_type_of_work",
+  "type_of_work_",
   "type_of_work",
   "branch",
   "branch_name",
@@ -533,16 +533,16 @@
   },
   {
    "depends_on": "eval:!doc.type_of_work",
-   "fieldname": "new_type_of_work",
-   "fieldtype": "Select",
-   "label": "Type Of Work",
-   "options": "CONCRETE\nMECHANICAL\nNDT\nBITUMEN\nSOIL INVESTIGATION\nCHEMICAL\nHIGHWAY\nENVIRONMENTAL\nCONSULTANCY\nMETALLURGICAL\nWATER\nCHEMICAL SOIL\nFOOD"
+   "fieldname": "type_of_work_",
+   "fieldtype": "Link",
+   "label": "Type Of Work_",
+   "options": "Type Of Work"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-05-22 13:33:59.167484",
+ "modified": "2023-05-22 13:40:56.992246",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",
