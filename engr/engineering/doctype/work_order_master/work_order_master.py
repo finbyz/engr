@@ -219,7 +219,7 @@ def get_events(start, end, filters=None):
 			left join 
 				`tabWork Order Master` as wom on womi.parent= wom.name
 			where
-				(womi.expected_date <= %(end)s and womi.expected_date >= %(start)s) {conditions}
+				(womi.expected_date <= %(end)s and womi.expected_date >= %(start)s) amd wom.workflow_state != 'Report Sent' {conditions}
 			""".format(conditions=conditions),
 				{
 					"start": start,
