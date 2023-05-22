@@ -27,6 +27,7 @@
   "office_number",
   "test_report",
   "referred_by",
+  "new_type_of_work",
   "type_of_work",
   "branch",
   "branch_name",
@@ -144,7 +145,8 @@
    "description": "Test to be conducted",
    "fieldname": "type_of_work",
    "fieldtype": "Data",
-   "label": "Type Of Work "
+   "label": "Type Of Work ",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_13",
@@ -528,12 +530,19 @@
    "label": "City",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:!doc.type_of_work",
+   "fieldname": "new_type_of_work",
+   "fieldtype": "Select",
+   "label": "New Type Of Work",
+   "options": "CONCRETE\nMECHANICAL\nNDT\nBITUMEN\nSOIL INVESTIGATION\nCHEMICAL\nHIGHWAY\nENVIRONMENTAL\nCONSULTANCY\nMETALLURGICAL\nWATER\nCHEMICAL SOIL\nFOOD"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-09 17:41:33.592475",
+ "modified": "2023-05-22 13:26:14.829814",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",
