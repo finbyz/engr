@@ -84,7 +84,10 @@ doc_events = {
 	},
 	"Opportunity":{
 		"validate":"engr.engineering.doc_events.opportunity.validate"
-	}
+	},
+	"Material Request":{
+		"validate":"engr.engineering.doc_events.material_request.validate"
+	},
 }
 # include js, css files in header of web template
 # web_include_css = "/assets/engr/css/engr.css"
@@ -198,7 +201,7 @@ scheduler_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"erpnext.hr.doctype.attendance.attendance.mark_bulk_attendance": "engr.engr.api.mark_bulk_attendance"
+	"erpnext.hr.doctype.attendance.attendance.mark_bulk_attendance": "engr.api.mark_bulk_attendance"
 }
 #
 # each overriding function accepts a `data` argument;

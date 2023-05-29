@@ -1027,7 +1027,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 		if(flt(this.frm.doc.conversion_rate)>0.0) {
 			if(this.frm.doc.ignore_pricing_rule) {
 				this.calculate_taxes_and_totals();
-			} else if (!this.in_apply_price_list){
+			} else if (this.in_apply_price_list){
 				this.apply_price_list();
 			}
 

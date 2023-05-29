@@ -16,7 +16,7 @@ def execute(filters):
 def get_data_filters(filters):
 	where_clause = ''
 	if filters.get('customer'):
-		where_clause += " and cp.parent='{}'  ".format(filters.get('customer'))
+		where_clause += " and cp.parent = '{}'  ".format(filters.get('customer'))
 	if filters.get('item_group'):
 		where_clause += " and cp.item_group='{}'  ".format(filters.get('item_group'))
 	return where_clause
@@ -28,8 +28,8 @@ def get_data(filters):
 		select sii.net_amount as achievement, si.customer,sii.item_group
 		from `tabSales Invoice Item` as sii
 		JOIN `tabSales Invoice` as si on si.name = sii.parent
-		where si.docstatus = 1 and (sii.item_group is not null or sii.item_group != '') {}
-	""".format(conditions),as_dict=1) 
+		where si.docstatus = 1 and (sii.item_group is not null or sii.item_group != '') 
+	""",as_dict=1) 
 	customer_potential=frappe.db.sql("""select cp.parent as customer ,cp.item_group,cp.target from `tabCustomer Potential` as cp where cp.target != 0 and cp.parenttype='Customer'""".format(conditions),as_dict=1)
 	customer_ig = {}
 	item_group_list = []
@@ -42,7 +42,7 @@ def get_data(filters):
 			achievement_map[row.customer + row.item_group] += flt(row.achievement)
 	for cust in customer_potential:
 		item_group_list.append(cust.item_group)
-		achievement = flt(achievement_map.get(cust.customer + cust.item_group))
+		achievement = flt(achievement_map.get(str(cust.get('customer')) + str(cust.get('item_group'))))
 		if cust.customer not in customer_ig.keys():
 			customer_ig[cust.customer]=[{'T_{}'.format(cust.item_group):flt(cust.target)}]
 			customer_ig[cust.customer].append({'A_{}'.format(cust.item_group):flt(achievement)})

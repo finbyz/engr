@@ -1,7 +1,7 @@
 {
  "add_total_row": 1,
  "columns": [],
- "creation": "2022-11-08 14:14:02.712474",
+ "creation": "2023-05-29 13:53:41.801379",
  "disable_prepared_report": 0,
  "disabled": 0,
  "docstatus": 0,
@@ -10,24 +10,25 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "INNOVATIVE TECHNOLOGIES FPIA (INDIA) PVT. LTD.",
- "modified": "2023-04-28 12:09:59.160908",
- "modified_by": "anandp@innotech.co.in",
+ "modified": "2023-05-29 14:22:55.428220",
+ "modified_by": "Administrator",
  "module": "Engineering",
- "name": "Monthly Bussines Data",
+ "name": "Stock Balance Innovative",
  "owner": "Administrator",
- "prepared_report": 0,
- "ref_doctype": "Meeting",
- "report_name": "Monthly Bussines Data",
+ "prepared_report": 1,
+ "query": "",
+ "ref_doctype": "Stock Ledger Entry",
+ "report_name": "Stock Balance Innovative",
  "report_type": "Script Report",
  "roles": [
   {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Export Manager"
+  },
+  {
    "role": "Local Admin"
-  },
-  {
-   "role": "Sales Manager"
-  },
-  {
-   "role": "Translator"
   }
  ]
 }
