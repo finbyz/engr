@@ -57,17 +57,17 @@ class WorkOrderMaster(Document):
 	def on_submit(self):
 		if self.workflow_state == 'Test in Progress':
 			for i , row in enumerate(self.item_master):
-				if not row.assign_to_user:
+				if not row.assign_to_user and not self.is_cancelled_document:
 					frappe.throw('Please Assign to User For Test Item <b>{}</b>'.format(row.item_code))
 	def on_update_after_submit(self):
 		if self.workflow_state == 'Test Report Preparation':
 			for row in self.item_master:
-				if not row.test_report_prepared:
+				if not row.test_report_prepared and not self.is_cancelled_document:
 					frappe.throw('Test report is not Prepared for Item {} '.format(row.item_code))
 		if self.workflow_state == 'Final Report Prepared':
 			for i , row in enumerate(self.item_master):
-				if not row.report_delivered:
-					frappe.throw('<p>If Report is Ready To Send ,<br> tick check Box Report Delivered in row {} </p>'.format(i))
+				if not row.report_delivered and not self.is_cancelled_document:
+					frappe.throw('<p>If Report is Ready To Send ,<br> tick check Box Report Delivered in row {} </p>'.format(i+1))
 
 @frappe.whitelist()
 def make_WOM(source_name, target_doc=None):	
@@ -154,8 +154,6 @@ def make_proforma_invoice(source_name, target_doc=None):
 						"item_code": "item_code",
 						"item_name": "item_name",
 						"sample_quantity":"qty",
-						
-						
 					}
 			    }
 	}, target_doc)

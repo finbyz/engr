@@ -9,6 +9,7 @@
   "for_final_report_submition_section",
   "final_report",
   "section_break_3",
+  "is_cancelled_document",
   "contract_work",
   "wom_name",
   "name_on_the_test_report",
@@ -537,12 +538,19 @@
    "fieldtype": "Link",
    "label": "Type Of Work_",
    "options": "Type Of Work"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_cancelled_document",
+   "fieldtype": "Check",
+   "label": "Is Cancelled Document",
+   "permlevel": 4
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-05-22 13:40:56.992246",
+ "modified": "2023-05-31 17:09:12.245189",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",
