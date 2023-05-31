@@ -65,7 +65,7 @@ class WorkOrderMaster(Document):
 				if not row.test_report_prepared:
 					frappe.throw('Test report is not Prepared for Item {} '.format(row.item_code))
 		if self.workflow_state == 'Final Report Prepared':
-			for row in self.item_master:
+			for i , row in enumerate(self.item_master):
 				if not row.report_delivered:
 					frappe.throw('<p>If Report is Ready To Send ,<br> tick check Box Report Delivered in row {} </p>'.format(i))
 
