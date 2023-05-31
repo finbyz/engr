@@ -8,6 +8,8 @@
  "field_order": [
   "for_final_report_submition_section",
   "final_report",
+  "reason_section",
+  "reason_for_cancelled",
   "section_break_3",
   "is_cancelled_document",
   "contract_work",
@@ -544,13 +546,25 @@
    "fieldname": "is_cancelled_document",
    "fieldtype": "Check",
    "label": "Is Cancelled Document",
-   "permlevel": 4
+   "permlevel": 2
+  },
+  {
+   "depends_on": "eval:doc.is_cancelled_document == 1;",
+   "fieldname": "reason_section",
+   "fieldtype": "Section Break",
+   "label": "Reason"
+  },
+  {
+   "fieldname": "reason_for_cancelled",
+   "fieldtype": "Small Text",
+   "label": "Reason For Cancelled",
+   "mandatory_depends_on": "eval:doc.is_cancelled_document == 1;"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-05-31 17:09:12.245189",
+ "modified": "2023-05-31 17:38:53.046877",
  "modified_by": "Administrator",
  "module": "Engineering",
  "name": "Work Order Master",
