@@ -266,3 +266,9 @@ customer.make_quotation = make_quotation
 # from finbyzerp.finbyzerp.dashboard import customer
 # from engr.engineering.doc_events.customer_dashboard import get_data
 # customer.get_data = get_data
+
+
+#Override make_depreciation_entry function in Asset
+from erpnext.assets.doctype.asset import depreciation
+from  engr.api import make_depreciation_entry
+depreciation.make_depreciation_entry = make_depreciation_entry

@@ -6220,7 +6220,7 @@
           () => set_value("currency", currency),
           () => set_value("price_list_currency", currency),
           () => set_value("status", "Draft"),
-          () => set_value("is_subcontracted", "No"),
+          () => set_value("is_subcontracted", 0),
           () => {
             if (this.frm.doc.company && !this.frm.doc.amended_from) {
               this.frm.trigger("company");
@@ -9014,7 +9014,8 @@
     get_filter_values(raise) {
       const mandatory = this.filters.filter((f) => f.df.reqd || f.df.mandatory);
       let missing_mandatory = mandatory.filter((f) => !f.get_value());
-      missing_mandatory = mandatory.filter((f) => f.get_value().length == 0);
+      console.log(mandatory);
+      missing_mandatory = mandatory.filter((f) => console.log(f.get_value()));
       if (raise && missing_mandatory.length > 0) {
         let message = __("Please set filters");
         this.hide_loading_screen();
@@ -10426,4 +10427,4 @@
  * @author	owenm    <owen23355@gmail.com>
  * @license MIT
  */
-//# sourceMappingURL=engr.bundle.7AUYQLPJ.js.map
+//# sourceMappingURL=engr.bundle.2RUY5YHL.js.map

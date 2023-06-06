@@ -5,13 +5,17 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import flt,cint, get_url_to_form, nowdate
+from frappe.utils import flt,cint, get_url_to_form, getdate, nowdate, today
 from frappe.contacts.doctype.address.address import get_company_address
 from erpnext.accounts.utils import get_fiscal_year, getdate
 import datetime
 from email.utils import formataddr
 from frappe.desk.notifications import get_filters_for
 from frappe.model.mapper import get_mapped_doc
+from erpnext.assets.doctype.asset.depreciation import get_depreciation_accounts,get_credit_and_debit_accounts
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
+	get_checks_for_pl_and_bs_accounts,
+)
 
 def validate_sales_person(self):
 	if self.sales_team:
@@ -271,3 +275,99 @@ def remove_cancel_referance():
 		if doc.work_order_master_ref:
 			if frappe.db.get_value("Work Order Master", doc.work_order_master_ref , 'tax_invoice_no') == doc.name:
 				frappe.db.set_value("Work Order Master" , doc.work_order_master_ref , 'tax_invoice_no' , None , update_modified = False)
+
+
+
+
+@frappe.whitelist()
+def make_depreciation_entry(asset_name, date=None):
+	frappe.has_permission("Journal Entry", throw=True)
+
+	if not date:
+		date = today()
+
+	asset = frappe.get_doc("Asset", asset_name)
+	(
+		fixed_asset_account,
+		accumulated_depreciation_account,
+		depreciation_expense_account,
+	) = get_depreciation_accounts(asset)
+
+	depreciation_cost_center, depreciation_series = frappe.get_cached_value(
+		"Company", asset.company, ["depreciation_cost_center", "series_for_depreciation_entry"]
+	)
+
+	depreciation_cost_center = asset.cost_center or depreciation_cost_center
+
+	accounting_dimensions = get_checks_for_pl_and_bs_accounts()
+
+	for d in asset.get("schedules"):
+		if not d.journal_entry and getdate(d.schedule_date) <= getdate(date):
+			je = frappe.new_doc("Journal Entry")
+			je.voucher_type = "Depreciation Entry"
+			je.naming_series = depreciation_series
+			je.posting_date = d.schedule_date
+			je.company = asset.company
+			je.finance_book = d.finance_book
+			je.branch = asset.get("branch")
+			je.remark = "Depreciation Entry against {0} worth {1}".format(asset_name, d.depreciation_amount)
+
+			credit_account, debit_account = get_credit_and_debit_accounts(
+				accumulated_depreciation_account, depreciation_expense_account
+			)
+
+			credit_entry = {
+				"account": credit_account,
+				"credit_in_account_currency": d.depreciation_amount,
+				"reference_type": "Asset",
+				"reference_name": asset.name,
+				"cost_center": depreciation_cost_center,
+			}
+
+			debit_entry = {
+				"account": debit_account,
+				"debit_in_account_currency": d.depreciation_amount,
+				"reference_type": "Asset",
+				"reference_name": asset.name,
+				"cost_center": depreciation_cost_center,
+			}
+
+			for dimension in accounting_dimensions:
+				if asset.get(dimension["fieldname"]) or dimension.get("mandatory_for_bs"):
+					credit_entry.update(
+						{
+							dimension["fieldname"]: asset.get(dimension["fieldname"])
+							or dimension.get("default_dimension")
+						}
+					)
+
+				if asset.get(dimension["fieldname"]) or dimension.get("mandatory_for_pl"):
+					debit_entry.update(
+						{
+							dimension["fieldname"]: asset.get(dimension["fieldname"])
+							or dimension.get("default_dimension")
+						}
+					)
+
+			je.append("accounts", credit_entry)
+
+			je.append("accounts", debit_entry)
+
+			je.flags.ignore_permissions = True
+			je.flags.planned_depr_entry = True
+			je.save()
+			if not je.meta.get_workflow():
+				je.submit()
+
+			d.db_set("journal_entry", je.name)
+
+			idx = cint(d.finance_book_id)
+			finance_books = asset.get("finance_books")[idx - 1]
+			finance_books.value_after_depreciation -= d.depreciation_amount
+			finance_books.db_update()
+
+	asset.db_set("depr_entry_posting_status", "Successful")
+
+	asset.set_status()
+
+	return asset
