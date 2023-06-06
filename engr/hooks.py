@@ -297,3 +297,8 @@ ProductionPlan.make_work_order = make_work_order
 from erpnext.manufacturing.doctype.production_plan.production_plan import ProductionPlan
 from engr.engineering.doc_events.production_plan import make_material_request
 ProductionPlan.make_material_request = make_material_request
+
+
+from erpnext.stock.report.stock_ledger import stock_ledger 
+from engr.engineering.report.stock_ledger import execute as stock_ledger_execute
+stock_ledger.execute = stock_ledger_execute
