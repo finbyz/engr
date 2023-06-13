@@ -38,6 +38,7 @@ doctype_js = {
 	"Quotation":"public/js/doctype_js/quotation.js",
     "Payment Reconciliation": "public/js/doctype_js/payment_reconciliation.js",
     "Supplier": "public/js/doctype_js/supplier.js",
+	"Additional Salary":"public/js/additional_salary.js"
 	# "Proforma Invoice": "public/js/doctype_js/proforma_invoice.js"
 }	
 
@@ -107,6 +108,9 @@ doc_events = {
 	},
 	"Bank Statement Transaction Entry":{
 		'before_naming':"engr.api.before_naming"
+	},
+	"Additional Salary":{
+		"validate":"engr.engineering.doc_events.additional_salary.on_validate"
 	}
 
 		
