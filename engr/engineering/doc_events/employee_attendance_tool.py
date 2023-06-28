@@ -15,10 +15,11 @@ def mark_employee_attendance(
 	early_exit: str = None,
 	shift: str = None,
 	employee_is_on_site: str = "1",
-) -> None:
+	remark: str =None,
+):
 	if isinstance(employee_list, str):
 		employee_list = json.loads(employee_list)
-
+	
 	for employee in employee_list:
 		leave_type = None
 		if status == "On Leave" and leave_type:
@@ -34,7 +35,8 @@ def mark_employee_attendance(
 				late_entry=late_entry,
 				early_exit=early_exit,
 				shift=shift,
-				employee_is_on_site = employee_is_on_site
+				employee_is_on_site = employee_is_on_site,
+				remark = remark
 			)
 		)
 		attendance.insert()

@@ -12,7 +12,8 @@ frappe.ui.form.on("Employee Attendance Tool", {
 					late_entry: frm.doc.late_entry,
 					early_exit: frm.doc.early_exit,
 					shift: frm.doc.shift,
-					employee_is_on_site:frm.doc.employee_is_on_site
+					employee_is_on_site:frm.doc.employee_is_on_site,
+					remark:frm.doc.remark
 				},
 				freeze: true,
 				freeze_message: __("Marking Attendance")
