@@ -1,6 +1,4 @@
 frappe.query_reports["Employee Analytics"] = {
-
-
 	"filters": [
 		{
 			"fieldname":"company",

@@ -9576,6 +9576,28 @@
     }
   };
 
+  // ../engr/engr/public/js/employee_analytics.js
+  frappe.query_reports["Employee Analytics"] = {
+    "filters": [
+      {
+        "fieldname": "company",
+        "label": __("Company"),
+        "fieldtype": "Link",
+        "options": "Company",
+        "default": frappe.defaults.get_user_default("Company"),
+        "reqd": 1
+      },
+      {
+        "fieldname": "parameter",
+        "label": __("Parameter"),
+        "fieldtype": "Select",
+        "options": ["Branch", "Grade", "Department", "Designation", "Employment Type"],
+        "default": "Branch",
+        "reqd": 1
+      }
+    ]
+  };
+
   // ../engr/engr/public/js/utils.js
   frappe.provide("erpnext");
   frappe.provide("erpnext.utils");
@@ -10427,4 +10449,4 @@
  * @author	owenm    <owen23355@gmail.com>
  * @license MIT
  */
-//# sourceMappingURL=engr.bundle.2RUY5YHL.js.map
+//# sourceMappingURL=engr.bundle.A77MGJZW.js.map

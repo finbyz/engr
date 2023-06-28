@@ -21,7 +21,10 @@ app_license = "MIT"
 # app_include_js = [
 # 	"/assets/js/engineering.min.js" 
 # ]
-app_include_js = ['engr.bundle.js']
+app_include_js = [
+    'engr.bundle.js'
+    # '/assets/engr/js/employee_attendance_tool.js'
+	]
 
 
 doctype_list_js = {
@@ -38,7 +41,8 @@ doctype_js = {
 	"Quotation":"public/js/doctype_js/quotation.js",
     "Payment Reconciliation": "public/js/doctype_js/payment_reconciliation.js",
     "Supplier": "public/js/doctype_js/supplier.js",
-	"Additional Salary":"public/js/additional_salary.js"
+	"Additional Salary":"public/js/additional_salary.js",
+    "Employee Attendance Tool":"public/js/doctype_js/employee_attendance_tool.js",
 	# "Proforma Invoice": "public/js/doctype_js/proforma_invoice.js"
 }	
 
@@ -224,9 +228,9 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "engr.event.get_events"
-# }
+override_whitelisted_methods = {
+    "hrms.hr.doctype.employee_attendance_tool.employee_attendance_tool.mark_employee_attendance": "engr.engineering.doc_events.employee_attendance_tool.mark_employee_attendance"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
