@@ -239,7 +239,7 @@ def set_wom_status():
 	from datetime import datetime
 	now = datetime.now()
 	if str(now) > "07:00:00" and str(now) < "22:00:00":
-		doc_list = frappe.db.sql(""" SELECT name , status , work_order_master_ref From `tabSales Invoice` Where docstatus = 1 Order by modified desc LIMIT 50 """ , as_dict = 1)
+		doc_list = frappe.db.sql(""" SELECT name , status , work_order_master_ref From `tabSales Invoice` Where docstatus = 1 Order by modified desc LIMIT 200 """ , as_dict = 1)
 		for row in doc_list:
 			if row.get('status') in ["Paid" , "Partly Paid"]:
 				frappe.db.set_value("Work Order Master" , row.get("work_order_master_ref") , "payment_status" , row.get('status') , update_modified=False)
