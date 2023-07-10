@@ -37,7 +37,6 @@ def on_cancel(self,method):
         frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'tax_invoice_no' , None , update_modified = False)
 
           
-from engr.engineering.doc_events.sales_invoice import update_proforma_billed_percent
 
 def update_proforma_billed_percent(self,method):
     so = self.items[0].sales_order
