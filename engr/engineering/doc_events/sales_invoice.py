@@ -35,17 +35,20 @@ def on_cancel(self,method):
     update_proforma_billed_percent(self,"cancel")
     if self.work_order_master_ref:
         frappe.db.set_value("Work Order Master" , self.work_order_master_ref , 'tax_invoice_no' , None , update_modified = False)
-   
-    
+
+          
+from engr.engineering.doc_events.sales_invoice import update_proforma_billed_percent
+
 def update_proforma_billed_percent(self,method):
     so = self.items[0].sales_order
     pi = self.items[0].proforma_invoice
     if so and pi:
         per_billed = frappe.db.get_value("Sales Order",so,"per_billed")
         pi_doc = frappe.get_doc("Proforma Invoice",pi)
-        # frappe.db.set_value("Proforma Invoice",pi,"per_billed",per_billed)
         pi_doc.db_set("per_billed", per_billed)
         pi_doc.db_set("status", "Closed")
+        if self.status == "Return":
+            pi_doc.db_set("status", "Return")
         
         # if method == "cancel" and not frappe.db.exists("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}):
         if method == "cancel":
