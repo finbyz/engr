@@ -33,7 +33,7 @@ def update_proforma_details(docname,action):
 						JOIN `tabProforma Invoice` as pi on pi.name = poi.parent
 						JOIN `tabSales Order Item` as soi on soi.name = poi.sales_order_item
 						where poi.sales_order = '{}' and poi.sales_order_item = '{}'
-						and pi.name != '{}' and pi.docstatus=1 and pi.status != "Retun"
+						and pi.name != '{}' and pi.docstatus=1 and pi.per_billed != 100
 					""".format(item.sales_order,item.sales_order_item,doc.name))
 	
 					sales_order_list.append(item.sales_order)
