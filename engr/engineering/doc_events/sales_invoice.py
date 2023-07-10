@@ -46,10 +46,8 @@ def update_proforma_billed_percent(self,method):
         pi_doc = frappe.get_doc("Proforma Invoice",pi)
         pi_doc.db_set("per_billed", per_billed)
         
-        if self.status == "Return":
-            pi_doc.db_set("status", "Return")
-        else:
-            pi_doc.db_set("status", "Closed")
+       
+        pi_doc.db_set("status", "Closed")
         
         # if method == "cancel" and not frappe.db.exists("Payment Entry Reference",{"proforma_invoice":pi,"docstatus":1}):
         if method == "cancel":
