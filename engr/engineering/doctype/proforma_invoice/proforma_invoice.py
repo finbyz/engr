@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt,cint ,comma_or, nowdate, getdate
 from frappe.model.mapper import get_mapped_doc
