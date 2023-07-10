@@ -1,6 +1,13 @@
-frappe.ui.form.on("Proforma Invoice",{
-    onload: function(frm){
-        frm.ignore_doctypes_on_cancel_all = ['Sales Invoice' , "Sales Invoice Item"];
+// frappe.ui.form.on("Proforma Invoice",{
+//     onload: function(frm){
+//         frm.set_query("work_order_master_ref", function(doc) {
+//             return {
+//                 "filters": {
+//                     "branch": doc.branch
+                    
+//                 }
+//             };
+//         });
     
-    }
-})
+//     }
+// })

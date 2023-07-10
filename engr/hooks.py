@@ -43,7 +43,7 @@ doctype_js = {
     "Supplier": "public/js/doctype_js/supplier.js",
 	"Additional Salary":"public/js/additional_salary.js",
     "Employee Attendance Tool":"public/js/doctype_js/employee_attendance_tool.js",
-	"Proforma Invoice": "public/js/doctype_js/proforma_invoice.js"
+	# "Proforma Invoice": "public/js/doctype_js/proforma_invoice.js"
 }	
 
 override_doctype_class = {

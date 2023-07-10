@@ -4,7 +4,6 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt,cint ,comma_or, nowdate, getdate
 from frappe.model.mapper import get_mapped_doc
@@ -12,6 +11,7 @@ from engr.engineering.doc_events.sales_order import update_proforma_details,chan
 from erpnext.controllers.status_updater import StatusUpdater
 from engr.api import validate_sales_person
 from frappe.utils import  formatdate, get_link_to_form
+from frappe import _
 
 class ProformaInvoice(Document):
     # def __init__(self, *args, **kwargs):
@@ -85,10 +85,10 @@ class ProformaInvoice(Document):
             where t1.name = t2.parent and t2.proforma_invoice = %s and t1.docstatus < 2""",
             self.name)
 
-        # if submit_rv:
-        #     submit_rv = [get_link_to_form("Sales Invoice", si) for si in submit_rv]
-        #     frappe.throw(_("Sales Invoice {0} must be cancelled before cancelling this Sales Order")
-        #         .format(", ".join(submit_rv)))
+        if submit_rv:
+            submit_rv = [get_link_to_form("Sales Invoice", si) for si in submit_rv]
+            frappe.throw(_("Sales Invoice {0} must be cancelled before cancelling this Sales Order")
+                .format(", ".join(submit_rv)))
                 
     @frappe.whitelist()
     def set_status(self, status):
