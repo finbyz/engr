@@ -85,10 +85,10 @@ class ProformaInvoice(Document):
             where t1.name = t2.parent and t2.proforma_invoice = %s and t1.docstatus < 2""",
             self.name)
 
-        if submit_rv:
-            submit_rv = [get_link_to_form("Sales Invoice", si) for si in submit_rv]
-            frappe.throw(_("Sales Invoice {0} must be cancelled before cancelling this Sales Order")
-                .format(", ".join(submit_rv)))
+        # if submit_rv:
+        #     submit_rv = [get_link_to_form("Sales Invoice", si) for si in submit_rv]
+        #     frappe.throw(_("Sales Invoice {0} must be cancelled before cancelling this Sales Order")
+        #         .format(", ".join(submit_rv)))
                 
     @frappe.whitelist()
     def set_status(self, status):
