@@ -168,6 +168,7 @@ def validate(self,method):
     validate_sales_person(self)
     validate_item_group(self)
     update_pending_delivery_qty(self)
+    set_bom_no(self)
 
 def update_sales_order_pending_qty(self,method):
     for each in self.items:
@@ -179,3 +180,8 @@ def update_pending_delivery_qty(self):
     for each in self.items:
         each.pending_delivered_qty = each.qty - (each.delivered_qty or 0)
 
+
+def set_bom_no(self):
+    for row in self.items:
+        if row.item_code:
+            row.bom_no = None
