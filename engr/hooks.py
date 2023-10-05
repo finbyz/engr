@@ -99,9 +99,9 @@ doc_events = {
 		"on_cancel":"engr.engineering.doc_events.delivery_note.on_cancel",
 		"on_trash":"engr.engineering.doc_events.delivery_note.on_trash",
 	},
-	"Salary Slip":{
-		"validate":"engr.engineering.doc_events.salary_slip.validate"
-	},
+	# "Salary Slip":{
+	# 	"validate":"engr.engineering.doc_events.salary_slip.validate"
+	# },
 	"Quotation":{
 		"on_update_after_submit":"engr.engineering.doc_events.quotation.update_quotation_status",
 		"validate":"engr.engineering.doc_events.quotation.validate",

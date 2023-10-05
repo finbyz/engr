@@ -19,7 +19,6 @@ def mark_employee_attendance(
 ):
 	if isinstance(employee_list, str):
 		employee_list = json.loads(employee_list)
-	
 	for employee in employee_list:
 		leave_type = None
 		if status == "On Leave" and leave_type:
