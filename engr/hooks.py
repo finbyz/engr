@@ -47,7 +47,8 @@ doctype_js = {
 }	
 
 override_doctype_class = {
-    "Opening Invoice Creation Tool" : "engr.engineering.doc_events.opening_invoice_creation_tool.CustomOpeningInvoiceCreationTool"
+    "Opening Invoice Creation Tool" : "engr.engineering.doc_events.opening_invoice_creation_tool.CustomOpeningInvoiceCreationTool",
+    "Payroll Entry": "engr.engineering.doc_events.payroll_entry.CustomPayrollEntry"
 }
 
 override_doctype_dashboards = {
