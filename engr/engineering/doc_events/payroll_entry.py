@@ -13,6 +13,7 @@ class CustomPayrollEntry(PayrollEntry):
 			"Payroll Settings", "process_payroll_accounting_entry_based_on_employee"
 		)
 		self.employee_based_payroll_payable_entries = {}
+		self._advance_deduction_entries = []
 
 		earnings = (
 			self.get_salary_component_total(
@@ -53,7 +54,7 @@ class CustomPayrollEntry(PayrollEntry):
 
 			# Earnings
 			for acc_cc, amount in earnings.items():
-				accounting_entry, payable_amount = self.get_accounting_entries_and_payable_amount(
+				payable_amount = self.get_accounting_entries_and_payable_amount(
 					acc_cc[0],
 					acc_cc[1] or self.cost_center,
 					amount,
@@ -63,12 +64,12 @@ class CustomPayrollEntry(PayrollEntry):
 					accounting_dimensions,
 					precision,
 					entry_type="debit",
+					accounts=accounts,
 				)
-				accounts.append(accounting_entry)
 
 			# Deductions
 			for acc_cc, amount in deductions.items():
-				accounting_entry, payable_amount = self.get_accounting_entries_and_payable_amount(
+				payable_amount = self.get_accounting_entries_and_payable_amount(
 					acc_cc[0],
 					acc_cc[1] or self.cost_center,
 					amount,
@@ -78,8 +79,17 @@ class CustomPayrollEntry(PayrollEntry):
 					accounting_dimensions,
 					precision,
 					entry_type="credit",
+					accounts=accounts,
 				)
-				accounts.append(accounting_entry)
+
+			payable_amount = self.set_accounting_entries_for_advance_deductions(
+				accounts,
+				currencies,
+				company_currency,
+				accounting_dimensions,
+				precision,
+				payable_amount,
+			)
 
 			# Payable amount
 			if process_payroll_accounting_entry_based_on_employee:
@@ -98,7 +108,7 @@ class CustomPayrollEntry(PayrollEntry):
 				for employee, employee_details in self.employee_based_payroll_payable_entries.items():
 					payable_amount = employee_details.get("earnings") - (employee_details.get("deductions") or 0)
 
-					accounting_entry, payable_amount = self.get_accounting_entries_and_payable_amount(
+					payable_amount = self.get_accounting_entries_and_payable_amount(
 						payroll_payable_account,
 						self.cost_center,
 						payable_amount,
@@ -109,10 +119,11 @@ class CustomPayrollEntry(PayrollEntry):
 						precision,
 						entry_type="payable",
 						party=employee,
+						accounts=accounts,
 					)
-					accounts.append(accounting_entry)
+
 			else:
-				accounting_entry, payable_amount = self.get_accounting_entries_and_payable_amount(
+				payable_amount = self.get_accounting_entries_and_payable_amount(
 					payroll_payable_account,
 					self.cost_center,
 					payable_amount,
@@ -122,8 +133,8 @@ class CustomPayrollEntry(PayrollEntry):
 					accounting_dimensions,
 					precision,
 					entry_type="payable",
+					accounts=accounts,
 				)
-				accounts.append(accounting_entry)
 
 			journal_entry.set("accounts", accounts)
 			if len(currencies) > 1:
