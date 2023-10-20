@@ -1,33 +1,13 @@
-import json
-
-from dateutil.relativedelta import relativedelta
-
 import frappe
 from frappe import _
-from frappe.desk.reportview import get_filters_cond, get_match_cond
-from frappe.model.document import Document
-from frappe.query_builder.functions import Coalesce
-from frappe.utils import (
-	DATE_FORMAT,
-	add_days,
-	add_to_date,
-	cint,
-	comma_and,
-	date_diff,
-	flt,
-	get_link_to_form,
-	getdate,
-)
-
+from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry
 import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
-	get_accounting_dimensions,
+	get_accounting_dimensions
 )
-from erpnext.accounts.utils import get_fiscal_year
-from erpnext.setup.doctype.employee.employee import get_holiday_list_for_employee
 
-
-def make_accrual_jv_entry(self):
+class CustomPayrollEntry(PayrollEntry):
+	def make_accrual_jv_entry(self):
 		self.check_permission("write")
 		process_payroll_accounting_entry_based_on_employee = frappe.db.get_single_value(
 			"Payroll Settings", "process_payroll_accounting_entry_based_on_employee"

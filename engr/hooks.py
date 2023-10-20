@@ -48,7 +48,7 @@ doctype_js = {
 
 override_doctype_class = {
     "Opening Invoice Creation Tool" : "engr.engineering.doc_events.opening_invoice_creation_tool.CustomOpeningInvoiceCreationTool",
-    # "Payroll Entry": "engr.engineering.doc_events.payroll_entry.CustomPayrollEntry"
+    "Payroll Entry": "engr.engineering.doc_events.payroll_entry.CustomPayrollEntry"
 }
 
 override_doctype_dashboards = {
@@ -281,7 +281,3 @@ customer.make_quotation = make_quotation
 from erpnext.assets.doctype.asset import depreciation
 from  engr.api import make_depreciation_entry
 depreciation.make_depreciation_entry = make_depreciation_entry
-
-from hrms.payroll.doctype.payroll_entry.payroll_entry import PayrollEntry
-from engr.engineering.doc_events.payroll_entry import make_accrual_jv_entry
-PayrollEntry.make_accrual_jv_entry = make_accrual_jv_entry
