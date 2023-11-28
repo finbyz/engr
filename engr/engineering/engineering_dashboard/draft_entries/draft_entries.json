@@ -1,0 +1,55 @@
+{
+ "cards": [
+  {
+   "card": "Draft Stock Entries"
+  },
+  {
+   "card": "Draft Sales Orders"
+  },
+  {
+   "card": "Draft Sales Invoice"
+  },
+  {
+   "card": "Draft Stock Entries-1"
+  },
+  {
+   "card": "Draft Quotation"
+  },
+  {
+   "card": "Draft Purchase Invoice"
+  },
+  {
+   "card": "Draft Purchase Receipt"
+  },
+  {
+   "card": "Draft Delivery Note"
+  },
+  {
+   "card": "Draft Payment Entry"
+  },
+  {
+   "card": "Draft Receipt Entry"
+  },
+  {
+   "card": "Draft Journal Entry"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Item-wise Annual Sales",
+   "width": "Full"
+  }
+ ],
+ "creation": "2022-06-25 13:55:43.414555",
+ "dashboard_name": "Draft Entries",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2023-11-28 12:44:51.403944",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Draft Entries",
+ "owner": "Administrator"
+}
