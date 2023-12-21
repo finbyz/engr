@@ -80,9 +80,13 @@ def update_proforma_details(docname,action):
                 update_value = False
                 if proforma_query:
                     proforma_amount = proforma_query[0][0]
-                    net_amount = proforma_query[0][1] 
-                    proforma_percentage = flt(proforma_amount) / flt(net_amount) * 100
-
+                    net_amount = proforma_query[0][1]
+                    net_amount = flt(net_amount)
+                    if net_amount != 0: 
+                        proforma_percentage = flt(proforma_amount) / net_amount * 100
+                    else:
+                        proforma_percentage = 0.0
+                        
                     if proforma_amount:
                         frappe.db.set_value("Sales Order Item",{"name":item.sales_order_item,"parent":item.sales_order},\
                             'proforma_amount',proforma_amount)
