@@ -28,13 +28,12 @@ class WorkOrderMaster(Document):
 		date = frappe.format(self.date , {'fieldtype':'Date'})
 		date = date.split('-')
 
-		if(self.branch == 'Nasik'):
-			self.branch_name = 'NK'
-		if(self.branch == 'Aurangabad'):
-			self.branch_name = 'AU'
-		self.wom_name = make_autoname("WOM-{}{}-{}-{}-{}".format(self.branch_name,date[2],date[1],date[0],".##"))
-		job_id = self.wom_name.split("-")
-		self.job_id = "{}-{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1], self.branch_name)
+		# if(self.branch == 'Nasik'):
+		# 	self.branch_name = 'NK'
+		# if(self.branch == 'Aurangabad'):
+		# 	self.branch_name = 'AU'
+		# self.wom_name = make_autoname("WOM-{}{}-{}-{}-{}".format(self.branch_name,date[2],date[1],date[0],".##"))
+		
 
 	def validate(self):
 		if(self.contract_work or self.contract_work == 1):
@@ -50,6 +49,10 @@ class WorkOrderMaster(Document):
 
 		if(self.tax_invoice_no):
 			frappe.db.set_value("Sales Invoice",self.tax_invoice_no ,"job_id" , self.job_id)
+
+		job_id = self.name.split("-")
+		self.job_id = "{}-{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1], self.branch_name)
+
 	def after_rename(self, olddn, newdn, merge=False):
 		job_id = newdn.split("-")
 		self.job_id = "{}-{}-{}".format(job_id[-3],job_id[-2],job_id[-1])
