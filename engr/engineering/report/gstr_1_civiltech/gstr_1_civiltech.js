@@ -71,7 +71,7 @@ frappe.query_reports["GSTR-1 CivilTech"] = {
 	onload: function (report) {
 		report.page.add_inner_button(__("Download as JSON"), function () {
 			frappe.call({
-				method: 'india_compliance.gst_india.report.gstr_1.gstr_1.get_json',
+				method: 'india_compliance.gst_india.report.gstr_1.gstr_1.get_gstr1_json',
 				args: {
 					data: report.data,
 					report_name: report.report_name,
