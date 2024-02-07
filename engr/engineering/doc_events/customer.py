@@ -48,8 +48,8 @@ def create_task(source_name, target_doc=None, ignore_permissions= True):
 	)
 	return doc
 
-def before_validate(self,method):
-	self.customer_id = make_autoname("{}".format(".#####"))
+# def before_validate(self,method):
+# 	self.customer_id = make_autoname("{}".format(".#####"))
 
 @frappe.whitelist()
 def make_WOM_from_customer(source_name, target_doc=None):	
