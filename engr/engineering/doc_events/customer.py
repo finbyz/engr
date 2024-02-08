@@ -48,7 +48,8 @@ def create_task(source_name, target_doc=None, ignore_permissions= True):
 	)
 	return doc
 
-# def before_validate(self,method):
+def before_validate(self,method):
+	pass
 # 	self.customer_id = make_autoname("{}".format(".#####"))
 
 @frappe.whitelist()
