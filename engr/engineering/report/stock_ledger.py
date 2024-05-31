@@ -16,7 +16,6 @@ from erpnext.stock.utils import (
 )
 from erpnext.stock.report.stock_ledger.stock_ledger import get_inventory_dimension_fields
 from erpnext.stock.report.stock_ledger.stock_ledger import check_inventory_dimension_filters_applied
-from erpnext.stock.report.stock_ledger.stock_ledger import get_columns
 from erpnext.stock.report.stock_ledger.stock_ledger import get_stock_ledger_entries
 from erpnext.stock.report.stock_ledger.stock_ledger import get_items
 from erpnext.stock.report.stock_ledger.stock_ledger import get_item_details
@@ -126,3 +125,178 @@ def execute(filters=None):
 				row.update({'lot_no' : dn_map.get((row.voucher_no,row.item_code)).get('lot_no')})
 	# FINBYZ CHANGES END
 	return columns, data
+
+def get_columns(filters):
+	columns = [
+		{"label": _("Date"), "fieldname": "date", "fieldtype": "Datetime", "width": 150},
+		{
+			"label": _("Item"),
+			"fieldname": "item_code",
+			"fieldtype": "Link",
+			"options": "Item",
+			"width": 100,
+		},
+		{"label": _("Item Name"), "fieldname": "item_name", "width": 100},
+		{
+			"label": _("Stock UOM"),
+			"fieldname": "stock_uom",
+			"fieldtype": "Link",
+			"options": "UOM",
+			"width": 90,
+		},
+	]
+
+	for dimension in get_inventory_dimensions():
+		columns.append(
+			{
+				"label": _(dimension.doctype),
+				"fieldname": dimension.fieldname,
+				"fieldtype": "Link",
+				"options": dimension.doctype,
+				"width": 110,
+			}
+		)
+
+	columns.extend(
+		[
+			{
+				"label": _("In Qty"),
+				"fieldname": "in_qty",
+				"fieldtype": "Float",
+				"width": 80,
+				"convertible": "qty",
+			},
+			{
+				"label": _("Out Qty"),
+				"fieldname": "out_qty",
+				"fieldtype": "Float",
+				"width": 80,
+				"convertible": "qty",
+			},
+			{
+				"label": _("Balance Qty"),
+				"fieldname": "qty_after_transaction",
+				"fieldtype": "Float",
+				"width": 100,
+				"convertible": "qty",
+			},
+			{
+				"label": _("Voucher #"),
+				"fieldname": "voucher_no",
+				"fieldtype": "Dynamic Link",
+				"options": "voucher_type",
+				"width": 150,
+			},
+			{
+				"label": _("Warehouse"),
+				"fieldname": "warehouse",
+				"fieldtype": "Link",
+				"options": "Warehouse",
+				"width": 150,
+			},
+			{
+				"label": _("Item Group"),
+				"fieldname": "item_group",
+				"fieldtype": "Link",
+				"options": "Item Group",
+				"width": 100,
+			},
+			{
+				"label": _("Brand"),
+				"fieldname": "brand",
+				"fieldtype": "Link",
+				"options": "Brand",
+				"width": 100,
+			},
+			{"label": _("Description"), "fieldname": "description", "width": 200},
+			{
+				"label": _("Incoming Rate"),
+				"fieldname": "incoming_rate",
+				"fieldtype": "Currency",
+				"width": 110,
+				"options": "Company:company:default_currency",
+				"convertible": "rate",
+			},
+			{
+				"label": _("Avg Rate (Balance Stock)"),
+				"fieldname": "valuation_rate",
+				"fieldtype": filters.valuation_field_type,
+				"width": 180,
+				"options": "Company:company:default_currency"
+				if filters.valuation_field_type == "Currency"
+				else None,
+				"convertible": "rate",
+			},
+			{
+				"label": _("Valuation Rate"),
+				"fieldname": "in_out_rate",
+				"fieldtype": filters.valuation_field_type,
+				"width": 140,
+				"options": "Company:company:default_currency"
+				if filters.valuation_field_type == "Currency"
+				else None,
+				"convertible": "rate",
+			},
+			{
+				"label": _("Balance Value"),
+				"fieldname": "stock_value",
+				"fieldtype": "Currency",
+				"width": 110,
+				"options": "Company:company:default_currency",
+			},
+			{
+				"label": _("Value Change"),
+				"fieldname": "stock_value_difference",
+				"fieldtype": "Currency",
+				"width": 110,
+				"options": "Company:company:default_currency",
+			},
+			{"label": _("Voucher Type"), "fieldname": "voucher_type", "width": 110},
+			{
+				"label": _("Voucher #"),
+				"fieldname": "voucher_no",
+				"fieldtype": "Dynamic Link",
+				"options": "voucher_type",
+				"width": 100,
+			},
+			{
+				"label": _("Batch"),
+				"fieldname": "batch_no",
+				"fieldtype": "Link",
+				"options": "Batch",
+				"width": 100,
+			},
+			# Finbyz Changes Start
+			{
+				"label": _("Lot No"),
+				"fieldname": "lot_no", 
+				"fieldtype": "Data", 
+				"width": 100
+			},
+			# Finbyz Changes End
+			{
+				"label": _("Serial No"),
+				"fieldname": "serial_no",
+				"fieldtype": "Link",
+				"options": "Serial No",
+				"width": 100,
+			},
+			{"label": _("Balance Serial No"), "fieldname": "balance_serial_no", "width": 100},
+			{
+				"label": _("Project"),
+				"fieldname": "project",
+				"fieldtype": "Link",
+				"options": "Project",
+				"width": 100,
+			},
+			{
+				"label": _("Company"),
+				"fieldname": "company",
+				"fieldtype": "Link",
+				"options": "Company",
+				"width": 110,
+			},
+		]
+	)
+
+	return columns

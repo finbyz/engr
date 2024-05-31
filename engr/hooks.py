@@ -38,12 +38,12 @@ from erpnext.manufacturing.doctype.work_order import work_order
 work_order.create_job_card = create_job_card
 
 app_include_js = [
-	"/assets/js/engineering.min.js" 
+	"engr.bundle.js" 
 ]
 
-override_doctype_class = {
-	'Sales Invoice': 'engr.engineering.doc_events.SalesInvoiceclass.SalesInvoice'
-}
+# override_doctype_class = {
+# 	'Sales Invoice': 'engr.engineering.doc_events.SalesInvoiceclass.SalesInvoice'
+# }
 doctype_list_js = {
 	"Sales Order" : "public/js/doctype_js/sales_order_list.js",
 	"Production Plan":"public/js/doctype_js/production plan.js",
@@ -302,3 +302,7 @@ ProductionPlan.make_material_request = make_material_request
 from erpnext.stock.report.stock_ledger import stock_ledger 
 from engr.engineering.report.stock_ledger import execute as stock_ledger_execute
 stock_ledger.execute = stock_ledger_execute
+
+from erpnext.stock.report.stock_ledger import stock_ledger 
+from engr.engineering.report.stock_ledger import get_columns as stock_ledger_get_columns
+stock_ledger.get_columns = stock_ledger_get_columns
