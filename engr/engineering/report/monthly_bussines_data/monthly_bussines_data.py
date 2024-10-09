@@ -3,8 +3,8 @@
 
 import frappe
 from frappe import _
+def execute(filters={"from_date":'2023-07-01' , "to_date":'2023-07-10'}):
 
-def execute(filters=None):
     if not filters.get('from_date') or not filters.get('to_date'):
         frappe.throw('give a Filter From Date and To Date')
     columns, data = [], []
@@ -16,7 +16,7 @@ def get_columns(filters):
         columns = [
             {
                 "label": _("Customer Name"),
-                "fieldname": "party_name",
+                "fieldname": "customer_name",
                 "fieldtype": "Link", 
                 "options":"Customer",
                 "width": 200
@@ -104,11 +104,11 @@ def get_data(filters):
 
         data = frappe.db.sql(f"""
             SELECT 
-                me.party as customer_name,COUNT(me.name) as visit_number, GROUP_CONCAT(DISTINCT me.meeting_arranged_by) as sales_person
+                me.party as customer_name , COUNT(me.name) as visit_number, GROUP_CONCAT(DISTINCT me.meeting_arranged_by) as sales_person
             from
                 `tabMeeting` me
             where 
-                me.docstatus=1 and me.party_type = 'Customer' {condition} 
+                me.docstatus=1 and me.party_type = 'Customer' {condition}
             GROUP BY
                 me.party
             
@@ -130,33 +130,42 @@ def get_data(filters):
             qo_condition = f" and qo.transaction_date BETWEEN '{filters.get('from_date')}' and '{filters.get('to_date')}'"
             so_condition = f" and transaction_date BETWEEN '{filters.get('from_date')}' and '{filters.get('to_date')}'"
             si_condition = f" and posting_date BETWEEN '{filters.get('from_date')}' and '{filters.get('to_date')}'"
-        qo_data = frappe.db.sql(f""" SELECT sum(qo.grand_total) as quotatoin_grand_total, sum(net_total) as net_quotation_value,  qo.territory , qo.party_name  From `tabQuotation` as qo Where qo.docstatus = 1  {qo_condition_trns} {qo_condition} Group By qo.party_name""",as_dict= True)
-        so_data = frappe.db.sql(f""" SELECT sum(grand_total) as sales_order_grand_total,sum(total) as net_sales_order_value,  territory , customer From `tabSales Order`  Where docstatus = 1  {so_condition_trns} {so_condition} Group By customer""",as_dict=True)
-        si_data = frappe.db.sql(f""" SELECT sum(grand_total) as sales_invoice_grand_total,territory ,sum(total) as invoice_net_value,customer From `tabSales Invoice`  Where docstatus = 1  {si_condition_trns} {si_condition} Group By customer""",as_dict=True)
-
+        qo_data = frappe.db.sql(f""" SELECT qo.party_name as customer_name , sum(qo.grand_total) as quotatoin_grand_total, sum(net_total) as net_quotation_value,  qo.territory , qo.party_name  
+                                    From `tabQuotation` as qo
+                                    Where qo.docstatus = 1  {qo_condition_trns} {qo_condition} 
+                                    Group By qo.party_name""",as_dict= True)
+        so_data = frappe.db.sql(f""" SELECT  sum(grand_total) as sales_order_grand_total,sum(total) as net_sales_order_value,  territory , customer as customer_name 
+                                    From `tabSales Order`  
+                                    Where docstatus = 1  {so_condition_trns} {so_condition} Group By customer""",as_dict=True)
+        si_data = frappe.db.sql(f""" SELECT  sum(grand_total) as sales_invoice_grand_total,territory ,sum(total) as invoice_net_value,customer as customer_name 
+                                    From `tabSales Invoice`  
+                                    Where docstatus = 1  {si_condition_trns} {si_condition} 
+                                    Group By customer""",as_dict=True)
+        
         so_map = {}
         for row in so_data:
-            so_map[row.customer] = row
+            so_map[row.customer_name] = row
 
         si_map = {}
         for row in si_data:
-            si_map[row.customer] = row
+            si_map[row.customer_name] = row
 
-        map_data = {}
-        for row in data:
-            map_data[row.customer_name] = row
+        qo_map = {}
+        for row in qo_data:
+            qo_map[row.customer_name] = row
         final_data=[]
+        
         if filters.get('user'):
-            for row in qo_data:
-                if so_map.get(row.party_name):
-                    if row.party_name == so_map[row.party_name].customer:
-                        row.update(so_map[row.party_name])
-                if si_map.get(row.party_name):    
-                    if row.party_name == si_map[row.party_name].customer:
-                        row.update(si_map[row.party_name]) 
-                if map_data.get(row.party_name):
-                    if row.party_name ==  map_data[row.party_name].customer_name:
-                        row.update(map_data[row.party_name])
+            for row in data:
+                if so_map.get(row.customer_name):
+                    if row.customer_name == so_map[row.customer_name].customer:
+                        row.update(so_map[row.customer_name])
+                if si_map.get(row.customer_name):    
+                    if row.customer_name == si_map[row.customer_name].customer:
+                        row.update(si_map[row.customer_name]) 
+                if qo_map.get(row.customer_name):
+                    if row.customer_name ==  qo_map[row.customer_name].customer_name:
+                        row.update(qo_map[row.customer_name])
                 if not row.net_quotation_value:
                     row.update({'net_quotation_value':0})
                 if not row.net_sales_order_value:
@@ -165,29 +174,59 @@ def get_data(filters):
                     row.update({'invoice_net_value':0})
                 if row.sales_person:
                     final_data.append(row)
-            return final_data
+            data = final_data
         else:
-            for row in qo_data:
-                if so_map.get(row.party_name):
-                    if row.party_name == so_map[row.party_name].customer:
-                        row.update(so_map[row.party_name])
-                if si_map.get(row.party_name):    
-                    if row.party_name == si_map[row.party_name].customer:
-                        row.update(si_map[row.party_name]) 
-                if map_data.get(row.party_name):
-                    if row.party_name ==  map_data[row.party_name].customer_name:
-                        row.update(map_data[row.party_name])
+            for row in data:
+                if so_map.get(row.customer_name):
+                    if row.customer_name == so_map[row.customer_name].customer:
+                        row.update(so_map[row.customer_name])
+                if si_map.get(row.customer_name):    
+                    if row.customer_name == si_map[row.customer_name].customer:
+                        row.update(si_map[row.customer_name]) 
+                if qo_map.get(row.customer_name):
+                    if row.customer_name ==  qo_map[row.customer_name].customer_name:
+                        row.update(qo_map[row.customer_name])
                 if not row.net_quotation_value:
                     row.update({'net_quotation_value':0})
                 if not row.net_sales_order_value:
                     row.update({'net_sales_order_value':0})
                 if not row.invoice_net_value:
                     row.update({'invoice_net_value':0})
-            return qo_data
-    qo_con = ''
-    so_con = ''
-    si_con = ''
+        data_map = {}
+        for row in data:
+            data_map[row.customer_name] = row
+        
+        for row in qo_data:
+            if not data_map.get(row.customer_name):
+                data.append(row)
+        other_data = []
+        for row in data:
+            for d in so_data:
+                if row.customer_name == d.customer_name:
+                    row.update(d)
+                else:
+                    other_data.append
+
+        other_data = []
+        for row in data:
+            for d in si_data:
+                if row.customer_name == d.customer_name:
+                    row.update(d)
+                else:
+                    other_data.append		
+        final_data = []
+        data = data + other_data
+
+        sorted_list = sorted(data, key=lambda x: x["customer_name"])
+
+        for row in sorted_list:
+            final_data.append(row)
+        return final_data
+    
     if filters.get('st'):
+        qo_con = ''
+        so_con = ''
+        si_con = ''
         sales_person = ""
         con = ""
         if filters.get('territory'):

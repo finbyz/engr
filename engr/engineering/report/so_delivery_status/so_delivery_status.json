@@ -34,7 +34,13 @@
    "role": "Stock User"
   },
   {
-   "role": "Purchase Manager"
+   "role": "Stock Manager"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Sales Representative"
   }
  ]
 }

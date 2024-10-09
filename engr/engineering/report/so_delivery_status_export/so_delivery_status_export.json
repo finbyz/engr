@@ -3,7 +3,7 @@
  "columns": [],
  "creation": "2021-12-16 11:57:28.388268",
  "disable_prepared_report": 0,
- "disabled": 0,
+ "disabled": 1,
  "docstatus": 0,
  "doctype": "Report",
  "filters": [],
@@ -11,8 +11,8 @@
  "is_standard": "Yes",
  "json": "{\"columns\":[{\"label\":\"Sales Order\",\"fieldname\":\"name\",\"fieldtype\":\"Data\",\"width\":130,\"id\":\"name\",\"name\":\"Sales Order\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"proforma_percentage\",\"field\":\"proforma_percentage\",\"fieldtype\":\"Percent\",\"label\":\"Proforma Percentage\",\"insert_after_index\":0,\"link_field\":\"name\",\"doctype\":\"Sales Order\",\"width\":100,\"id\":\"proforma_percentage\",\"name\":\"Proforma Percentage\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"proforma_required\",\"field\":\"proforma_required\",\"fieldtype\":\"Check\",\"label\":\"Proforma Required\",\"insert_after_index\":1,\"link_field\":\"name\",\"doctype\":\"Sales Order\",\"width\":100,\"id\":\"proforma_required\",\"name\":\"Proforma Required\",\"editable\":false,\"compareValue\":null},{\"label\":\"Status\",\"fieldname\":\"status\",\"fieldtype\":\"Data\",\"width\":102,\"id\":\"status\",\"name\":\"Status\",\"editable\":false,\"compareValue\":null},{\"label\":\"Date\",\"fieldname\":\"transaction_date\",\"fieldtype\":\"Date\",\"width\":80,\"id\":\"transaction_date\",\"name\":\"Date\",\"editable\":false},{\"label\":\"Sales Invoice\",\"fieldname\":\"si_name\",\"fieldtype\":\"Data\",\"width\":130,\"id\":\"si_name\",\"name\":\"Sales Invoice\",\"editable\":false,\"compareValue\":null},{\"label\":\"Sales Invoice Date\",\"fieldname\":\"si_date\",\"fieldtype\":\"Date\",\"width\":80,\"id\":\"si_date\",\"name\":\"Sales Invoice Date\",\"editable\":false},{\"label\":\"Item Code\",\"fieldname\":\"item_code\",\"fieldtype\":\"Data\",\"width\":100,\"id\":\"item_code\",\"name\":\"Item Code\",\"editable\":false,\"compareValue\":null},{\"label\":\"Qty\",\"fieldname\":\"qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"qty\",\"name\":\"Qty\",\"editable\":false,\"compareValue\":null},{\"label\":\"Delivered Qty\",\"fieldname\":\"delivered_qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"delivered_qty\",\"name\":\"Delivered Qty\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"per_delivered\",\"field\":\"per_delivered\",\"fieldtype\":\"Percent\",\"label\":\"%  Delivered\",\"insert_after_index\":10,\"link_field\":\"name\",\"doctype\":\"Sales Order\",\"width\":100,\"id\":\"per_delivered\",\"name\":\"%  Delivered\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"per_billed\",\"field\":\"per_billed\",\"fieldtype\":\"Percent\",\"label\":\"% Amount Billed\",\"insert_after_index\":11,\"link_field\":\"name\",\"doctype\":\"Sales Order\",\"width\":100,\"id\":\"per_billed\",\"name\":\"% Amount Billed\",\"editable\":false,\"compareValue\":null},{\"label\":\"To Deliver Qty\",\"fieldname\":\"qty_to_deliver\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"qty_to_deliver\",\"name\":\"To Deliver Qty\",\"editable\":false,\"compareValue\":null},{\"label\":\"Available Qty\",\"fieldname\":\"actual_qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"actual_qty\",\"name\":\"Available Qty\",\"editable\":false,\"compareValue\":null},{\"label\":\"Projected Qty\",\"fieldname\":\"projected_qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"projected_qty\",\"name\":\"Projected Qty\",\"editable\":false,\"compareValue\":null},{\"label\":\"Delivery Date\",\"fieldname\":\"delivery_date\",\"fieldtype\":\"Date\",\"width\":80,\"id\":\"delivery_date\",\"name\":\"Delivery Date\",\"editable\":false},{\"label\":\"Material Request\",\"fieldname\":\"material_request\",\"fieldtype\":\"Data\",\"width\":130,\"id\":\"material_request\",\"name\":\"Material Request\",\"editable\":false,\"compareValue\":null},{\"label\":\"MR Qty\",\"fieldname\":\"mr_qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"mr_qty\",\"name\":\"MR Qty\",\"editable\":false,\"compareValue\":null},{\"label\":\"Purchase Order\",\"fieldname\":\"purchase_order\",\"fieldtype\":\"Data\",\"width\":120,\"id\":\"purchase_order\",\"name\":\"Purchase Order\",\"editable\":false,\"compareValue\":null},{\"label\":\"PO Qty\",\"fieldname\":\"po_qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"po_qty\",\"name\":\"PO Qty\",\"editable\":false,\"compareValue\":null},{\"fieldname\":\"schedule_date_purchase_order\",\"field\":\"schedule_date\",\"fieldtype\":\"Date\",\"label\":\"Required By\",\"insert_after_index\":16,\"link_field\":\"purchase_order\",\"doctype\":\"Purchase Order\",\"width\":100,\"id\":\"schedule_date_purchase_order\",\"name\":\"Required By\",\"editable\":false},{\"label\":\"Received Qty\",\"fieldname\":\"received_qty\",\"fieldtype\":\"Float\",\"width\":70,\"id\":\"received_qty\",\"name\":\"Received Qty\",\"editable\":false,\"compareValue\":null},{\"label\":\"Purchase Receipt Date\",\"fieldname\":\"purchase_receipt_date\",\"fieldtype\":\"Date\",\"width\":80,\"id\":\"purchase_receipt_date\",\"name\":\"Purchase Receipt Date\",\"editable\":false},{\"label\":\"PO Expected Date\",\"fieldname\":\"schedule_date\",\"fieldtype\":\"Date\",\"width\":80,\"id\":\"schedule_date\",\"name\":\"PO Expected Date\",\"editable\":false},{\"fieldname\":\"sales_person\",\"field\":\"sales_person\",\"fieldtype\":\"Data\",\"label\":\"Sales Person\",\"insert_after_index\":23,\"link_field\":\"name\",\"doctype\":\"Sales Order\",\"width\":100,\"id\":\"sales_person\",\"name\":\"Sales Person\",\"editable\":false,\"compareValue\":null}]}",
  "letter_head": "INNOVATIVE TECHNOLOGIES",
- "modified": "2023-04-22 09:50:47.531715",
- "modified_by": "Administrator",
+ "modified": "2023-07-15 13:51:11.512560",
+ "modified_by": "anandp@innotech.co.in",
  "module": "Engineering",
  "name": "SO Delivery Status Export",
  "owner": "anandp@innotech.co.in",
@@ -22,12 +22,5 @@
  "reference_report": "SO Delivery Status",
  "report_name": "SO Delivery Status Export",
  "report_type": "Custom Report",
- "roles": [
-  {
-   "role": "Export Manager"
-  },
-  {
-   "role": "Script Manager"
-  }
- ]
+ "roles": []
 }
