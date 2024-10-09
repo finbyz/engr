@@ -10,8 +10,8 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "INNOVATIVE TECHNOLOGIES FPIA (INDIA) PVT. LTD.",
- "modified": "2023-05-30 10:04:33.220865",
- "modified_by": "Administrator",
+ "modified": "2023-09-27 16:12:10.591458",
+ "modified_by": "anandp@innotech.co.in",
  "module": "Engineering",
  "name": "Stock Balance To Sales Team",
  "owner": "Administrator",
@@ -32,6 +32,9 @@
   },
   {
    "role": "Sales User"
+  },
+  {
+   "role": "Sales Representative"
   }
  ]
 }

@@ -42,6 +42,7 @@ def create_purchase_receipt(self):
 			target.supplier = source.company
 			target.set_posting_time = 1
 			target.posting_date = source.posting_date
+			target.company_gstin = source.billing_address_gstin
 			
 			target_company_abbr = frappe.db.get_value("Company", target.company, "abbr")
 			source_company_abbr = frappe.db.get_value("Company", source.company, "abbr")
@@ -49,6 +50,9 @@ def create_purchase_receipt(self):
 				target_taxes_and_charges = source.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
 				if frappe.db.exists("Purchase Taxes and Charges Template", target_taxes_and_charges):
 					target.taxes_and_charges = target_taxes_and_charges
+					target.taxes = []
+					# tax_doc = frappe.get_doc("Purchase Taxes and Charges Template" , target_taxes_and_charges )
+					# target.taxes = tax_doc.taxes
 				else:
 					frappe.throw("Please Create Sales Taxes and Charges Template Like Purchase Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
 					

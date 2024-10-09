@@ -2,6 +2,8 @@
 // For license information, please see license.txt
 {% include 'engr/public/js/sales_common.js' %}
 
+extend_cscript(cur_frm.cscript, new erpnext.selling.SellingController({ frm: cur_frm }))
+
 frappe.ui.form.on('Proforma Invoice', {
 	onload: function(frm) {
 		if (!frm.doc.transaction_date && frm.doc.docstatus ==0){
@@ -126,16 +128,16 @@ frappe.ui.form.on('Proforma Invoice', {
 	},
 });
 
-erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend({
-	onload: function(doc, dt, dn) {
+erpnext.selling.SalesOrderController = class SalesOrderController extends erpnext.selling.SellingController {
+	onload(doc, dt, dn) {
 		this._super();
-	},
+	}
 
-	refresh: function(doc, dt, dn) {
+	refresh(doc, dt, dn) {
 		var me = this;
 		this._super();
 		let allow_delivery = false;
-	},
+	}
 
-});
+};
 $.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));

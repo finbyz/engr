@@ -312,9 +312,12 @@ def make_inter_company_transaction(self, target_doc=None):
 			target.taxes = source.taxes
 			
 			for index, item in enumerate(source.taxes):
+				target.taxes[index].doctype = "Purchase Taxes and Charges"
+				target.taxes[index].parenttype = "Purchase Invoice"
 				target.taxes[index].account_head = item.account_head.replace(
 					source_company_abbr, target_company_abbr
 				)
+				target.taxes[index].account_head = "Input Tax " + str(target.taxes[index].account_head)
 				target.taxes[index].cost_center = item.cost_center.replace(
 					source_company_abbr, target_company_abbr
 				)

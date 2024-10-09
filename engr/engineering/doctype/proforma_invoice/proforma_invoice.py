@@ -71,6 +71,12 @@ def create_proforma_invoice(source_name, target_doc=None):
 				"per_billed",
 				"billing_status",
 				"auto_repeat",
+				"total_qty",
+				"base_total",
+				"base_net_total",
+				"total_net_weight",
+				"total",
+				"net_total"
 			},
 		},
 		"Sales Order Item": {

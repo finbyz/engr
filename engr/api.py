@@ -191,7 +191,7 @@ def send_sales_invoice_mails():
 
             if bool(si.contact_email) and si.contact_email not in recipients:
                 recipients.append(si.contact_email)
-
+            print(recipients)
 
         message = header(customer) + '' + table + '' + footer(actual_amount, outstanding)
         # recipients = "anandp@innotech.co.in"
@@ -276,7 +276,7 @@ def send_proforma_invoice_mails():
                 We will appreciate your immediate response in this regard.<br><br>
                 If payment already made from your end, kindly provide details of the payment/s made to enable us to reconcile and credit your account.<br><br>
                 Kindly Regards,<br>
-                Anand Patil <br><br>
+                Atul Pawar <br><br>
                 Innovative Technologies and P. K. Sales Automations Pvt. Ltd.<br>(formerly​known as P. K. Sales Corporation)
                 
                 <div>
@@ -292,11 +292,11 @@ def send_proforma_invoice_mails():
                                 </tr>
                                 <tr>
                                     <td style="padding-bottom: 0px; vertical-align: top; width: 20px; color: #a0ce4e; font-size: 14px; font-family: Arial, Helvetica, sans-serif;" valign="top" width="20">M:</td>
-                                    <td style="padding-bottom: 0px; color: #333333; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">7506389828</td>
+                                    <td style="padding-bottom: 0px; color: #333333; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">9987024735</td>
                                 </tr>
                                 <tr>
                                     <td style="padding-bottom: 0px; vertical-align: top; width: 20px; color: #a0ce4e; font-size: 14px; font-family: Arial, Helvetica, sans-serif;" valign="top" width="20">E:</td>
-                                    <td style="padding-bottom: 0px; color: #333333; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">anandp@Innotech.co.in</td>
+                                    <td style="padding-bottom: 0px; color: #333333; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">atulp@innotech.co.in</td>
                                 </tr>
                             </tbody></table>
                         </td>

@@ -20,7 +20,8 @@ app_license = "MIT"
 # app_include_js = "/assets/engr/js/engr.js"
 
 app_include_js = [
-	"/assets/js/engineering.min.js" 
+	# "/assets/js/engineering.min.js" 
+	"engr.bundle.js"
 ]
 
 
@@ -222,6 +223,10 @@ from erpnext.selling.report.sales_person_target_variance_based_on_item_group imp
 from engr.engineering.report.sales_person_target_variance_based_on_item_group import execute
 sales_person_target_variance_based_on_item_group.execute = execute
 
-from finbyzerp import e_invoice_override
-from engr.e_invoice_override import get_item_list
-e_invoice_override.get_item_list = get_item_list
+# from finbyzerp import e_invoice_override
+# from engr.e_invoice_override import get_item_list
+# e_invoice_override.get_item_list = get_item_list
+
+from erpnext.selling.doctype.quotation import quotation
+from engr.engineering.doc_events.quotation import _make_sales_order
+quotation._make_sales_order = _make_sales_order
