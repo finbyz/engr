@@ -28,8 +28,8 @@ class WorkOrderMaster(Document):
 		date = frappe.format(self.date , {'fieldtype':'Date'})
 		date = date.split('-')
 
-		# if(self.branch == 'Nasik'):
-		# 	self.branch_name = 'NK'
+		if(self.branch == 'Nasik'):
+			self.branch_name = 'NK'
 		# if(self.branch == 'Aurangabad'):
 		# 	self.branch_name = 'AU'
 		self.wom_name = make_autoname("WOM-{}{}-{}-{}-{}".format(self.branch_name,date[2],date[1],date[0],".##"))
