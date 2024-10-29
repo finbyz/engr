@@ -25,6 +25,8 @@ from frappe.utils import (
 
 class WorkOrderMaster(Document):
 	def before_naming(self):
+		if not self.__islocal:
+			return
 		date = frappe.format(self.date , {'fieldtype':'Date'})
 		date = date.split('-')
 
