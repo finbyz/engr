@@ -239,6 +239,7 @@ def set_payment_entry_ref(self,method):
 
 
 def on_update_after_submit(self , method):
+	return
 	# set_payment_entry_ref(self , method)
 	if len(self.references):
 		self.db_set("is_advance" , 0)
