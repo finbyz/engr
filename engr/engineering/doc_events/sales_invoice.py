@@ -321,7 +321,8 @@ def make_inter_company_transaction(self, target_doc=None):
 				target.taxes[index].cost_center = item.cost_center.replace(
 					source_company_abbr, target_company_abbr
 				)
-		
+				target.taxes[index].category = "Total"
+				target.taxes[index].add_deduct_tax = "Add"
 		target.run_method("set_missing_values")
 	
 	def update_accounts(source_doc, target_doc, source_parent):

@@ -1,0 +1,45 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2025-08-07 16:27:53.035237",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "INNOVATIVE TECHNOLOGIES FPIA (INDIA) PVT. LTD.",
+ "modified": "2025-08-07 16:38:46.352892",
+ "modified_by": "Administrator",
+ "module": "Engineering",
+ "name": "Yearly Account Summary",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "GL Entry",
+ "report_name": "Yearly Account Summary",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Auditor"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Translator"
+  },
+  {
+   "role": "Export Manager"
+  },
+  {
+   "role": "Support Team"
+  },
+  {
+   "role": "System Manager"
+  }
+ ]
+}

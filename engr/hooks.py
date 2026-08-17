@@ -36,6 +36,7 @@ doctype_js = {
 	"Customer":"public/js/doctype_js/customer.js",
 	"Sales Invoice":"public/js/doctype_js/sales_invoice.js",
 	"Communication":"public/js/doctype_js/communication.js",
+	"Payment Entry":"public/js/doctype_js/payment_entry.js",
 }
 
 override_doctype_dashboards = {
@@ -43,6 +44,9 @@ override_doctype_dashboards = {
 	"Customer": "engr.engineering.dashboard.customer.get_data",
 }
 
+override_doctype_class = {
+	"Sales Person" : "engr.engineering.override.sales_person.SalesPerson"
+}
 doc_events = {
 	"Customer":{
 		"validate":"engr.engineering.doc_events.customer.validate_customer_potential"
@@ -69,6 +73,7 @@ doc_events = {
 		"on_submit":"engr.engineering.doc_events.purchase_order.on_submit",
 		"on_cancel":"engr.engineering.doc_events.purchase_order.on_cancel",
 		"on_trash":"engr.engineering.doc_events.purchase_order.on_trash",
+		"on_update_after_submit":"engr.engineering.doc_events.purchase_order.on_update_after_submit"
 
 	},
 	"Sales Order":{

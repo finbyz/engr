@@ -65,7 +65,8 @@ def get_purchase_invoice_data():
 def get_purchase_order_data():
 
 	po_map = {}
-	data = frappe.db.sql("""select po.material_request_item,po.parent as purchase_order,po.qty as po_qty,po.name as po_detail, pop.schedule_date, pop.supplier from `tabPurchase Order Item` as po
+	data = frappe.db.sql("""select po.material_request_item,po.parent as purchase_order,po.qty as po_qty,po.name as po_detail, po.schedule_date, pop.supplier 
+	from `tabPurchase Order Item` as po
 	JOIN `tabPurchase Order` as pop on pop.name = po.parent 
 	where po.docstatus = 1""",as_dict=1)
 	for po in data:

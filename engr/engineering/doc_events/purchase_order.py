@@ -22,6 +22,20 @@ def update_reqd_date(self,method=None):
 		if self.schedule_date != frappe.db.get_value("Sales Order",so,"delivery_date"):
 			frappe.db.set_value("Sales Order",so,"delivery_date",self.schedule_date)
 
+def on_update_after_submit(doc, method):
+    set_schedule_date_in_items(doc, method)
+
+def set_schedule_date_in_items(doc, method):
+    """
+    Persists the schedule_date of each item using db_set.
+    """
+    if not doc.items:
+        return
+
+    for row in doc.items:
+        if row.schedule_date:
+            row.db_set("schedule_date", row.schedule_date)
+
 @frappe.whitelist()
 def get_last_5_transaction_details(name, item_code, supplier):
 	data = frappe.db.sql("""
@@ -173,8 +187,7 @@ def create_sales_order(self):
 		return doc
 
 	check_inter_company_transaction = frappe.get_value("Company", self.company, "allow_inter_company_transaction")
-	if check_inter_company_transaction:
-		
+	if check_inter_company_transaction and self.is_internal_supplier:
 		company = frappe.get_doc("Company", self.company)
 		inter_company_list = [item.company for item in company.allowed_to_transact_with]
 		supplier_company = frappe.db.get_value("Supplier",self.supplier,'represents_company')
@@ -189,7 +202,8 @@ def create_sales_order(self):
 			# 	frappe.throw(_("Selected Price List should have buying and selling fields checked."))
 			so = get_sales_order_entry(self.name)
 			row = so.append('sales_team', {})
-			row.sales_person="PRATHEEK SHETTY"
+			row.sales_person="Internal"
+			row.product_group="Internal"
 			row.allocated_percentage="100.000"
 			so.save(ignore_permissions = True)
 			so.submit()

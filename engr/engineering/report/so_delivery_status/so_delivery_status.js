@@ -4,6 +4,16 @@
 
 frappe.query_reports["SO Delivery Status"] = {
 	"filters": [
+		// {
+		// 	"label":"From Date",
+		// 	"fieldname":"from_date",
+		// 	"fieldtype":"Date",
+		// },
+		// {
+		// 	"label":"To Date",
+		// 	"fieldname":"to_date",
+		// 	"fieldtype":"Date",
+		// },
 		{
 			"label":"Sales Order",
 			"fieldname":"name",
@@ -33,5 +43,6 @@ frappe.query_reports["SO Delivery Status"] = {
 			"fieldname":"ready_to_dispatch",
 			"fieldtype":"Check"
 		},
+		
 	]
 };

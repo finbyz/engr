@@ -85,6 +85,26 @@ def sales_invoice_payment_remainder():
             # frappe.enqueue(send_proforma_invoice_mails, queue='long', timeout=5000, job_name='Payment Reminder Mails')
             return "Payment Reminder Mails Send"
 
+# @frappe.whitelist()
+# def sales_invoice_payment_remainder():
+#     if cint(frappe.db.get_value("Accounts Settings", None, "auto_send_payment_reminder_mails")):
+#         if getdate().weekday() == 6:
+#             invoices = frappe.get_all("Sales Invoice",
+#                 filters={
+#                     "status": "Unpaid",
+#                     "is_return": 0,
+#                     "docstatus": 1,
+#                     "dont_send_payment_reminder": 0
+#                 },
+#                 limit=1 
+#             )
+#             if invoices:
+#                 frappe.enqueue(send_sales_invoice_mails, queue='long', timeout=5000, job_name='Payment Reminder Mails')
+#                 return "Payment Reminder Mails Sent"
+#             else:
+#                 return "No eligible invoices found"
+
+
 @frappe.whitelist()
 def send_sales_invoice_mails():
     from frappe.utils import fmt_money
@@ -148,6 +168,7 @@ def send_sales_invoice_mails():
             'outstanding_amount':(">", 5000),
             'currency': 'INR',
             'docstatus': 1,
+            "dont_send_payment_reminder": 0,
             'customer': ['not in', non_customers],},
             order_by='posting_date',
             fields=["name", "customer", "posting_date", "po_no", "po_date", "rounded_total", "outstanding_amount", "contact_email", "naming_series"])
@@ -166,7 +187,7 @@ def send_sales_invoice_mails():
 
     customers = get_customers()
 
-    sender = formataddr(("Innovative Technologies", "accounts@innotech.co.in"))
+    sender = formataddr(("Innovative Technologies", "anaghad@innotech.co.in"))
     for customer in customers:
         attachments, outstanding, actual_amount, recipients = [], [], [], []
         table = ''
@@ -200,7 +221,7 @@ def send_sales_invoice_mails():
                 recipients=recipients,
                 cc = '',
                 subject = 'Overdue Invoices: ' + customer,
-                sender = 'accounts@innotech.co.in',
+                sender = 'anaghad@innotech.co.in',
                 message = message,
                 attachments = attachments
             )
