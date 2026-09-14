@@ -208,20 +208,11 @@ def create_purchase_invoice(self):
 						item.sales_order,
 						'inter_company_order_reference'
 					)
-		
-			# authority = frappe.db.get_value("Company", pi.company, 'authority')
-				
-			# if authority == "Unauthorized" and (not pi.amended_from) and self.si_ref:
-				
-			# 	alternate_company = self.alternate_company
-			# 	company_series = frappe.db.get_value("Company", alternate_company, 'company_series')
 
-			# 	pi.company_series = frappe.db.get_value("Company", pi.name, "company_series")
-			# 	pi.series_value = check_counter_series(pi.naming_series, company_series) - 1
-			# 	pi.naming_series = 'A' + pi.naming_series
 			
 			pi.si_ref = self.name
-
+			pi.shipping_address = None
+			pi.inter_company_invoice_reference = None
 			pi.save()
 			if self.update_stock:
 				pi.db_set('update_stock', 1)
@@ -245,16 +236,7 @@ def cancel_all(self):
 			doc.cancel()
 
 def delete_all(self):
-	# if self.get('pr_ref'):
-	# 	pr_ref = self.pr_ref
-	# 	frappe.db.set_value("Purchase Invoice", self.pr_ref, 'inter_company_invoice_reference', None)
-	# 	frappe.db.set_value("Purchase Invoice", self.pr_ref, 'si_ref', None)
 
-	# 	self.db_set("pi_ref", None)
-	# 	self.db_set("inter_company_invoice_reference", None)
-		
-	# 	doc = frappe.get_doc("Purchase Invoice", pi_ref)
-	# 	doc.delete()
 	if self.get('pi_ref'):
 		pi_ref = self.pi_ref
 		frappe.db.set_value("Purchase Invoice", self.pi_ref, 'inter_company_invoice_reference', '')
@@ -267,16 +249,7 @@ def delete_all(self):
 		doc.delete()
 		frappe.msgprint(_("Purchase Invoice <b>{name}</b> has been deleted!".format(name=pi_ref)), title="Purchase Invoice Deleted", indicator="red")
 
-# def delete_sales_order(self):
-# 	if self.so_ref:
-# 		frappe.db.set_value("Purchase Order", self.name, 'inter_company_order_reference', '')
-# 		frappe.db.set_value("Purchase Order", self.name, 'so_ref', '')
 
-# 		frappe.db.set_value("Sales Order", self.so_ref, 'po_ref', '')
-
-# 		if frappe.db.exists("Sales Order", self.so_ref):
-# 			frappe.delete_doc("Sales Order", self.so_ref, force = 1, ignore_permissions=True)
-# 			frappe.msgprint(_("Sales Order <b>{name}</b> has been deleted!".format(name=self.so_ref)), title="Sales Order Deleted", indicator="red")
 def make_inter_company_transaction(self, target_doc=None):
 	source_doc  = frappe.get_doc("Sales Invoice", self.name)
 
@@ -289,7 +262,7 @@ def make_inter_company_transaction(self, target_doc=None):
 			target.amended_from = name
 		
 		target.company = source.customer
-		target.supplier = source.company
+		target.supplier = details.get("party") or source.company
 		# target.buying_price_list = source.selling_price_list
 		target.posting_date = source.posting_date
 
@@ -356,14 +329,17 @@ def make_inter_company_transaction(self, target_doc=None):
 				"name": "bill_no",
 				"posting_date": "bill_date",
 				"set_target_warehouse":"set_warehouse",
-				"shipping_address_name": "shipping_address",
-				"shipping_address": "shipping_address_display",
 			},
 			"field_no_map": [
 				"series_value",
 				"update_stock",
 				"real_difference_amount",
-				"cost_center"
+				"cost_center",
+				"shipping_address",
+				"shipping_address_display",
+				"billing_address",
+				"billing_address_display",
+				"inter_company_invoice_reference",
 			]
 		},
 		"Sales Invoice Item": {
@@ -379,30 +355,14 @@ def make_inter_company_transaction(self, target_doc=None):
 				"proforma_invoice",
 			], "postprocess": update_accounts,
 		},
-		# "Sales Taxes and Charges":{
-		# 	"doctype":"Purchase Taxes and Charges",
-		# 	"field_no_map": ["dont_recompute_tax"]
-		# }
+
 	}, target_doc,set_missing_values)
 
 	return doclist
 
 def validate_inter_company_transaction(doc, doctype):
-	# price_list = None
 	details = get_inter_company_details(doc, doctype)
 
-	# if doctype in ["Sales Invoice", "Delivery Note", "Sales Order"]:
-	# 	price_list = doc.selling_price_list
-	# elif doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]:
-	# 	price_list = doc.buying_price_list
-	
-	# if price_list:
-	# 	valid_price_list = frappe.db.get_value("Price List", {"name": price_list, "buying": 1, "selling": 1})
-	# else:
-	# 	frappe.throw(_("Selected Price List should have buying and selling fields checked."))
-	
-	# if not valid_price_list:
-	# 	frappe.throw(_("Selected Price List should have buying and selling fields checked."))
 	
 	party = details.get("party")
 	if not party:

@@ -6,7 +6,7 @@ from frappe.model.mapper import get_mapped_doc
 from frappe import _
 from frappe.utils import flt, cint, get_url_to_form
 from datetime import datetime
-from erpnext.stock.doctype.batch.batch import set_batch_nos
+# from erpnext.stock.doctype.batch.batch import set_batch_nos
 from erpnext.stock.doctype.delivery_note.delivery_note import DeliveryNote
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.model.utils import get_fetch_values
@@ -56,12 +56,6 @@ def create_purchase_receipt(self):
 				else:
 					frappe.throw("Please Create Sales Taxes and Charges Template Like Purchase Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
 					
-			# if source_parent.purchase_naming_series:
-			# 	target_doc.name = source_parent.purchase_naming_series
-			# else:
-			# 	target_doc.name = source_name
-			# if source.packages:
-			# 	target.packages = source.packages
 			target.letter_head =  frappe.db.get_value("Company",self.customer,'default_letter_head')
 
 			if self.amended_from:
@@ -101,8 +95,6 @@ def create_purchase_receipt(self):
 				"field_map": {
 					"set_posting_time": "set_posting_time",
 					"selling_price_list": "buying_price_list",
-					"shipping_address_name": "shipping_address",
-					"shipping_address": "shipping_address_display",
 					"posting_date": "posting_date",
 					"posting_time": "posting_time",
 					"ignore_pricing_rule": "ignore_pricing_rule",
@@ -113,8 +105,13 @@ def create_purchase_receipt(self):
 				},
 				"field_no_map": [
 					# "taxes_and_charges",
+					"cost_center",
 					"series_value",
 					"letter_head",
+					"shipping_address",
+					"shipping_address_display",
+					"billing_address",
+					"billing_address_display",
 				],
 
 			},
@@ -124,6 +121,7 @@ def create_purchase_receipt(self):
 					"purchase_order_item": "purchase_order_item",
 					"serial_no": "serial_no",
 					"batch_no": "batch_no",
+					"cost_center":""
 				},
 				"field_no_map": [
 					"warehouse",
@@ -135,6 +133,9 @@ def create_purchase_receipt(self):
 			},
 			"Sales Taxes and Charges": {
 				"doctype": "Purchase Taxes and Charges",
+				"field_map": {
+					"cost_center",
+				},
 				"postprocess": update_taxes,
 			},
 			"Delivery Note Package Detail":{
@@ -143,7 +144,8 @@ def create_purchase_receipt(self):
 					"consumed_qty": "net_weight",
 				},
 				"field_no_map": [
-					"item_code"
+					"item_code",
+					"cost_center"
 				],
 				"postprocess": update_pack,
 			}
@@ -171,6 +173,12 @@ def create_purchase_receipt(self):
 
 		if self.company in inter_company_list:
 			pr = get_purchase_receipt_entry(self.name)
+			# Clear cost centers that belong to the source company
+			pr.cost_center = None
+			for item in pr.items:
+				item.cost_center = None
+			for tax in pr.taxes:
+				tax.cost_center = None
 			pr.save(ignore_permissions = True)
 
 			for index, item in enumerate(self.items):

@@ -154,6 +154,7 @@ def create_sales_order(self):
 				"field_no_map": [
 					"series_value",
 					"set_warehouse",
+					"cost_center"
 				]
 			},
 			"Purchase Order Item": {
@@ -205,6 +206,12 @@ def create_sales_order(self):
 			row.sales_person="Internal"
 			row.product_group="Internal"
 			row.allocated_percentage="100.000"
+			# Clear cost centers that belong to the source company
+			so.cost_center = None
+			for data in so.items:
+				data.cost_center = None
+			for tax in so.taxes:
+				tax.cost_center = None
 			so.save(ignore_permissions = True)
 			so.submit()
 

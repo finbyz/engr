@@ -441,6 +441,18 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		return false;
 	}
 
+	toggle_enable_for_stock_uom(field) {
+		frappe.call({
+			method: "erpnext.stock.doctype.stock_settings.stock_settings.get_enable_stock_uom_editing",
+			callback: (r) => {
+				if (r.message) {
+					var value = r.message[field];
+					this.frm.fields_dict["items"].grid.toggle_enable("stock_qty", value);
+				}
+			},
+		});
+	}
+
 	apply_default_taxes() {
 		var me = this;
 		var taxes_and_charges_field = frappe.meta.get_docfield(me.frm.doc.doctype, "taxes_and_charges",
