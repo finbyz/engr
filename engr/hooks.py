@@ -235,3 +235,15 @@ sales_person_target_variance_based_on_item_group.execute = execute
 from erpnext.selling.doctype.quotation import quotation
 from engr.engineering.doc_events.quotation import _make_sales_order
 quotation._make_sales_order = _make_sales_order
+
+fixtures = [
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["module", "in", [
+                "Engineering",
+           
+            ]]
+        ]
+    }
+]
