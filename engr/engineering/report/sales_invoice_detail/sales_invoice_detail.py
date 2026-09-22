@@ -72,6 +72,18 @@ def get_columns():
             "fieldtype": "Currency",
             "width": 130,
         },
+         {
+            "label": _("Discount Amount"),
+            "fieldname": "distributed_discount_amount",
+            "fieldtype": "Currency",
+            "width": 130,
+        },
+        {
+            "label": _("Net Amount"),
+            "fieldname": "base_net_amount",
+            "fieldtype": "Currency",
+            "width": 130,
+        },
         {
             "label": _("Status"),
             "fieldname": "status",
@@ -120,6 +132,8 @@ def get_data(filters):
             sii.qty,
             sii.rate,
             sii.amount,
+            sii.distributed_discount_amount,
+            sii.base_net_amount,
             si.status,
             (
                 SELECT GROUP_CONCAT(st2.sales_person ORDER BY st2.idx SEPARATOR ', ')
