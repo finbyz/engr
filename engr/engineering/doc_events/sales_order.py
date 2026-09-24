@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import flt,cint,get_url_to_form
+from frappe.utils import flt,cint,get_url_to_form, escape_html
 from erpnext.controllers.status_updater import StatusUpdater
 from engr.api import validate_sales_person
 
@@ -153,6 +153,85 @@ def get_last_5_transaction_details(name, item_code, customer):
 	
 	table += """
 	</tbody></table>
+	"""
+	return table
+
+@frappe.whitelist()
+def get_sales_order_item_details(items, company=None):
+	if isinstance(items, str):
+		items = frappe.parse_json(items)
+
+	items = items or []
+	if not items:
+		return ""
+
+	item_codes = tuple({item.get("item_code") for item in items if item.get("item_code")})
+	warehouses = tuple({item.get("warehouse") for item in items if item.get("warehouse")})
+	warehouse_qty = {}
+	company_qty = {}
+	if item_codes:
+		stock_scope = "warehouse.company = %(company)s"
+		values = {"item_codes": item_codes, "company": company}
+		if warehouses:
+			stock_scope += " OR bin.warehouse IN %(warehouses)s"
+			values["warehouses"] = warehouses
+
+		for stock in frappe.db.sql(
+			f"""
+			SELECT bin.item_code, bin.warehouse, bin.actual_qty, warehouse.company
+			FROM `tabBin` bin
+			INNER JOIN `tabWarehouse` warehouse ON warehouse.name = bin.warehouse
+			WHERE bin.item_code IN %(item_codes)s AND ({stock_scope})
+			""",
+			values,
+			as_dict=True,
+		):
+			qty = flt(stock.actual_qty)
+			warehouse_qty[(stock.item_code, stock.warehouse)] = qty
+			if company and stock.company == company:
+				company_qty[stock.item_code] = company_qty.get(stock.item_code, 0) + qty
+
+	def format_qty(qty):
+		color, background = ("#17603a", "#e7f5eb") if qty > 0 else ("#9a3412", "#fff0e8")
+		return (
+			f'<span style="display:inline-block;min-width:56px;text-align:right;'
+			f'padding:3px 9px;border-radius:12px;font-weight:600;'
+			f'color:{color};background:{background};">'
+			f'{frappe.format(qty, {"fieldtype": "Float"})}</span>'
+		)
+
+	table = """<div style="overflow-x:auto;border:1px solid #d8e4f0;border-radius:8px;">
+	<table class="table" style="margin:0;width:100%;font-size:13px;color:#243746;">
+		<thead>
+			<tr>
+				<th style="padding:10px 12px;background:#f3f3f3;color:#17324d;white-space:nowrap;">Item Code</th>
+				<th style="padding:10px 12px;background:#f3f3f3;color:#17324d;">Item Name</th>
+				<th style="padding:10px 12px;background:#f3f3f3;color:#17324d;white-space:nowrap;">Warehouse</th>
+				<th style="padding:10px 12px;background:#f3f3f3;color:#17324d;text-align:right;white-space:nowrap;">Available Qty</th>
+				<th style="padding:10px 12px;background:#f3f3f3;color:#17324d;text-align:right;white-space:nowrap;">Available Qty in Company</th>
+			</tr>
+		</thead>
+	<tbody>"""
+
+	for index, item in enumerate(items):
+		item_code = item.get("item_code")
+		warehouse = item.get("warehouse")
+		actual_qty = warehouse_qty.get((item_code, warehouse), 0)
+		company_actual_qty = company_qty.get(item_code, 0)
+		row_background = "#f3f8fc" if index % 2 else "#fff"
+
+		table += f"""
+			<tr>
+				<td style="padding:9px 12px;background:{row_background};font-weight:600;color:#234e70;">{escape_html(item_code or "")}</td>
+				<td style="padding:9px 12px;background:{row_background};">{escape_html(item.get("item_name") or "")}</td>
+				<td style="padding:9px 12px;background:{row_background};">{escape_html(warehouse or "")}</td>
+				<td style="padding:9px 12px;background:{row_background};text-align:right;">{format_qty(actual_qty)}</td>
+				<td style="padding:9px 12px;background:{row_background};text-align:right;">{format_qty(company_actual_qty)}</td>
+			</tr>
+		"""
+
+	table += """
+	</tbody></table></div>
 	"""
 	return table
 

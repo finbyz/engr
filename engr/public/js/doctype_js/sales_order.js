@@ -1,15 +1,68 @@
 frappe.ui.form.on('Sales Order', {
     refresh: function(frm) {
             frm.add_custom_button(__('Proforma Invoice'),function() {frm.trigger('create_proforma_invoice')}, __('Create'));
+            frm.trigger('set_sales_order_detail');
 	},
+    company: function(frm) {
+        frm.trigger('set_sales_order_detail');
+    },
     create_proforma_invoice: function(frm){
         frappe.model.open_mapped_doc({
             method: "engr.engineering.doctype.proforma_invoice.proforma_invoice.create_proforma_invoice",
             frm: frm
         })
+    },
+    set_sales_order_detail: function(frm) {
+        if (!frm.fields_dict.sales_order_detail) {
+            return;
+        }
+
+        const items = (frm.doc.items || []).map(item => ({
+            item_code: item.item_code,
+            item_name: item.item_name,
+            warehouse: item.warehouse
+        }));
+
+        const request_id = frappe.utils.get_random(8);
+        frm._sales_order_detail_request_id = request_id;
+
+        if (!items.length) {
+            frm.fields_dict.sales_order_detail.$wrapper.empty();
+            return;
+        }
+
+        frappe.call({
+            method: "engr.engineering.doc_events.sales_order.get_sales_order_item_details",
+            args: {
+                items: items,
+                company: frm.doc.company
+            },
+            callback: function(r) {
+                if (frm._sales_order_detail_request_id !== request_id) {
+                    return;
+                }
+
+                frm.fields_dict.sales_order_detail.$wrapper.html(r.message || "");
+            }
+        });
     }
 })
 frappe.ui.form.on('Sales Order Item', {
+	item_code: function(frm) {
+		frm.trigger('set_sales_order_detail');
+	},
+	item_name: function(frm) {
+		frm.trigger('set_sales_order_detail');
+	},
+	warehouse: function(frm) {
+		frm.trigger('set_sales_order_detail');
+	},
+	items_add: function(frm) {
+		frm.trigger('set_sales_order_detail');
+	},
+	items_remove: function(frm) {
+		frm.trigger('set_sales_order_detail');
+	},
 	last_5_transaction: function(frm, cdt, cdn){
 		let d = locals[cdt][cdn];
 		frappe.call({
