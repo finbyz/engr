@@ -271,31 +271,6 @@ def make_inter_company_transaction(self, target_doc=None):
 
 		target.set_warehouse = self.set_target_warehouse
 
-		if source.taxes_and_charges:
-			target_company_abbr = frappe.db.get_value("Company", target.company, "abbr")
-			source_company_abbr = frappe.db.get_value("Company", source.company, "abbr")
-			taxes_and_charges = source.taxes_and_charges.replace(
-				source_company_abbr, target_company_abbr
-			)
-
-			if frappe.db.exists("Purchase Taxes and Charges Template", taxes_and_charges):
-				target.taxes_and_charges = taxes_and_charges
-			else:
-				frappe.throw("Please Create Purchase Taxes and Charges Template Like Sales Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
-			target.taxes = source.taxes
-			
-			for index, item in enumerate(source.taxes):
-				target.taxes[index].doctype = "Purchase Taxes and Charges"
-				target.taxes[index].parenttype = "Purchase Invoice"
-				target.taxes[index].account_head = item.account_head.replace(
-					source_company_abbr, target_company_abbr
-				)
-				target.taxes[index].account_head = "Input Tax " + str(target.taxes[index].account_head)
-				target.taxes[index].cost_center = item.cost_center.replace(
-					source_company_abbr, target_company_abbr
-				)
-				target.taxes[index].category = "Total"
-				target.taxes[index].add_deduct_tax = "Add"
 		target.run_method("set_missing_values")
 	
 	def update_accounts(source_doc, target_doc, source_parent):
@@ -357,6 +332,41 @@ def make_inter_company_transaction(self, target_doc=None):
 		},
 
 	}, target_doc,set_missing_values)
+	# Use the receiving company's tax rows after all mapper callbacks finish.
+	if self.taxes_and_charges:
+		source_company_abbr = frappe.db.get_value("Company", self.company, "abbr")
+		target_company_abbr = frappe.db.get_value("Company", doclist.company, "abbr")
+		template = self.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
+		if not frappe.db.exists(
+			"Purchase Taxes and Charges Template",
+			{"name": template, "company": doclist.company, "disabled": 0},
+		):
+			frappe.throw(
+				"Create an enabled Purchase Taxes and Charges Template {} for {}.".format(
+					frappe.bold(template), frappe.bold(doclist.company)
+				)
+			)
+	elif self.taxes or flt(self.total_taxes_and_charges):
+		template = frappe.db.get_value(
+			"Purchase Taxes and Charges Template",
+			{"company": doclist.company, "is_default": 1, "disabled": 0},
+		)
+		if not template:
+			frappe.throw(
+				"Sales Invoice {} has taxes but no tax template. Set a Sales Taxes and Charges Template with a matching Purchase template, or set a default Purchase Taxes and Charges Template for {}.".format(
+					frappe.bold(self.name), frappe.bold(doclist.company)
+				)
+			)
+	else:
+		template = None
+
+	from erpnext.controllers.accounts_controller import get_taxes_and_charges
+
+	doclist.taxes_and_charges = template
+	doclist.set("taxes", get_taxes_and_charges("Purchase Taxes and Charges Template", template) if template else [])
+	if template and not doclist.taxes:
+		frappe.throw("Purchase Taxes and Charges Template {} has no tax rows.".format(frappe.bold(template)))
+	doclist.run_method("calculate_taxes_and_totals")
 
 	return doclist
 

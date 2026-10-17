@@ -43,19 +43,7 @@ def create_purchase_receipt(self):
 			target.set_posting_time = 1
 			target.posting_date = source.posting_date
 			target.company_gstin = source.billing_address_gstin
-			
-			target_company_abbr = frappe.db.get_value("Company", target.company, "abbr")
-			source_company_abbr = frappe.db.get_value("Company", source.company, "abbr")
-			if source.taxes_and_charges:
-				target_taxes_and_charges = source.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
-				if frappe.db.exists("Purchase Taxes and Charges Template", target_taxes_and_charges):
-					target.taxes_and_charges = target_taxes_and_charges
-					target.taxes = []
-					# tax_doc = frappe.get_doc("Purchase Taxes and Charges Template" , target_taxes_and_charges )
-					# target.taxes = tax_doc.taxes
-				else:
-					frappe.throw("Please Create Sales Taxes and Charges Template Like Purchase Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
-					
+
 			target.letter_head =  frappe.db.get_value("Company",self.customer,'default_letter_head')
 
 			if self.amended_from:
@@ -160,6 +148,41 @@ def create_purchase_receipt(self):
 			set_missing_values,
 			ignore_permissions=ignore_permissions
 		)
+		# Load purchase-side tax accounts and rates after the mapper callbacks.
+		if self.taxes_and_charges:
+			source_company_abbr = frappe.db.get_value("Company", self.company, "abbr")
+			target_company_abbr = frappe.db.get_value("Company", doc.company, "abbr")
+			template = self.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
+			if not frappe.db.exists(
+				"Purchase Taxes and Charges Template",
+				{"name": template, "company": doc.company, "disabled": 0},
+			):
+				frappe.throw(
+					"Create an enabled Purchase Taxes and Charges Template {} for {}.".format(
+						frappe.bold(template), frappe.bold(doc.company)
+					)
+				)
+		elif self.taxes or flt(self.total_taxes_and_charges):
+			template = frappe.db.get_value(
+				"Purchase Taxes and Charges Template",
+				{"company": doc.company, "is_default": 1, "disabled": 0},
+			)
+			if not template:
+				frappe.throw(
+					"Delivery Note {} has taxes but no tax template. Set a Sales Taxes and Charges Template with a matching Purchase template, or set a default Purchase Taxes and Charges Template for {}.".format(
+						frappe.bold(self.name), frappe.bold(doc.company)
+					)
+				)
+		else:
+			template = None
+
+		from erpnext.controllers.accounts_controller import get_taxes_and_charges
+
+		doc.taxes_and_charges = template
+		doc.set("taxes", get_taxes_and_charges("Purchase Taxes and Charges Template", template) if template else [])
+		if template and not doc.taxes:
+			frappe.throw("Purchase Taxes and Charges Template {} has no tax rows.".format(frappe.bold(template)))
+		doc.run_method("calculate_taxes_and_totals")
 
 		return doc
 
@@ -177,8 +200,6 @@ def create_purchase_receipt(self):
 			pr.cost_center = None
 			for item in pr.items:
 				item.cost_center = None
-			for tax in pr.taxes:
-				tax.cost_center = None
 			pr.save(ignore_permissions = True)
 
 			for index, item in enumerate(self.items):

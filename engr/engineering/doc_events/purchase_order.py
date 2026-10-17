@@ -90,16 +90,6 @@ def create_sales_order(self):
 			target.company = source.supplier
 			target.customer = source.company
 
-			target_company_abbr = frappe.db.get_value("Company", target.company, "abbr")
-			source_company_abbr = frappe.db.get_value("Company", source.company, "abbr")
-
-			if source.taxes_and_charges:
-				target_taxes_and_charges = source.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
-				if frappe.db.exists("Sales Taxes and Charges Template", target_taxes_and_charges):
-					target.taxes_and_charges = target_taxes_and_charges
-					target.taxes = []
-				else:
-					frappe.throw("Please Create Sales Taxes and Charges Template Like Purchase Taxes and Charges Template {}".format(frappe.bold(source.taxes_and_charges)))
 			if self.amended_from:
 				name = frappe.db.get_value("Sales Order", {'po_ref': self.amended_from}, "name")
 				target.amended_from = name
@@ -108,7 +98,6 @@ def create_sales_order(self):
 			target.set_posting_time = 1
 
 			target.run_method("set_missing_values")
-			target.run_method("calculate_taxes_and_charges")
 
 		def update_items(source_doc, target_doc, source_parent):
 			source_company_abbr = frappe.db.get_value("Company", source_parent.company, "abbr")
@@ -184,7 +173,46 @@ def create_sales_order(self):
 			set_missing_value,
 			ignore_permissions=ignore_permissions
 		)
+		# Use the submitted PO, then load sales-side accounts and rates from
+		# the matching Sales template after all mapper callbacks have finished.
+		if self.taxes_and_charges:
+			source_company_abbr = frappe.db.get_value("Company", self.company, "abbr")
+			target_company_abbr = frappe.db.get_value("Company", doc.company, "abbr")
+			template = self.taxes_and_charges.replace(source_company_abbr, target_company_abbr)
+			if not frappe.db.exists(
+				"Sales Taxes and Charges Template",
+				{"name": template, "company": doc.company, "disabled": 0},
+			):
+				frappe.throw(
+					"Create an enabled Sales Taxes and Charges Template {} for {}.".format(
+						frappe.bold(template), frappe.bold(doc.company)
+					)
+				)
+		elif self.taxes or flt(self.total_taxes_and_charges):
+			template = frappe.db.get_value(
+				"Sales Taxes and Charges Template",
+				{"company": doc.company, "is_default": 1, "disabled": 0},
+			)
+			if not template:
+				frappe.throw(
+					"Purchase Order {} has taxes but no tax template. Set a Purchase Taxes and Charges Template with a matching Sales template, or set a default Sales Taxes and Charges Template for {}.".format(
+						frappe.bold(self.name), frappe.bold(doc.company)
+					)
+				)
+		else:
+			template = None
 
+		from erpnext.controllers.accounts_controller import get_taxes_and_charges
+
+		doc.taxes_and_charges = template
+		doc.set("taxes", get_taxes_and_charges("Sales Taxes and Charges Template", template) if template else [])
+		if template and not doc.taxes:
+			frappe.throw("Sales Taxes and Charges Template {} has no tax rows.".format(frappe.bold(template)))
+		doc.run_method("calculate_taxes_and_totals")
+		frappe.log_error(
+			title="SO before save - PO {}".format(self.name),
+			message=json.dumps(doc.as_dict(), indent=2, default=str),
+		)
 		return doc
 
 	check_inter_company_transaction = frappe.get_value("Company", self.company, "allow_inter_company_transaction")
@@ -210,8 +238,6 @@ def create_sales_order(self):
 			so.cost_center = None
 			for data in so.items:
 				data.cost_center = None
-			for tax in so.taxes:
-				tax.cost_center = None
 			so.save(ignore_permissions = True)
 			so.submit()
 
