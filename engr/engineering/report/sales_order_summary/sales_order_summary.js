@@ -31,6 +31,14 @@ frappe.query_reports["Sales Order Summary"] = {
 			default: "Monthly",
 			reqd: 1
 		},
+		{
+			fieldname: "company",
+			label: __("Company"),
+			fieldtype: "Link",
+			options: "Company",
+			default: frappe.defaults.get_user_default("Company"),
+			reqd: 1
+		},
 
 		{
 			fieldname: "chart_type",
@@ -102,6 +110,10 @@ frappe.query_reports["Sales Order Summary"] = {
 		};
 
 		report.page.fields_dict["product_group"].df.onchange = function () {
+			report.refresh();
+		};
+
+		report.page.fields_dict["company"].df.onchange = function () {
 			report.refresh();
 		};
 	},

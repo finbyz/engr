@@ -19,6 +19,14 @@ frappe.query_reports["Sales Order Detail"] = {
 			width: "100px"
 		},
 		{
+			fieldname: "company",
+			label: __("Company"),
+			fieldtype: "Link",
+			options: "Company",
+			default: frappe.defaults.get_user_default("Company"),
+			reqd: 1
+		},
+		{
 			fieldname: "name",
 			label: __("Sales Order ID"),
 			fieldtype: "Link",

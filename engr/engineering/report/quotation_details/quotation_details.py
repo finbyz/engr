@@ -184,6 +184,11 @@ def get_conditions(filters):
     if filters.get("customer"):
         conditions += " AND q.party_name = %(customer)s"
         values["customer"] = filters["customer"]
+    
+    # Filter: Company
+    if filters.get("company"):
+        conditions += " AND q.company = %(company)s"
+        values["company"] = filters["company"]
 
     if filters.get("internal_customer"):
         conditions += """
@@ -203,6 +208,7 @@ def get_conditions(filters):
     if filters.get("to_date"):
         conditions += " AND q.transaction_date <= %(to_date)s"
         values["to_date"] = filters["to_date"]
+    
 
     # Filter: Status (multi-select)
     if filters.get("status"):

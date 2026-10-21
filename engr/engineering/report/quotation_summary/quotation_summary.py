@@ -375,51 +375,114 @@ def get_periods(from_date, to_date, period_type):
             periods.append({"label": label, "from": current, "to": p_end, "key": key})
             current = getdate(add_months(current, 1))
 
+    # elif period_type == "Quarterly":
+    #     year  = from_date.year
+    #     month = from_date.month
+    #     qs    = ((month - 1) // 3) * 3 + 1
+    #     current = getdate(f"{year}-{qs:02d}-01")
+    #     while current <= to_date:
+    #         q_num     = (current.month - 1) // 3 + 1
+    #         end_month = current.month + 2
+    #         end_day   = calendar.monthrange(current.year, end_month)[1]
+    #         p_end     = getdate(f"{current.year}-{end_month:02d}-{end_day:02d}")
+    #         if p_end > to_date:
+    #             p_end = to_date
+    #         label = f"Q{q_num} {current.year}"
+    #         key   = f"Q{q_num}_{current.year}"
+    #         periods.append({"label": label, "from": current, "to": p_end, "key": key})
+    #         current = getdate(add_months(current, 3))
+
+    # elif period_type == "Half Yearly":
+    #     year  = from_date.year
+    #     month = from_date.month
+    #     hs    = 1 if month <= 6 else 7
+    #     current = getdate(f"{year}-{hs:02d}-01")
+    #     while current <= to_date:
+    #         h_num     = 1 if current.month <= 6 else 2
+    #         end_month = 6 if current.month <= 6 else 12
+    #         end_day   = calendar.monthrange(current.year, end_month)[1]
+    #         p_end     = getdate(f"{current.year}-{end_month:02d}-{end_day:02d}")
+    #         if p_end > to_date:
+    #             p_end = to_date
+    #         label = f"H{h_num} {current.year}"
+    #         key   = f"H{h_num}_{current.year}"
+    #         periods.append({"label": label, "from": current, "to": p_end, "key": key})
+    #         current = getdate(add_months(current, 6))
+    
     elif period_type == "Quarterly":
-        year  = from_date.year
-        month = from_date.month
-        qs    = ((month - 1) // 3) * 3 + 1
-        current = getdate(f"{year}-{qs:02d}-01")
+        # Fiscal quarters: Q1 Apr-Jun, Q2 Jul-Sep, Q3 Oct-Dec, Q4 Jan-Mar
+        qs_month = ((from_date.month - 4) % 12) // 3 * 3 + 4
+        if qs_month > 12:
+            qs_month -= 12
+        qs_year = from_date.year if qs_month <= from_date.month else from_date.year - 1
+        current = getdate(f"{qs_year}-{qs_month:02d}-01")
         while current <= to_date:
-            q_num     = (current.month - 1) // 3 + 1
-            end_month = current.month + 2
-            end_day   = calendar.monthrange(current.year, end_month)[1]
-            p_end     = getdate(f"{current.year}-{end_month:02d}-{end_day:02d}")
+            fq_num   = ((current.month - 4) % 12) // 3 + 1
+            fy_start = current.year if current.month >= 4 else current.year - 1
+            fy_label = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+            p_end    = getdate(get_last_day(add_months(current, 2)))
             if p_end > to_date:
                 p_end = to_date
-            label = f"Q{q_num} {current.year}"
-            key   = f"Q{q_num}_{current.year}"
-            periods.append({"label": label, "from": current, "to": p_end, "key": key})
+            periods.append({
+                "label": f"Q{fq_num} {fy_label}",
+                "from":  current,
+                "to":    p_end,
+                "key":   f"Q{fq_num}_{fy_start}",
+            })
             current = getdate(add_months(current, 3))
 
     elif period_type == "Half Yearly":
-        year  = from_date.year
-        month = from_date.month
-        hs    = 1 if month <= 6 else 7
-        current = getdate(f"{year}-{hs:02d}-01")
+        # H1 = Apr-Sep, H2 = Oct-Mar
+        m = from_date.month
+        if 4 <= m <= 9:
+            hs_year, hs_month = from_date.year, 4
+        elif m >= 10:
+            hs_year, hs_month = from_date.year, 10
+        else:
+            hs_year, hs_month = from_date.year - 1, 10
+        current = getdate(f"{hs_year}-{hs_month:02d}-01")
         while current <= to_date:
-            h_num     = 1 if current.month <= 6 else 2
-            end_month = 6 if current.month <= 6 else 12
-            end_day   = calendar.monthrange(current.year, end_month)[1]
-            p_end     = getdate(f"{current.year}-{end_month:02d}-{end_day:02d}")
+            h_num    = 1 if current.month == 4 else 2
+            fy_start = current.year if current.month >= 4 else current.year - 1
+            fy_label = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+            p_end    = getdate(get_last_day(add_months(current, 5)))
             if p_end > to_date:
                 p_end = to_date
-            label = f"H{h_num} {current.year}"
-            key   = f"H{h_num}_{current.year}"
-            periods.append({"label": label, "from": current, "to": p_end, "key": key})
+            periods.append({
+                "label": f"H{h_num} {fy_label}",
+                "from":  current,
+                "to":    p_end,
+                "key":   f"H{h_num}_{fy_start}",
+            })
             current = getdate(add_months(current, 6))
 
+    # elif period_type == "Yearly":
+    #     year    = from_date.year
+    #     current = getdate(f"{year}-01-01")
+    #     while current <= to_date:
+    #         p_end = getdate(f"{current.year}-12-31")
+    #         if p_end > to_date:
+    #             p_end = to_date
+    #         label = str(current.year)
+    #         key   = f"Y_{current.year}"
+    #         periods.append({"label": label, "from": current, "to": p_end, "key": key})
+    #         current = getdate(f"{current.year + 1}-01-01")
+
     elif period_type == "Yearly":
-        year    = from_date.year
-        current = getdate(f"{year}-01-01")
+        # FY: 1 Apr - 31 Mar
+        fy_start = from_date.year if from_date.month >= 4 else from_date.year - 1
+        current  = getdate(f"{fy_start}-04-01")
         while current <= to_date:
-            p_end = getdate(f"{current.year}-12-31")
+            p_end = getdate(f"{current.year + 1}-03-31")
             if p_end > to_date:
                 p_end = to_date
-            label = str(current.year)
-            key   = f"Y_{current.year}"
-            periods.append({"label": label, "from": current, "to": p_end, "key": key})
-            current = getdate(f"{current.year + 1}-01-01")
+            periods.append({
+                "label": f"FY {current.year}-{str(current.year + 1)[-2:]}",
+                "from":  current,
+                "to":    p_end,
+                "key":   f"Y_{current.year}",
+            })
+            current = getdate(f"{current.year + 1}-04-01")
 
     return periods
 
@@ -450,6 +513,10 @@ def fetch_counts(filters, from_date, to_date, periods):
         )
         """
         query_filters["product_groups"] = tuple(product_groups)
+    
+    if filters.get("company"):
+        conditions += " AND q.company = %(company)s"
+        query_filters["company"] = filters.get("company")
 
     raw = frappe.db.sql(
         f"""

@@ -275,6 +275,11 @@ def get_conditions(filters):
     if filters.get("customer"):
         conditions += " AND so.customer = %(customer)s"
         values["customer"] = filters["customer"]
+    
+    # Filter: Company
+    if filters.get("company"):
+        conditions += " AND so.company = %(company)s"
+        values["company"] = filters["company"]
 
     # Filter: Item Code
     if filters.get("item_code"):

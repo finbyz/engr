@@ -180,6 +180,11 @@ def get_conditions(filters):
     if filters.get("customer"):
         conditions += " AND si.customer = %(customer)s"
         values["customer"] = filters["customer"]
+    
+    # Filter: Company
+    if filters.get("company"):
+        conditions += " AND si.company = %(company)s"
+        values["company"] = filters["company"]
 
     # Filter: From Date
     if filters.get("from_date"):
