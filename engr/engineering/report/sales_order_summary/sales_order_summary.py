@@ -273,11 +273,20 @@ def fetch_counts(filters, from_date, to_date, periods):
     # COMPANY FILTER
     # -----------------------------------------------------
 
-    if filters.get("company"):
+    # if filters.get("company"):
 
-        conditions += " AND so.company = %(company)s"
+    #     conditions += " AND so.company = %(company)s"
 
-        query_filters["company"] = filters.get("company")
+    #     query_filters["company"] = filters.get("company")
+
+    companies = filters.get("company") or []
+
+    if isinstance(companies, str):
+        companies = [companies]
+
+    if companies:
+        conditions += " AND so.company IN %(companies)s"
+        query_filters["companies"] = tuple(companies)
 
     raw = frappe.db.sql(
         f"""

@@ -185,10 +185,18 @@ def get_conditions(filters):
         conditions += " AND q.party_name = %(customer)s"
         values["customer"] = filters["customer"]
     
-    # Filter: Company
-    if filters.get("company"):
-        conditions += " AND q.company = %(company)s"
-        values["company"] = filters["company"]
+    # # Filter: Company
+    # if filters.get("company"):
+    #     conditions += " AND q.company = %(company)s"
+    #     values["company"] = filters["company"]
+    companies = filters.get("company") or []
+
+    if isinstance(companies, str):
+        companies = frappe.parse_json(companies) if companies.startswith("[") else [companies]
+
+    if companies:
+        conditions += " AND q.company IN %(companies)s"
+        values["companies"] = tuple(companies)
 
     if filters.get("internal_customer"):
         conditions += """

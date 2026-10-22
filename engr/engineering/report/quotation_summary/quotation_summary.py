@@ -185,9 +185,19 @@ def fetch_counts(filters, from_date, to_date, periods):
         """
         query_filters["product_groups"] = tuple(product_groups)
     
-    if filters.get("company"):
-        conditions += " AND q.company = %(company)s"
-        query_filters["company"] = filters.get("company")
+    # if filters.get("company"):
+    #     conditions += " AND q.company = %(company)s"
+    #     query_filters["company"] = filters.get("company")
+
+    companies = filters.get("company") or []
+
+    if isinstance(companies, str):
+        companies = frappe.parse_json(companies) if companies.startswith("[") else [companies]
+
+    if companies:
+        conditions += " AND q.company IN %(companies)s"
+        query_filters["companies"] = tuple(companies)
+
 
     raw = frappe.db.sql(
         f"""

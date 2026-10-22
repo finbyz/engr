@@ -276,10 +276,20 @@ def get_conditions(filters):
         conditions += " AND so.customer = %(customer)s"
         values["customer"] = filters["customer"]
     
+    # # Filter: Company
+    # if filters.get("company"):
+    #     conditions += " AND so.company = %(company)s"
+    #     values["company"] = filters["company"]
+
     # Filter: Company
-    if filters.get("company"):
-        conditions += " AND so.company = %(company)s"
-        values["company"] = filters["company"]
+    companies = filters.get("company") or []
+
+    if isinstance(companies, str):
+        companies = frappe.parse_json(companies) if companies.startswith("[") else [companies]
+
+    if companies:
+        conditions += " AND so.company IN %(companies)s"
+        values["companies"] = tuple(companies)
 
     # Filter: Item Code
     if filters.get("item_code"):
