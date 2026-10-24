@@ -129,7 +129,7 @@ def get_data(filters):
             qi.item_code,
             qi.qty,
             qi.rate,
-            qi.amount,
+            qi.net_amount as amount,
             qi.item_group,
             DATEDIFF(CURDATE(), q.transaction_date)    AS age,
             IFNULL(q.win_probability, 0)               AS win_probability,
